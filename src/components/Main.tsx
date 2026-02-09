@@ -1,7 +1,7 @@
 import { site } from "@/content/siteContent";
 
 export default function Main() {
-  const { title, subtitle, heroImage } = site.main;
+  const { title, subtitle, heroImage, endtitle } = site.main;
 
   return (
     <section className="min-h-screen bg-black px-6 text-white flex items-center">
@@ -22,6 +22,9 @@ export default function Main() {
               alt={heroImage.alt}
               className="block w-full object-contain max-h-[48vh]"
             />
+            <p className="mt-6 text-sm tracking-wide text-white/60">
+                {endtitle}
+            </p>
           </div>
         </div>
 

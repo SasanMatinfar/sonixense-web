@@ -8,6 +8,7 @@ export const site = {
       src: "/images/teaser.png",
       alt: "soniXense hero",
     },
+    endtitle: "The Future of Multisensory Interaction",
   },
   brand: "soniXense",
   nav: [
