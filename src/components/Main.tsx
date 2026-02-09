@@ -4,30 +4,27 @@ export default function Main() {
   const { title, subtitle, heroImage } = site.main;
 
   return (
-    <section className="min-h-screen bg-black px-6 py-20 text-white">
-      <div className="mx-auto max-w-3xl">
-        
-        {/* Title */}
-        <h1 className="mt-6 text-4xl font-semibold tracking-tight">
+    <section className="min-h-screen bg-black px-6 text-white flex items-center">
+      <div className="mx-auto w-full max-w-3xl text-center">
+
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
           {title}
         </h1>
 
-        {/* Subtitle */}
-        <p className="mt-4 text-white/70 leading-relaxed">
+        <p className="mx-auto mt-3 max-w-xl text-white/70 leading-relaxed">
           {subtitle}
         </p>
 
-        {/* Image block */}
-        <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-2">
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-black">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+        <div className="mt-8 flex justify-center">
+          <div className="w-full max-w-[85vw] sm:max-w-md md:max-w-lg lg:max-w-xl">
             <img
               src={heroImage.src}
               alt={heroImage.alt}
-              className="w-full object-cover"
+              className="block w-full object-contain max-h-[48vh]"
             />
           </div>
         </div>
+
       </div>
     </section>
   );
