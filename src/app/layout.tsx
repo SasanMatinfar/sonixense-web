@@ -1,26 +1,33 @@
-import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { Inter, Syne } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
 
-
-export const metadata: Metadata = {
-  title: "soniXense — Sonification & Sonic Interaction Design",
-  description: "Designing sound-based representations for data and interactive systems.",
+export const metadata = {
+  title: "soniXense",
+  description: "Sonification studio",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`bg-[#0D2833] text-white ${inter.variable} ${space.variable}`}>
+      <body className={`${inter.variable} ${syne.variable} antialiased`}>
         {children}
       </body>
     </html>
   );
 }
-

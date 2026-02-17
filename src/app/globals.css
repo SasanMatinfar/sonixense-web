@@ -4,19 +4,83 @@
   --bg: 13 40 51; /* #0D2833 */
 }
 
-html,
 body {
   margin: 0;
   padding: 0;
-  min-height: 100%;
   background-color: rgb(var(--bg)) !important;
   color: white;
-}
-
-body {
-  font-family: var(--font-inter), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }
 
 .heading-font {
-  font-family: var(--font-space), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: var(--font-heading), system-ui, sans-serif;
+}
+
+/* Wave animation */
+@keyframes wavePulse {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.62; }
+  50% { transform: scale(1.2) rotate(7deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 0.62; }
+}
+
+@keyframes wavePulseAlt {
+  0% { transform: scale(1.03) rotate(0deg); opacity: 0.52; }
+  50% { transform: scale(1.28) rotate(-10deg); opacity: 0.95; }
+  100% { transform: scale(1.03) rotate(0deg); opacity: 0.52; }
+}
+
+@keyframes morphBlob {
+  0% {
+    border-radius: 46% 54% 56% 44% / 44% 57% 43% 56%;
+  }
+  33% {
+    border-radius: 58% 42% 45% 55% / 52% 43% 57% 48%;
+  }
+  66% {
+    border-radius: 40% 60% 53% 47% / 59% 46% 54% 41%;
+  }
+  100% {
+    border-radius: 46% 54% 56% 44% / 44% 57% 43% 56%;
+  }
+}
+
+.wave {
+  animation: wavePulse 2.5s ease-in-out infinite;
+}
+
+.wave-alt {
+  animation: wavePulseAlt 3.1s ease-in-out infinite;
+}
+
+.wave-founder {
+  animation: waveFounderPulse 0.95s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+.wave-founder-alt {
+  animation: waveFounderPulseAlt 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+@keyframes waveFounderPulse {
+  0% { transform: scale(0.92) rotate(0deg); opacity: 0.28; }
+  50% { transform: scale(1.48) rotate(9deg); opacity: 1; }
+  100% { transform: scale(0.92) rotate(0deg); opacity: 0.28; }
+}
+
+@keyframes waveFounderPulseAlt {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.22; }
+  50% { transform: scale(1.58) rotate(-12deg); opacity: 0.95; }
+  100% { transform: scale(1) rotate(0deg); opacity: 0.22; }
+}
+
+.morph-ring {
+  border-radius: 50%;
+  animation: morphBlob 5.2s ease-in-out infinite;
+}
+
+.morph-fast {
+  animation-duration: 3.8s;
+}
+
+.morph-slow {
+  animation-duration: 6.4s;
 }
