@@ -199,6 +199,11 @@ function WaveArrowButton({
 function MainContent() {
   const { openPanel, openLeftPanel } = useSlidePanel();
   const { title, subtitle, heroImage, endtitle } = site.main;
+  const subtitleBreak = "Intelligent Sonic Innovation";
+  const hasSubtitleBreak = subtitle.includes(subtitleBreak);
+  const subtitleFirstPart = hasSubtitleBreak
+    ? subtitle.replace(subtitleBreak, "").trim()
+    : subtitle;
   const [activeFounder, setActiveFounder] = useState<FounderProfile | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalFrom, setModalFrom] = useState({ x: 0, y: 0 });
@@ -270,17 +275,23 @@ function MainContent() {
       <section className="min-h-screen px-6 flex items-center">
         <div className="mx-auto w-full max-w-3xl text-center">
 
-        <h1 className="heading-font text-7xl sm:text-8xl font-semibold tracking-tight">
+        <h1 className="heading-font mt-6 sm:mt-8 text-6xl sm:text-7xl md:text-8xl font-semibold tracking-tight">
           {title}
         </h1>
 
         {/* Subtitle — now bold */}
-        <p className="mx-auto mt-3 max-w-xl leading-relaxed text-[#DB5F42] font-bold">
-          {subtitle}
+        <p className="mx-auto mt-4 max-w-4xl text-lg sm:text-xl md:text-2xl leading-tight text-[#DB5F42] font-bold">
+          {subtitleFirstPart}
+          {hasSubtitleBreak ? (
+            <>
+              <br />
+              {subtitleBreak}
+            </>
+          ) : null}
         </p>
 
         <div className="mt-8 flex justify-center relative">
-          <div className="w-full max-w-[85vw] sm:max-w-md md:max-w-lg lg:max-w-xl">
+          <div className="w-full max-w-[92vw] sm:max-w-2xl md:max-w-3xl">
             <div className="relative">
               <WaveArrowButton
                 onClick={openLeftPanel}
@@ -299,12 +310,12 @@ function MainContent() {
               <img
                 src={heroImage.src}
                 alt={heroImage.alt}
-                className="block w-full object-contain max-h-[48vh]"
+                className="block w-full object-contain max-h-[50vh]"
               />
             </div>
 
             {/* End title — now bold + soft color */}
-            <p className="mt-6 text-sm tracking-wide text-[#E9C9DF] font-bold">
+            <p className="mt-6 text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold">
               {endtitle}
             </p>
 
