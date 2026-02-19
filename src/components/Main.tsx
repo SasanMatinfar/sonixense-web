@@ -5,15 +5,29 @@ import { site } from "@/content/siteContent";
 import SlidePanelShell, { useSlidePanel } from "@/components/SlidePanelShell";
 
 function SubPage() {
+  const { activePanel } = useSlidePanel();
+  const showVideo = activePanel === "right";
+
   return (
     <div className="space-y-6">
-      <h2 className="heading-font text-3xl tracking-tight">
+      <h2 className="heading-font text-3xl tracking-tight text-center">
         Navigation
       </h2>
 
-      <p className="max-w-2xl text-white/70 leading-relaxed">
-        Navigation subpage!
-      </p>
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+          {showVideo ? (
+            <iframe
+              className="h-full w-full"
+              src="https://www.youtube.com/embed/63ylNd6sqIE"
+              title="Navigation video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
@@ -78,9 +92,9 @@ const founders: FounderProfile[] = [
     thumbnailSrc: "/images/founders/navid.png",
     portraitSrc: "/images/founders/navid.png",
     objectPosition: "center 26%",
-    bio: "",
+    bio: "Navid Navab is ArtScientist and composer who brings over decade experience of interdisciplinary research and production.",
     details: "",
-    gallery: ["/images/founders/navid.png"],
+    gallery: ["/images/founders/navid-award.jpg", "/images/founders/navid-nica.jpg"],
   },
   {
     id: "founder-3",
@@ -89,9 +103,9 @@ const founders: FounderProfile[] = [
     thumbnailSrc: "/images/founders/veronica.jpg",
     portraitSrc: "/images/founders/veronica.jpg",
     objectPosition: "center 40%",
-    bio: "",
+    bio: "Veronica Ruozzi — biomedical engineer focused on biomechanical modeling and advanced medical XR applications.",
     details: "",
-    gallery: ["/images/founders/veronica.jpg"],
+    gallery: [],
   },
   {
     id: "founder-4",
@@ -100,9 +114,9 @@ const founders: FounderProfile[] = [
     thumbnailSrc: "/images/founders/nassir.jpg",
     portraitSrc: "/images/founders/nassir.jpg",
     objectPosition: "center",
-    bio: "",
+    bio: "Prof. Nassir Navab, TUM, with decades of pioneering work in biomedical engineering, surgical data science, medical XR, and medical robotics.",
     details: "",
-    gallery: ["/images/founders/nassir.jpg"],
+    gallery: [],
   },
 ];
 
@@ -217,8 +231,8 @@ function MainContent() {
     const rawX = rect.left + rect.width / 2 - window.innerWidth / 2;
     const rawY = rect.top + rect.height / 2 - window.innerHeight / 2;
     setModalFrom({
-      x: Math.max(-180, Math.min(180, rawX * 0.45)),
-      y: Math.max(820, Math.min(1300, rawY + 980)),
+      x: Math.max(-140, Math.min(140, rawX * 0.3)),
+      y: Math.max(56, Math.min(window.innerHeight * 0.22, rawY * 0.22 + window.innerHeight * 0.14)),
     });
     setActiveFounder(founder);
     setModalOpen(false);
@@ -255,32 +269,32 @@ function MainContent() {
   );
 
   const handleScrollDown = () => {
-    if (typeof document === "undefined") return;
-    const scrollContainer = document.getElementById("main-page-scroll");
-    if (!scrollContainer) {
-      window.scrollBy({
-        top: window.innerHeight * 0.72,
-        behavior: "smooth",
-      });
-      return;
-    }
-    scrollContainer.scrollBy({
-      top: window.innerHeight * 0.72,
+    const foundersSection = document.getElementById("founders-section");
+    foundersSection?.scrollIntoView({
       behavior: "smooth",
+      block: "start",
+    });
+  };
+  const handleScrollToPatents = () => {
+    if (typeof document === "undefined") return;
+    const patentsSection = document.getElementById("patents-section");
+    patentsSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
   };
 
   return (
     <div className="bg-[rgb(var(--bg))] text-white">
-      <section className="min-h-screen px-6 flex items-center">
-        <div className="mx-auto w-full max-w-3xl text-center">
+      <section className="min-h-screen px-4 sm:px-6 py-6 sm:py-8">
+        <div className="mx-auto w-full max-w-6xl min-h-[calc(100vh-3rem)] flex flex-col justify-center text-center">
 
-        <h1 className="heading-font mt-6 sm:mt-8 text-6xl sm:text-7xl md:text-8xl font-semibold tracking-tight">
+        <h1 className="heading-font text-[clamp(3.2rem,9vw,6.2rem)] font-semibold tracking-tight">
           {title}
         </h1>
 
         {/* Subtitle — now bold */}
-        <p className="mx-auto mt-4 max-w-4xl text-lg sm:text-xl md:text-2xl leading-tight text-[#DB5F42] font-bold">
+        <p className="mx-auto mt-4 max-w-4xl text-[clamp(1rem,3.8vw,1.75rem)] leading-tight text-[#DB5F42] font-bold">
           {subtitleFirstPart}
           {hasSubtitleBreak ? (
             <>
@@ -290,36 +304,36 @@ function MainContent() {
           ) : null}
         </p>
 
-        <div className="mt-8 flex justify-center relative">
-          <div className="w-full max-w-[92vw] sm:max-w-2xl md:max-w-3xl">
+        <div className="mt-6 sm:mt-8 flex justify-center relative">
+          <div className="w-full max-w-[94vw] sm:max-w-2xl md:max-w-3xl">
             <div className="relative">
               <WaveArrowButton
                 onClick={openLeftPanel}
                 ariaLabel="Open general sonification page"
                 direction="left"
-                className="absolute top-1/2 -left-20 z-30 -translate-y-1/2"
+                className="absolute top-1/2 left-0 sm:-left-8 md:-left-14 z-30 -translate-y-1/2 scale-75 sm:scale-90 md:scale-100"
               />
 
               <WaveArrowButton
                 onClick={openPanel}
                 ariaLabel="Open navigation page"
                 direction="right"
-                className="absolute top-1/2 -right-20 z-30 -translate-y-1/2"
+                className="absolute top-1/2 right-0 sm:-right-8 md:-right-14 z-30 -translate-y-1/2 scale-75 sm:scale-90 md:scale-100"
               />
 
               <img
                 src={heroImage.src}
                 alt={heroImage.alt}
-                className="block w-full object-contain max-h-[50vh]"
+                className="block w-full object-contain max-h-[40vh] sm:max-h-[46vh]"
               />
             </div>
 
             {/* End title — now bold + soft color */}
-            <p className="mt-6 text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold">
+            <p className="mt-4 text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold">
               {endtitle}
             </p>
 
-            <div className="mt-8 flex justify-center">
+            <div className="mt-5 sm:mt-6 flex justify-center">
               <WaveArrowButton
                 onClick={handleScrollDown}
                 ariaLabel="Scroll down"
@@ -334,63 +348,117 @@ function MainContent() {
         </div>
       </section>
 
-      <section className="px-6 pb-20">
-        <div className="mx-auto w-full max-w-6xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="heading-font text-3xl sm:text-4xl tracking-tight">
-              The Pioneers in Surgical Sonification
-            </h2>
-            <p className="mx-auto mt-2 text-sm font-semibold tracking-[0.16em] text-[#E9C9DF]/85">
-              STARTUP CO-FOUNDERS
-            </p>
-            <span className="mx-auto mt-4 block h-px w-28 bg-gradient-to-r from-transparent via-[#DB5F42]/70 to-transparent" />
-            <p className="mx-auto mt-3 max-w-2xl text-white/70 leading-relaxed">
-              We combine consultancy and co-development, guiding companies from
-              early vision to full integration - turning research into real life
-              solutions. Click any co-founder to open a full profile modal.
-            </p>
+      <section id="founders-section" className="min-h-screen px-4 sm:px-6 py-8 sm:py-10">
+        <div className="mx-auto w-full max-w-6xl min-h-[calc(100vh-3rem)] flex flex-col items-center justify-between gap-8">
+          <div id="founders-content" className="w-full">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="heading-font text-3xl sm:text-4xl tracking-tight">
+                The Pioneers in Surgical Sonification
+              </h2>
+              <p className="mx-auto mt-2 text-sm font-semibold tracking-[0.16em] text-[#E9C9DF]/85">
+                STARTUP CO-FOUNDERS
+              </p>
+              <span className="mx-auto mt-4 block h-px w-28 bg-gradient-to-r from-transparent via-[#DB5F42]/70 to-transparent" />
+              <p className="mx-auto mt-3 max-w-2xl text-white/70 leading-relaxed">
+                We combine consultancy and co-development, guiding companies from
+                early vision to full integration - turning research into real life
+                solutions. Click any co-founder to open a full profile modal.
+              </p>
+            </div>
+
+            <div className="mt-8 sm:mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+              {founders.map((founder) => (
+                <button
+                  key={founder.id}
+                  type="button"
+                  onClick={(event) =>
+                    openFounderModal(founder, event.currentTarget)
+                  }
+                  className="group relative flex flex-col items-center border border-white/10 bg-[linear-gradient(180deg,rgba(24,66,82,0.6)_0%,rgba(11,34,44,0.92)_100%)] px-3 sm:px-4 py-4 sm:py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.04]"
+                  aria-label={`Open profile for ${founder.name}`}
+                >
+                  <span className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#E9C9DF]/50 to-transparent" />
+                  <div className="relative h-28 w-28 sm:h-36 sm:w-36">
+                    <span className="absolute -inset-1 rounded-full border-[2.5px] border-[#DB5F42]/85 wave-founder morph-ring" />
+                    <span
+                      className="absolute inset-1 rounded-full border-[2.5px] border-[#E9C9DF]/80 wave-founder-alt morph-ring morph-fast"
+                      style={{ animationDelay: "0.2s" }}
+                    />
+                    <span
+                      className="absolute inset-3 rounded-full border-2 border-[#DB5F42]/65 wave-founder morph-ring"
+                      style={{ animationDelay: "0.35s" }}
+                    />
+                    <span
+                      className="absolute inset-[10px] overflow-hidden rounded-full border-2 border-white/20 bg-gradient-to-br from-[#2E5565] via-[#1C3F4D] to-[#152F3A] transition-transform duration-500 group-hover:scale-[1.1]"
+                    >
+                      <img
+                        src={founder.thumbnailSrc}
+                        alt={founder.name}
+                        className="h-full w-full object-cover brightness-[1.18] contrast-[1.22] saturate-[0.62] sepia-[0.14] hue-rotate-[-8deg]"
+                        style={{ objectPosition: founder.objectPosition ?? "center" }}
+                      />
+                    </span>
+                  </div>
+
+                  <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold tracking-wide text-[#F7DACC]">
+                    {founder.name}
+                  </p>
+                  <p className="mt-1 text-[11px] sm:text-xs text-white/65">{founder.role}</p>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4">
-            {founders.map((founder) => (
-              <button
-                key={founder.id}
-                type="button"
-                onClick={(event) =>
-                  openFounderModal(founder, event.currentTarget)
-                }
-                className="group relative flex flex-col items-center border border-white/10 bg-[linear-gradient(180deg,rgba(24,66,82,0.6)_0%,rgba(11,34,44,0.92)_100%)] px-4 py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.06]"
-                aria-label={`Open profile for ${founder.name}`}
-              >
-                <span className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#E9C9DF]/50 to-transparent" />
-                <div className="relative h-32 w-32 sm:h-36 sm:w-36">
-                  <span className="absolute -inset-1 rounded-full border-[2.5px] border-[#DB5F42]/85 wave-founder morph-ring" />
-                  <span
-                    className="absolute inset-1 rounded-full border-[2.5px] border-[#E9C9DF]/80 wave-founder-alt morph-ring morph-fast"
-                    style={{ animationDelay: "0.2s" }}
-                  />
-                  <span
-                    className="absolute inset-3 rounded-full border-2 border-[#DB5F42]/65 wave-founder morph-ring"
-                    style={{ animationDelay: "0.35s" }}
-                  />
-                  <span
-                    className="absolute inset-[10px] overflow-hidden rounded-full border-2 border-white/20 bg-gradient-to-br from-[#2E5565] via-[#1C3F4D] to-[#152F3A] transition-transform duration-500 group-hover:scale-[1.12]"
-                  >
-                    <img
-                      src={founder.thumbnailSrc}
-                      alt={founder.name}
-                      className="h-full w-full object-cover brightness-[1.18] contrast-[1.22] saturate-[0.62] sepia-[0.14] hue-rotate-[-8deg]"
-                      style={{ objectPosition: founder.objectPosition ?? "center" }}
-                    />
-                  </span>
-                </div>
+          <WaveArrowButton
+            onClick={handleScrollToPatents}
+            ariaLabel="Scroll to patents section"
+            direction="down"
+          />
+        </div>
+      </section>
 
-                <p className="mt-4 text-sm font-semibold tracking-wide text-[#F7DACC]">
-                  {founder.name}
-                </p>
-                <p className="mt-1 text-xs text-white/65">{founder.role}</p>
-              </button>
-            ))}
+      <section id="patents-section" className="px-4 sm:px-6 pb-24">
+        <div className="mx-auto w-full max-w-5xl text-center">
+          <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
+            Patents
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-4xl text-white/78 leading-relaxed text-lg sm:text-xl">
+            Our patent portfolio delivers cutting-edge technologies for enhanced
+            surgical navigation, and for transforming medical images into
+            granular acoustic cues that let surgeons &quot;hear&quot; the anatomy.
+          </p>
+        </div>
+      </section>
+
+      <section className="px-4 sm:px-6 pb-24">
+        <div className="mx-auto w-full max-w-5xl text-center">
+          <h2 className="heading-font text-4xl sm:text-5xl font-semibold tracking-tight text-[#F2D3C5]">
+            Associations
+          </h2>
+
+          <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10 items-center">
+            <div className="mx-auto flex h-20 w-full max-w-[180px] items-center justify-center">
+              <img
+                src="/images/logos/tum.png"
+                alt="TUM logo"
+                className="max-h-full w-auto object-contain grayscale brightness-140 contrast-125 opacity-100"
+              />
+            </div>
+            <div className="mx-auto flex h-20 w-full max-w-[180px] items-center justify-center">
+              <img
+                src="/images/logos/camp.jpg"
+                alt="CAMP logo"
+                className="max-h-full w-auto object-contain grayscale brightness-125 contrast-90 mix-blend-lighten opacity-90"
+              />
+            </div>
+            <div className="mx-auto flex h-20 w-full max-w-[180px] items-center justify-center">
+              <img
+                src="/images/logos/dfg.png"
+                alt="DFG logo"
+                className="max-h-full w-auto object-contain grayscale brightness-125 contrast-90 mix-blend-lighten opacity-90"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -406,18 +474,18 @@ function MainContent() {
             role="dialog"
             aria-modal="true"
             aria-label={`${activeFounder.name} profile`}
-            className="relative w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-[2rem] border border-[#DB5F42]/35 bg-[#102e3b] p-6 sm:p-8 shadow-[0_16px_80px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="relative w-full max-w-4xl max-h-[88vh] overflow-y-auto rounded-[1.5rem] sm:rounded-[2rem] border border-[#DB5F42]/35 bg-[#102e3b] p-5 sm:p-8 shadow-[0_16px_80px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{
               transform: modalOpen
-                ? "translate(0px, 560px) scale(1)"
-                : `translate(${modalFrom.x}px, ${modalFrom.y}px) scale(0.72)`,
+                ? "translate(0px, min(5vh, 44px)) scale(1)"
+                : `translate(${modalFrom.x}px, ${modalFrom.y}px) scale(0.88)`,
             }}
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               onClick={closeFounderModal}
-              className="absolute right-6 top-6 rounded-full border border-white/20 px-4 py-1.5 text-sm text-white/80 hover:bg-white/10"
+              className="absolute right-4 top-4 sm:right-6 sm:top-6 rounded-full border border-white/20 px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-white/80 hover:bg-white/10"
             >
               Close
             </button>
@@ -451,23 +519,25 @@ function MainContent() {
               </div>
             </div>
 
-            <div className="mt-8">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {activeFounder.gallery.map((image, index) => (
-                  <div
-                    key={`${activeFounder.id}-gallery-${index}`}
-                    className="relative mx-auto w-[80%] aspect-square"
-                  >
-                    <img
-                      src={image}
-                      alt={`${activeFounder.name} gallery ${index + 1}`}
-                      className="h-full w-full object-contain brightness-[1.01] contrast-[1.06] saturate-[0.96] sepia-[0.02]"
-                      style={{ objectPosition: activeFounder.objectPosition ?? "center" }}
-                    />
-                  </div>
-                ))}
+            {activeFounder.gallery.length > 0 ? (
+              <div className="mt-8">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {activeFounder.gallery.map((image, index) => (
+                    <div
+                      key={`${activeFounder.id}-gallery-${index}`}
+                      className="relative mx-auto w-[80%] aspect-square"
+                    >
+                      <img
+                        src={image}
+                        alt={`${activeFounder.name} gallery ${index + 1}`}
+                        className="h-full w-full object-contain brightness-[1.01] contrast-[1.06] saturate-[0.96] sepia-[0.02]"
+                        style={{ objectPosition: activeFounder.objectPosition ?? "center" }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : null}
           </div>
         </div>
       )}

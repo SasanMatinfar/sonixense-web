@@ -6,6 +6,7 @@ type SlidePanelControls = {
   openPanel: () => void;
   openLeftPanel: () => void;
   closePanel: () => void;
+  activePanel: "none" | "right" | "left";
 };
 
 const SlidePanelContext = createContext<SlidePanelControls | null>(null);
@@ -80,8 +81,9 @@ export default function SlidePanelShell({
       openPanel: () => setActivePanel("right"),
       openLeftPanel: () => setActivePanel("left"),
       closePanel: () => setActivePanel("none"),
+      activePanel,
     }),
-    []
+    [activePanel]
   );
 
   return (
@@ -92,9 +94,9 @@ export default function SlidePanelShell({
         <div
           className={`absolute inset-0 z-10 transition-transform duration-800 ease-[cubic-bezier(0.2,0.0,0.0,1.0)] ${
             activePanel === "right"
-              ? "-translate-x-[75%]"
+              ? "-translate-x-full"
               : activePanel === "left"
-                ? "translate-x-[75%]"
+                ? "translate-x-full"
                 : "translate-x-0"
           }`}
           id="main-page-scroll"
@@ -109,7 +111,7 @@ export default function SlidePanelShell({
             activePanel === "right" ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="absolute inset-y-0 right-0 w-[75vw] min-h-screen bg-[rgb(var(--bg))] px-6 text-white">
+          <div className="min-h-screen bg-[rgb(var(--bg))] px-6 text-white">
             <div className="mx-auto flex w-full max-w-5xl items-center justify-between py-6">
               <div className="text-sm tracking-wide text-white/70">
                 
@@ -136,7 +138,7 @@ export default function SlidePanelShell({
             activePanel === "left" ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="absolute inset-y-0 left-0 w-[75vw] min-h-screen bg-[rgb(var(--bg))] px-6 text-white">
+          <div className="min-h-screen bg-[rgb(var(--bg))] px-6 text-white">
             <div className="mx-auto flex w-full max-w-5xl items-center justify-between py-6">
               <button
                 type="button"
