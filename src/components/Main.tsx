@@ -11,19 +11,102 @@ function SubPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="heading-font text-3xl tracking-tight text-center">
-        Navigation
+      <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
+        Surgical Guidance
       </h2>
+
+      <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
+        PARTNERS FOR THE NEXT
+        <br />
+        GENERATION OF
+        <br />
+        MEDTECH
+      </p>
+
+      <div className="w-full">
+        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+            <div className="w-full md:flex-[0_0_68%]">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                {showVideo ? (
+                  <iframe
+                    className="h-full w-full"
+                    src="https://www.youtube.com/embed/63ylNd6sqIE"
+                    title="Navigation video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                ) : null}
+              </div>
+            </div>
+            <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
+              DEVELOPING PROTOTYPES
+              <br />
+              THAT OPEN NEW POSSIBILITIES
+              <br />
+              FOR SONIC INTERACTION
+              <br />
+              IN SURGERY
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+            <div className="w-full md:flex-[0_0_68%]">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
+                <p className="text-sm sm:text-base tracking-wide text-white/70">
+                  Guidance video placeholder
+                </p>
+              </div>
+            </div>
+            <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
+              With expert knowledge and
+              <br />
+              pioneering technology,
+              <br />
+              we translate complex surgical
+              <br />
+              data into sound that supports
+              <br />
+              decision-making.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GeneralSonificationPage() {
+  const { activePanel } = useSlidePanel();
+  const showVideo = activePanel === "left";
+
+  return (
+    <div className="space-y-6">
+      <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
+        ArtScience
+      </h2>
+
+      <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
+        Where science, technology,
+        <br />
+        and art converge to redefine
+        <br />
+        perception
+      </p>
 
       <div className="mx-auto w-full max-w-3xl">
         <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
           {showVideo ? (
             <iframe
               className="h-full w-full"
-              src="https://www.youtube.com/embed/63ylNd6sqIE"
-              title="Navigation video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
+              src="https://player.vimeo.com/video/329952640"
+              title="ArtScience video"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
               allowFullScreen
             />
           ) : null}
@@ -33,23 +116,7 @@ function SubPage() {
   );
 }
 
-function GeneralSonificationPage() {
-  return (
-    <div className="space-y-6">
-      <h2 className="heading-font text-3xl tracking-tight">
-        General Sonification
-      </h2>
-
-      <p className="max-w-3xl text-white/75 leading-relaxed">
-        Sonification maps data, motion, or interactions into sound so patterns
-        can be heard as well as seen. This page can introduce your concept,
-        workflow, and example use cases.
-      </p>
-    </div>
-  );
-}
-
-type ArrowDirection = "left" | "right" | "down";
+type ArrowDirection = "left" | "right" | "down" | "up";
 type WaveRing = {
   inset: number;
   border: string;
@@ -141,13 +208,17 @@ function WaveArrowButton({
       ? "group-hover:-translate-x-0.5"
       : direction === "right"
         ? "group-hover:translate-x-0.5"
-        : "group-hover:translate-y-0.5";
+        : direction === "up"
+          ? "group-hover:-translate-y-0.5"
+          : "group-hover:translate-y-0.5";
   const arrowPath =
     direction === "left"
       ? "M15 6l-6 6 6 6"
       : direction === "right"
         ? "M9 6l6 6-6 6"
-        : "M6 9l6 6 6-6";
+        : direction === "up"
+          ? "M6 15l6-6 6 6"
+          : "M6 9l6 6 6-6";
   const ringSets: Record<ArrowDirection, WaveRing[]> = {
     left: [
       { inset: 0, border: "border-[#DB5F42]/72", wave: "wave", morph: "morph-fast", delay: "0s", hoverScale: "group-hover:scale-[1.35]" },
@@ -161,6 +232,13 @@ function WaveArrowButton({
       { inset: 7, border: "border-[#DB5F42]/38", wave: "wave-alt", morph: "morph-slow", delay: "0.7s", hoverScale: "group-hover:scale-[2.3]" },
     ],
     down: [
+      { inset: 0, border: "border-[#DB5F42]/72", wave: "wave-alt", morph: "morph-fast", delay: "0s", hoverScale: "group-hover:scale-[1.34]" },
+      { inset: 2, border: "border-[#DB5F42]/62", wave: "wave", morph: "", delay: "0.16s", hoverScale: "group-hover:scale-[1.6]" },
+      { inset: 4, border: "border-[#E9C9DF]/54", wave: "wave-alt", morph: "", delay: "0.3s", hoverScale: "group-hover:scale-[1.88]" },
+      { inset: 7, border: "border-[#DB5F42]/45", wave: "wave", morph: "morph-slow", delay: "0.52s", hoverScale: "group-hover:scale-[2.15]" },
+      { inset: 10, border: "border-[#E9C9DF]/34", wave: "wave-alt", morph: "", delay: "0.78s", hoverScale: "group-hover:scale-[2.45]" },
+    ],
+    up: [
       { inset: 0, border: "border-[#DB5F42]/72", wave: "wave-alt", morph: "morph-fast", delay: "0s", hoverScale: "group-hover:scale-[1.34]" },
       { inset: 2, border: "border-[#DB5F42]/62", wave: "wave", morph: "", delay: "0.16s", hoverScale: "group-hover:scale-[1.6]" },
       { inset: 4, border: "border-[#E9C9DF]/54", wave: "wave-alt", morph: "", delay: "0.3s", hoverScale: "group-hover:scale-[1.88]" },
@@ -213,7 +291,7 @@ function WaveArrowButton({
 
 function MainContent() {
   const { openPanel, openLeftPanel } = useSlidePanel();
-  const { title, subtitle, heroImage, endtitle } = site.main;
+  const { subtitle, heroImage, endtitle } = site.main;
   const canUseDOM = typeof window !== "undefined";
   const subtitleBreak = "Intelligent Sonic Innovation";
   const hasSubtitleBreak = subtitle.includes(subtitleBreak);
@@ -260,8 +338,29 @@ function MainContent() {
   );
 
   const handleScrollDown = () => {
+    const demoSection = document.getElementById("demo-section");
+    demoSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+  const handleScrollToDemo = () => {
+    const demoSection = document.getElementById("demo-section");
+    demoSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+  const handleScrollToFounders = () => {
     const foundersSection = document.getElementById("founders-section");
     foundersSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+  const handleScrollToHero = () => {
+    const heroSection = document.getElementById("hero-section");
+    heroSection?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
@@ -274,101 +373,198 @@ function MainContent() {
       block: "start",
     });
   };
+  const handleScrollToContactSection = () => {
+    if (typeof document === "undefined") return;
+    const contactSection = document.getElementById("contact-section");
+    contactSection?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <div className="bg-[rgb(var(--bg))] text-white overflow-x-clip">
-      <section className="min-h-[100svh] py-[var(--section-y)]">
-        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-[calc(100svh-3rem)] flex flex-col justify-center text-center">
+      <section
+        id="hero-section"
+        className="h-[100svh] snap-start overflow-hidden"
+        style={{
+          paddingTop: "max(var(--section-y), var(--safe-top))",
+          paddingBottom: "max(var(--section-y), var(--safe-bottom))",
+          paddingLeft: "max(var(--gutter-x), var(--safe-x))",
+          paddingRight: "max(var(--gutter-x), var(--safe-right))",
+        }}
+      >
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] h-full relative flex flex-col text-center">
+          <div
+            className="flex-1 flex flex-col justify-center"
+            style={{
+              paddingTop: "0",
+              paddingBottom: "calc(var(--arrow-clearance) + 4.25rem)",
+            }}
+          >
+            <div
+              role="img"
+              aria-label="soniXense"
+              className="mx-auto opacity-95"
+              style={{
+                width: "min(88vw, 58rem)",
+                height: "clamp(5rem, 15.5vw, 10.5rem)",
+                backgroundColor: "#FFFFFF",
+                WebkitMaskImage: "url(/images/logos/logo.svg)",
+                maskImage: "url(/images/logos/logo.svg)",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+              }}
+            />
 
-        <h1 className="heading-font text-[clamp(3.2rem,9vw,6.2rem)] font-semibold tracking-tight">
-          {title}
-        </h1>
-
-        {/* Subtitle — now bold */}
-        <p className="mx-auto mt-4 max-w-4xl text-[clamp(1rem,3.8vw,1.75rem)] leading-tight text-[#DB5F42] font-bold">
-          {subtitleFirstPart}
-          {hasSubtitleBreak ? (
-            <>
-              <br />
-              {subtitleBreak}
-            </>
-          ) : null}
-        </p>
-
-        <div className="mt-6 sm:mt-8 flex justify-center relative">
-          <div className="w-full max-w-[95vw] sm:max-w-2xl md:max-w-3xl">
-            <div className="relative">
-              <WaveArrowButton
-                onClick={openLeftPanel}
-                ariaLabel="Open general sonification page"
-                direction="left"
-                className="hidden md:block absolute top-1/2 -left-10 lg:-left-12 z-30 -translate-y-1/2"
-              />
-
-              <WaveArrowButton
-                onClick={openPanel}
-                ariaLabel="Open navigation page"
-                direction="right"
-                className="hidden md:block absolute top-1/2 -right-10 lg:-right-12 z-30 -translate-y-1/2"
-              />
-
-              <img
-                src={heroImage.src}
-                alt={heroImage.alt}
-                className="block w-full object-contain max-h-[40vh] sm:max-h-[46vh]"
-              />
-            </div>
-
-            <div className="mt-4 flex items-center justify-center gap-[var(--content-gap)] md:hidden">
-              <WaveArrowButton
-                onClick={openLeftPanel}
-                ariaLabel="Open general sonification page"
-                direction="left"
-                className="scale-90"
-              />
-              <WaveArrowButton
-                onClick={openPanel}
-                ariaLabel="Open navigation page"
-                direction="right"
-                className="scale-90"
-              />
-            </div>
-
-            {/* End title — now bold + soft color */}
-            <p className="mt-4 text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold">
-              {endtitle}
+            <p className="mx-auto mt-3 max-w-4xl text-[clamp(0.88rem,2.85vw,1.3rem)] leading-tight text-[#DB5F42] font-bold">
+              {subtitleFirstPart}
+              {hasSubtitleBreak ? (
+                <>
+                  <br />
+                  {subtitleBreak}
+                </>
+              ) : null}
             </p>
 
-            <div className="mt-5 sm:mt-6 flex justify-center">
-              <WaveArrowButton
-                onClick={handleScrollDown}
-                ariaLabel="Scroll down"
-                direction="down"
-                large
-              />
+            <div className="mt-4 sm:mt-6 flex justify-center relative">
+              <div className="w-full max-w-[95vw] sm:max-w-2xl md:max-w-3xl">
+                <div className="relative">
+                  <WaveArrowButton
+                    onClick={openLeftPanel}
+                    ariaLabel="Open general sonification page"
+                    direction="left"
+                    className="hidden md:block absolute top-1/2 -left-10 lg:-left-12 z-30 -translate-y-1/2"
+                  />
+
+                  <WaveArrowButton
+                    onClick={openPanel}
+                    ariaLabel="Open navigation page"
+                    direction="right"
+                    className="hidden md:block absolute top-1/2 -right-10 lg:-right-12 z-30 -translate-y-1/2"
+                  />
+
+                  <img
+                    src={heroImage.src}
+                    alt={heroImage.alt}
+                    className="block w-full object-contain max-h-[30vh] sm:max-h-[35vh]"
+                  />
+                </div>
+
+                <div className="mt-4 flex items-center justify-center gap-[var(--content-gap)] md:hidden">
+                  <WaveArrowButton
+                    onClick={openLeftPanel}
+                    ariaLabel="Open general sonification page"
+                    direction="left"
+                    className="scale-90"
+                  />
+                  <WaveArrowButton
+                    onClick={openPanel}
+                    ariaLabel="Open navigation page"
+                    direction="right"
+                    className="scale-90"
+                  />
+                </div>
+
+                <p className="mt-3 text-base sm:text-lg tracking-wide text-[#E9C9DF] font-bold">
+                  {endtitle}
+                </p>
+              </div>
             </div>
           </div>
 
-        </div>
-
+          <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollDown}
+              ariaLabel="Scroll down"
+              direction="down"
+              large
+            />
+          </div>
         </div>
       </section>
 
-      <section id="founders-section" className="min-h-[100svh] py-[var(--section-y)]">
-        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-[calc(100svh-3rem)] flex flex-col items-center justify-between gap-[var(--stack-gap-loose)]">
-          <div id="founders-content" className="w-full">
+      <section
+        id="demo-section"
+        className="h-[100svh] snap-start overflow-hidden"
+        style={{
+          paddingTop: "max(var(--section-y), var(--safe-top))",
+          paddingBottom: "max(var(--section-y), var(--safe-bottom))",
+          paddingLeft: "max(var(--gutter-x), var(--safe-x))",
+          paddingRight: "max(var(--gutter-x), var(--safe-right))",
+        }}
+      >
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] h-full relative flex flex-col items-center text-center">
+          <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToHero}
+              ariaLabel="Scroll to hero section"
+              direction="up"
+            />
+          </div>
+
+          <div
+            className="flex-1 flex items-center"
+            style={{
+              paddingTop: "var(--arrow-clearance)",
+              paddingBottom: "var(--arrow-clearance)",
+            }}
+          >
+            <h2 className="heading-font text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-[#F2D3C5]">
+              Navigation Demo
+            </h2>
+          </div>
+
+          <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToFounders}
+              ariaLabel="Scroll to founders section"
+              direction="down"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="founders-section"
+        className="h-[100svh] snap-start overflow-y-auto"
+        style={{
+          paddingTop: "max(var(--section-y), var(--safe-top))",
+          paddingBottom: "max(var(--section-y), var(--safe-bottom))",
+          paddingLeft: "max(var(--gutter-x), var(--safe-x))",
+          paddingRight: "max(var(--gutter-x), var(--safe-right))",
+        }}
+      >
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-full relative flex flex-col items-center">
+          <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToDemo}
+              ariaLabel="Scroll to demo section"
+              direction="up"
+            />
+          </div>
+
+          <div
+            id="founders-content"
+            className="w-full flex-1 flex flex-col justify-center"
+            style={{
+              paddingTop: "var(--arrow-clearance)",
+              paddingBottom: "var(--arrow-clearance)",
+            }}
+          >
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="heading-font text-3xl sm:text-4xl tracking-tight">
                 The Pioneers in Surgical Sonification
               </h2>
-              <p className="mx-auto mt-2 text-sm font-semibold tracking-[0.16em] text-[#E9C9DF]/85">
-                STARTUP CO-FOUNDERS
-              </p>
               <span className="mx-auto mt-4 block h-px w-24 sm:w-28 bg-gradient-to-r from-transparent via-[#DB5F42]/70 to-transparent" />
               <p className="mx-auto mt-3 max-w-2xl text-white/70 leading-relaxed">
                 We combine consultancy and co-development, guiding companies from
                 early vision to full integration - turning research into real life
-                solutions. Click any co-founder to open a full profile modal.
+                solutions.
               </p>
             </div>
 
@@ -413,57 +609,174 @@ function MainContent() {
                 </button>
               ))}
             </div>
+
+            <p className="heading-font mx-auto mt-8 sm:mt-10 max-w-2xl text-center text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
+              TRANSFORMING PRODUCTS THROUGH PRECISIONENGINEERED SOUND
+            </p>
           </div>
 
-          <WaveArrowButton
-            onClick={handleScrollToPatents}
-            ariaLabel="Scroll to patents section"
-            direction="down"
-          />
+          <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToPatents}
+              ariaLabel="Scroll to patents section"
+              direction="down"
+            />
+          </div>
         </div>
       </section>
 
-      <section id="patents-section" className="py-[var(--section-y)]">
-        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] text-center">
-          <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
-            Patents
-          </h2>
+      <section
+        id="patents-section"
+        className="h-[100svh] snap-start overflow-y-auto"
+        style={{
+          paddingTop: "max(var(--section-y), var(--safe-top))",
+          paddingBottom: "max(var(--section-y), var(--safe-bottom))",
+          paddingLeft: "max(var(--gutter-x), var(--safe-x))",
+          paddingRight: "max(var(--gutter-x), var(--safe-right))",
+        }}
+      >
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-full relative flex flex-col items-center text-center">
+          <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToFounders}
+              ariaLabel="Scroll to founders section"
+              direction="up"
+            />
+          </div>
 
-          <p className="mx-auto mt-6 max-w-4xl text-white/78 leading-relaxed text-lg sm:text-xl">
-            Our patent portfolio delivers cutting-edge technologies for enhanced
-            surgical navigation, and for transforming medical images into
-            granular acoustic cues that let surgeons &quot;hear&quot; the anatomy.
-          </p>
+          <div
+            className="flex-1 flex flex-col items-center justify-center"
+            style={{
+              paddingTop: "var(--arrow-clearance)",
+              paddingBottom: "var(--arrow-clearance)",
+            }}
+          >
+            <h2 className="heading-font -translate-y-6 text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
+              Patents
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-4xl text-white/78 leading-relaxed text-lg sm:text-xl">
+              Our patent portfolio delivers cutting-edge technologies for enhanced
+              surgical navigation, and for transforming medical images into
+              granular acoustic cues that let surgeons &quot;hear&quot; the anatomy.
+            </p>
+          </div>
+
+          <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToContactSection}
+              ariaLabel="Scroll to contact and associations section"
+              direction="down"
+            />
+          </div>
         </div>
       </section>
 
-      <section className="py-[var(--section-y)]">
-        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] text-center">
-          <h2 className="heading-font text-4xl sm:text-5xl font-semibold tracking-tight text-[#F2D3C5]">
-            Associations
-          </h2>
+      <section
+        id="contact-section"
+        className="h-[100svh] snap-start overflow-y-auto"
+        style={{
+          paddingTop: "max(var(--section-y), var(--safe-top))",
+          paddingBottom: "max(var(--section-y), var(--safe-bottom))",
+          paddingLeft: "max(var(--gutter-x), var(--safe-x))",
+          paddingRight: "max(var(--gutter-x), var(--safe-right))",
+        }}
+      >
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-full relative flex flex-col">
+          <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
+            <WaveArrowButton
+              onClick={handleScrollToPatents}
+              ariaLabel="Scroll to patents section"
+              direction="up"
+            />
+          </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-[var(--content-gap)] sm:grid-cols-3 items-center">
-            <div className="mx-auto flex h-20 w-full max-w-[11rem] sm:max-w-[12rem] items-center justify-center">
-              <img
-                src="/images/logos/tum.png"
-                alt="TUM logo"
-                className="max-h-full w-auto object-contain grayscale brightness-140 contrast-125 opacity-100"
-              />
+          <div
+            className="flex-1 flex flex-col justify-center gap-0"
+            style={{
+              paddingTop: "var(--arrow-clearance)",
+              paddingBottom: "var(--arrow-clearance)",
+            }}
+          >
+            <div className="w-full bg-[rgb(var(--bg))] px-5 py-6 sm:px-8 sm:py-8">
+              <div className="grid gap-8 md:grid-cols-[1fr,220px] items-center">
+                <div className="text-center">
+                  <h2 className="heading-font text-3xl sm:text-4xl font-semibold tracking-tight text-[#F2D3C5]">
+                    Contact
+                  </h2>
+                  <p className="mt-4 text-white/80 leading-relaxed">
+                    Boltzmannstr. 3
+                    <br />
+                    85748 Garching
+                  </p>
+                  <p className="mt-2 text-white/80 leading-relaxed">
+                    contact@sonixense.com
+                  </p>
+                </div>
+                <a
+                  href="https://api.qrserver.com/v1/create-qr-code/?size=900x900&data=here%20is%20sonixense!"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mx-auto block h-40 w-40"
+                  aria-label="Open Sonixense QR code"
+                >
+                  <img
+                    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=here%20is%20sonixense!"
+                    alt="QR code for Sonixense"
+                    className="h-full w-full object-contain"
+                  />
+                </a>
+              </div>
             </div>
-            <div className="mx-auto flex h-20 w-full max-w-[11rem] sm:max-w-[12rem] items-center justify-center">
-              <img
-                src="/images/logos/camp.jpg"
-                alt="CAMP logo"
-                className="max-h-full w-auto object-contain grayscale brightness-125 contrast-90 mix-blend-lighten opacity-90"
-              />
-            </div>
-            <div className="mx-auto flex h-20 w-full max-w-[11rem] sm:max-w-[12rem] items-center justify-center">
-              <img
-                src="/images/logos/dfg.png"
-                alt="DFG logo"
-                className="max-h-full w-auto object-contain grayscale brightness-125 contrast-90 mix-blend-lighten opacity-90"
-              />
+
+            <p className="heading-font mx-auto px-5 py-5 sm:px-8 sm:py-6 text-center text-base sm:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
+              We collaborate with medical and surgical technology companies shaping
+              <br />
+              the future of the operating room
+            </p>
+
+            <div className="w-full bg-[rgba(8,24,31,0.55)] px-5 py-6 sm:px-8 sm:py-8">
+              <h2 className="heading-font text-3xl sm:text-4xl font-semibold tracking-tight text-white/80 text-center">
+                Associations
+              </h2>
+
+              <div className="mt-8 grid grid-cols-1 gap-[var(--content-gap)] sm:grid-cols-2 lg:grid-cols-5 items-center">
+                <div className="mx-auto flex h-20 w-full max-w-[10.5rem] items-center justify-center">
+                  <img
+                    src="/images/logos/tum.png"
+                    alt="TUM logo"
+                    className="max-h-full w-auto object-contain grayscale brightness-90 contrast-115 opacity-95"
+                  />
+                </div>
+                <div className="mx-auto flex h-20 w-full max-w-[10.5rem] items-center justify-center">
+                  <img
+                    src="/images/logos/mri.png"
+                    alt="MRI logo"
+                    className="max-h-full w-auto object-contain grayscale brightness-130 contrast-115 opacity-95"
+                  />
+                </div>
+                <div className="mx-auto flex h-20 w-full max-w-[10.5rem] items-center justify-center">
+                  <img
+                    src="/images/logos/camp.jpg"
+                    alt="CAMP logo"
+                    className="max-h-full w-auto object-contain grayscale brightness-130 contrast-115 mix-blend-lighten opacity-95"
+                  />
+                </div>
+                <div className="mx-auto flex h-20 w-full max-w-[10.5rem] items-center justify-center">
+                  <img
+                    src="/images/logos/dfg.png"
+                    alt="DFG logo"
+                    className="max-h-full w-auto object-contain grayscale brightness-130 contrast-115 opacity-95"
+                  />
+                </div>
+                <div className="mx-auto flex h-20 w-full max-w-[10.5rem] items-center justify-center">
+                  <img
+                    src="/images/logos/miccai.png"
+                    alt="MICCAI logo"
+                    className="max-h-full w-auto object-contain grayscale brightness-95 contrast-115 opacity-95"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
