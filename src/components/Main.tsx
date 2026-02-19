@@ -92,11 +92,9 @@ function GeneralSonificationPage() {
       </h2>
 
       <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
-        Where science, technology,
+        Where science, technology, and art converge
         <br />
-        and art converge to redefine
-        <br />
-        perception
+        to redefine perception
       </p>
 
       <div className="mx-auto w-full max-w-3xl">
