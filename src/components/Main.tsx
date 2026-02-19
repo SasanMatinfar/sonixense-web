@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { site } from "@/content/siteContent";
 import SlidePanelShell, { useSlidePanel } from "@/components/SlidePanelShell";
 
@@ -213,6 +214,7 @@ function WaveArrowButton({
 function MainContent() {
   const { openPanel, openLeftPanel } = useSlidePanel();
   const { title, subtitle, heroImage, endtitle } = site.main;
+  const canUseDOM = typeof window !== "undefined";
   const subtitleBreak = "Intelligent Sonic Innovation";
   const hasSubtitleBreak = subtitle.includes(subtitleBreak);
   const subtitleFirstPart = hasSubtitleBreak
@@ -220,20 +222,9 @@ function MainContent() {
     : subtitle;
   const [activeFounder, setActiveFounder] = useState<FounderProfile | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalFrom, setModalFrom] = useState({ x: 0, y: 0 });
   const closeTimerRef = useRef<number | null>(null);
 
-  const openFounderModal = (
-    founder: FounderProfile,
-    triggerElement: HTMLButtonElement
-  ) => {
-    const rect = triggerElement.getBoundingClientRect();
-    const rawX = rect.left + rect.width / 2 - window.innerWidth / 2;
-    const rawY = rect.top + rect.height / 2 - window.innerHeight / 2;
-    setModalFrom({
-      x: Math.max(-140, Math.min(140, rawX * 0.3)),
-      y: Math.max(56, Math.min(window.innerHeight * 0.22, rawY * 0.22 + window.innerHeight * 0.14)),
-    });
+  const openFounderModal = (founder: FounderProfile) => {
     setActiveFounder(founder);
     setModalOpen(false);
   };
@@ -285,9 +276,9 @@ function MainContent() {
   };
 
   return (
-    <div className="bg-[rgb(var(--bg))] text-white">
-      <section className="min-h-screen px-4 sm:px-6 py-6 sm:py-8">
-        <div className="mx-auto w-full max-w-6xl min-h-[calc(100vh-3rem)] flex flex-col justify-center text-center">
+    <div className="bg-[rgb(var(--bg))] text-white overflow-x-clip">
+      <section className="min-h-[100svh] py-[var(--section-y)]">
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-[calc(100svh-3rem)] flex flex-col justify-center text-center">
 
         <h1 className="heading-font text-[clamp(3.2rem,9vw,6.2rem)] font-semibold tracking-tight">
           {title}
@@ -305,26 +296,41 @@ function MainContent() {
         </p>
 
         <div className="mt-6 sm:mt-8 flex justify-center relative">
-          <div className="w-full max-w-[94vw] sm:max-w-2xl md:max-w-3xl">
+          <div className="w-full max-w-[95vw] sm:max-w-2xl md:max-w-3xl">
             <div className="relative">
               <WaveArrowButton
                 onClick={openLeftPanel}
                 ariaLabel="Open general sonification page"
                 direction="left"
-                className="absolute top-1/2 left-0 sm:-left-8 md:-left-14 z-30 -translate-y-1/2 scale-75 sm:scale-90 md:scale-100"
+                className="hidden md:block absolute top-1/2 -left-10 lg:-left-12 z-30 -translate-y-1/2"
               />
 
               <WaveArrowButton
                 onClick={openPanel}
                 ariaLabel="Open navigation page"
                 direction="right"
-                className="absolute top-1/2 right-0 sm:-right-8 md:-right-14 z-30 -translate-y-1/2 scale-75 sm:scale-90 md:scale-100"
+                className="hidden md:block absolute top-1/2 -right-10 lg:-right-12 z-30 -translate-y-1/2"
               />
 
               <img
                 src={heroImage.src}
                 alt={heroImage.alt}
                 className="block w-full object-contain max-h-[40vh] sm:max-h-[46vh]"
+              />
+            </div>
+
+            <div className="mt-4 flex items-center justify-center gap-[var(--content-gap)] md:hidden">
+              <WaveArrowButton
+                onClick={openLeftPanel}
+                ariaLabel="Open general sonification page"
+                direction="left"
+                className="scale-90"
+              />
+              <WaveArrowButton
+                onClick={openPanel}
+                ariaLabel="Open navigation page"
+                direction="right"
+                className="scale-90"
               />
             </div>
 
@@ -348,8 +354,8 @@ function MainContent() {
         </div>
       </section>
 
-      <section id="founders-section" className="min-h-screen px-4 sm:px-6 py-8 sm:py-10">
-        <div className="mx-auto w-full max-w-6xl min-h-[calc(100vh-3rem)] flex flex-col items-center justify-between gap-8">
+      <section id="founders-section" className="min-h-[100svh] py-[var(--section-y)]">
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-[calc(100svh-3rem)] flex flex-col items-center justify-between gap-[var(--stack-gap-loose)]">
           <div id="founders-content" className="w-full">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="heading-font text-3xl sm:text-4xl tracking-tight">
@@ -358,7 +364,7 @@ function MainContent() {
               <p className="mx-auto mt-2 text-sm font-semibold tracking-[0.16em] text-[#E9C9DF]/85">
                 STARTUP CO-FOUNDERS
               </p>
-              <span className="mx-auto mt-4 block h-px w-28 bg-gradient-to-r from-transparent via-[#DB5F42]/70 to-transparent" />
+              <span className="mx-auto mt-4 block h-px w-24 sm:w-28 bg-gradient-to-r from-transparent via-[#DB5F42]/70 to-transparent" />
               <p className="mx-auto mt-3 max-w-2xl text-white/70 leading-relaxed">
                 We combine consultancy and co-development, guiding companies from
                 early vision to full integration - turning research into real life
@@ -366,19 +372,17 @@ function MainContent() {
               </p>
             </div>
 
-            <div className="mt-8 sm:mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+            <div className="mt-8 sm:mt-10 grid grid-cols-1 min-[500px]:grid-cols-2 gap-[var(--content-gap)] lg:grid-cols-4">
               {founders.map((founder) => (
                 <button
                   key={founder.id}
                   type="button"
-                  onClick={(event) =>
-                    openFounderModal(founder, event.currentTarget)
-                  }
-                  className="group relative flex flex-col items-center border border-white/10 bg-[linear-gradient(180deg,rgba(24,66,82,0.6)_0%,rgba(11,34,44,0.92)_100%)] px-3 sm:px-4 py-4 sm:py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.04]"
+                  onClick={() => openFounderModal(founder)}
+                  className="group relative flex min-h-[17.5rem] sm:min-h-[18.5rem] flex-col items-center border border-white/10 bg-[linear-gradient(180deg,rgba(24,66,82,0.6)_0%,rgba(11,34,44,0.92)_100%)] px-3 sm:px-4 py-4 sm:py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.03]"
                   aria-label={`Open profile for ${founder.name}`}
                 >
                   <span className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#E9C9DF]/50 to-transparent" />
-                  <div className="relative h-28 w-28 sm:h-36 sm:w-36">
+                  <div className="relative h-28 w-28 sm:h-[8.5rem] sm:w-[8.5rem] md:h-36 md:w-36 shrink-0">
                     <span className="absolute -inset-1 rounded-full border-[2.5px] border-[#DB5F42]/85 wave-founder morph-ring" />
                     <span
                       className="absolute inset-1 rounded-full border-[2.5px] border-[#E9C9DF]/80 wave-founder-alt morph-ring morph-fast"
@@ -400,10 +404,12 @@ function MainContent() {
                     </span>
                   </div>
 
-                  <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold tracking-wide text-[#F7DACC]">
+                  <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold tracking-wide text-[#F7DACC] leading-snug">
                     {founder.name}
                   </p>
-                  <p className="mt-1 text-[11px] sm:text-xs text-white/65">{founder.role}</p>
+                  <p className="mt-1 text-[11px] sm:text-xs text-white/65 leading-snug max-w-[24ch]">
+                    {founder.role}
+                  </p>
                 </button>
               ))}
             </div>
@@ -417,8 +423,8 @@ function MainContent() {
         </div>
       </section>
 
-      <section id="patents-section" className="px-4 sm:px-6 pb-24">
-        <div className="mx-auto w-full max-w-5xl text-center">
+      <section id="patents-section" className="py-[var(--section-y)]">
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] text-center">
           <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
             Patents
           </h2>
@@ -431,28 +437,28 @@ function MainContent() {
         </div>
       </section>
 
-      <section className="px-4 sm:px-6 pb-24">
-        <div className="mx-auto w-full max-w-5xl text-center">
+      <section className="py-[var(--section-y)]">
+        <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] text-center">
           <h2 className="heading-font text-4xl sm:text-5xl font-semibold tracking-tight text-[#F2D3C5]">
             Associations
           </h2>
 
-          <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10 items-center">
-            <div className="mx-auto flex h-20 w-full max-w-[180px] items-center justify-center">
+          <div className="mt-8 grid grid-cols-1 gap-[var(--content-gap)] sm:grid-cols-3 items-center">
+            <div className="mx-auto flex h-20 w-full max-w-[11rem] sm:max-w-[12rem] items-center justify-center">
               <img
                 src="/images/logos/tum.png"
                 alt="TUM logo"
                 className="max-h-full w-auto object-contain grayscale brightness-140 contrast-125 opacity-100"
               />
             </div>
-            <div className="mx-auto flex h-20 w-full max-w-[180px] items-center justify-center">
+            <div className="mx-auto flex h-20 w-full max-w-[11rem] sm:max-w-[12rem] items-center justify-center">
               <img
                 src="/images/logos/camp.jpg"
                 alt="CAMP logo"
                 className="max-h-full w-auto object-contain grayscale brightness-125 contrast-90 mix-blend-lighten opacity-90"
               />
             </div>
-            <div className="mx-auto flex h-20 w-full max-w-[180px] items-center justify-center">
+            <div className="mx-auto flex h-20 w-full max-w-[11rem] sm:max-w-[12rem] items-center justify-center">
               <img
                 src="/images/logos/dfg.png"
                 alt="DFG logo"
@@ -463,9 +469,10 @@ function MainContent() {
         </div>
       </section>
 
-      {activeFounder && (
+      {canUseDOM && activeFounder
+        ? createPortal(
         <div
-          className={`fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`fixed inset-0 z-[90] flex items-end md:items-center justify-center bg-black/70 p-3 sm:p-4 md:p-6 backdrop-blur-sm transition-opacity duration-300 ${
             modalOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={closeFounderModal}
@@ -474,18 +481,18 @@ function MainContent() {
             role="dialog"
             aria-modal="true"
             aria-label={`${activeFounder.name} profile`}
-            className="relative w-full max-w-4xl max-h-[88vh] overflow-y-auto rounded-[1.5rem] sm:rounded-[2rem] border border-[#DB5F42]/35 bg-[#102e3b] p-5 sm:p-8 shadow-[0_16px_80px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="relative w-full max-w-4xl h-[85svh] md:h-auto md:max-h-[88svh] overflow-y-auto rounded-t-[1.25rem] md:rounded-[2rem] border border-[#DB5F42]/35 bg-[#102e3b] p-4 sm:p-5 md:p-8 shadow-[0_16px_80px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{
               transform: modalOpen
-                ? "translate(0px, min(5vh, 44px)) scale(1)"
-                : `translate(${modalFrom.x}px, ${modalFrom.y}px) scale(0.88)`,
+                ? "translate(0px, 0px) scale(1)"
+                : "translate(0px, 30px) scale(0.98)",
             }}
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               onClick={closeFounderModal}
-              className="absolute right-4 top-4 sm:right-6 sm:top-6 rounded-full border border-white/20 px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-white/80 hover:bg-white/10"
+              className="absolute right-3 top-3 sm:right-4 sm:top-4 md:right-6 md:top-6 rounded-full border border-white/20 px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-white/80 hover:bg-white/10"
             >
               Close
             </button>
@@ -539,8 +546,10 @@ function MainContent() {
               </div>
             ) : null}
           </div>
-        </div>
-      )}
+        </div>,
+        document.body
+      )
+        : null}
     </div>
   );
 }
