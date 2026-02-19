@@ -655,10 +655,13 @@ function MainContent() {
               Patents
             </h2>
 
-            <p className="mx-auto mt-6 max-w-4xl text-white/78 leading-relaxed text-lg sm:text-xl">
-              Our patent portfolio delivers cutting-edge technologies for enhanced
-              surgical navigation, and for transforming medical images into
-              granular acoustic cues that let surgeons &quot;hear&quot; the anatomy.
+            <p className="mx-auto mt-6 max-w-5xl text-white/78 leading-relaxed text-lg sm:text-xl">
+              <span className="block">
+                Our patent portfolio delivers cutting-edge technologies for enhanced surgical navigation,
+              </span>
+              <span className="block">
+                and for transforming medical images into granular acoustic cues that let surgeons &quot;hear&quot; the anatomy.
+              </span>
             </p>
           </div>
 
