@@ -16,6 +16,11 @@ const syne = Syne({
 export const metadata = {
   title: "soniXense",
   description: "Sonification studio",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

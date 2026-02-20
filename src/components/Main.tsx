@@ -16,11 +16,7 @@ function SubPage() {
       </h2>
 
       <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
-        PARTNERS FOR THE NEXT
-        <br />
-        GENERATION OF
-        <br />
-        MEDTECH
+        Partners for the next generation of medtech
       </p>
 
       <div className="w-full">
@@ -41,13 +37,7 @@ function SubPage() {
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
-              DEVELOPING PROTOTYPES
-              <br />
-              THAT OPEN NEW POSSIBILITIES
-              <br />
-              FOR SONIC INTERACTION
-              <br />
-              IN SURGERY
+              Developing prototypes that open new possibilities for sonic interaction in surgery
             </p>
           </div>
         </div>
@@ -64,15 +54,24 @@ function SubPage() {
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
-              With expert knowledge and
-              <br />
-              pioneering technology,
-              <br />
-              we translate complex surgical
-              <br />
-              data into sound that supports
-              <br />
-              decision-making.
+              Using expert knowledge and pioneering technology to translate complex surgical data into sound for better decision-making
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+            <div className="w-full md:flex-[0_0_68%]">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
+                <p className="text-sm sm:text-base tracking-wide text-white/70">
+                  Guidance video placeholder
+                </p>
+              </div>
+            </div>
+            <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
+              We collaborate with medical and surgical technology companies shaping the future of the operating room
             </p>
           </div>
         </div>
@@ -92,22 +91,42 @@ function GeneralSonificationPage() {
       </h2>
 
       <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
-        Where science, technology, and art converge
-        <br />
-        to redefine perception
+        Where science, technology, and art converge to redefine perception
       </p>
 
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-          {showVideo ? (
-            <iframe
-              className="h-full w-full"
-              src="https://player.vimeo.com/video/329952640"
-              title="ArtScience video"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-              allowFullScreen
-            />
-          ) : null}
+      <div className="w-full">
+        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+            <div className="w-full md:flex-[0_0_68%]">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                {showVideo ? (
+                  <iframe
+                    className="h-full w-full"
+                    src="https://player.vimeo.com/video/329952640"
+                    title="ArtScience video"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                    allowFullScreen
+                  />
+                ) : null}
+              </div>
+            </div>
+            <div className="md:flex-1" />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+            <div className="w-full md:flex-[0_0_68%]">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
+                <p className="text-sm sm:text-base tracking-wide text-white/70">
+                  ArtScience video placeholder
+                </p>
+              </div>
+            </div>
+            <div className="md:flex-1" />
+          </div>
         </div>
       </div>
     </div>
@@ -400,23 +419,10 @@ function MainContent() {
               paddingBottom: "calc(var(--arrow-clearance) + 4.25rem)",
             }}
           >
-            <div
-              role="img"
-              aria-label="soniXense"
-              className="mx-auto opacity-95"
-              style={{
-                width: "min(88vw, 58rem)",
-                height: "clamp(5rem, 15.5vw, 10.5rem)",
-                backgroundColor: "#FFFFFF",
-                WebkitMaskImage: "url(/images/logos/logo.svg)",
-                maskImage: "url(/images/logos/logo.svg)",
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-                WebkitMaskSize: "contain",
-                maskSize: "contain",
-                WebkitMaskPosition: "center",
-                maskPosition: "center",
-              }}
+            <img
+              src="/images/logos/logo.svg"
+              alt="soniXense"
+              className="mx-auto h-auto max-h-[10.5rem] w-[min(88vw,58rem)] object-contain brightness-0 invert opacity-95"
             />
 
             <p className="mx-auto mt-3 max-w-4xl text-[clamp(0.88rem,2.85vw,1.3rem)] leading-tight text-[#DB5F42] font-bold">
@@ -506,15 +512,27 @@ function MainContent() {
           </div>
 
           <div
-            className="flex-1 flex items-center"
+            className="flex-1 flex flex-col items-center justify-center gap-6"
             style={{
               paddingTop: "var(--arrow-clearance)",
               paddingBottom: "var(--arrow-clearance)",
             }}
           >
             <h2 className="heading-font text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-[#F2D3C5]">
-              Navigation Demo
+              Navigation
             </h2>
+
+            <div className="w-full max-w-3xl">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
+                <p className="text-sm sm:text-base tracking-wide text-white/70">
+                  Navigation video placeholder
+                </p>
+              </div>
+            </div>
+
+            <p className="heading-font mx-auto max-w-full text-center text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight md:whitespace-nowrap">
+              Transforming products through precision-engineered sound
+            </p>
           </div>
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
@@ -608,9 +626,7 @@ function MainContent() {
               ))}
             </div>
 
-            <p className="heading-font mx-auto mt-8 sm:mt-10 max-w-2xl text-center text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
-              TRANSFORMING PRODUCTS THROUGH PRECISIONENGINEERED SOUND
-            </p>
+            <div className="mt-8 sm:mt-10" />
           </div>
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">

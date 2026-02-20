@@ -85,6 +85,8 @@ export default function SlidePanelShell({
   );
   const horizontalScrollAccum = useRef(0);
   const wheelResetTimer = useRef<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -127,6 +129,55 @@ export default function SlidePanelShell({
       }
     };
   }, [activePanel]);
+
+  useEffect(() => {
+    const swipeThreshold = 60;
+
+    const onTouchStart = (e: TouchEvent) => {
+      const touch = e.changedTouches[0];
+      touchStartX.current = touch.clientX;
+      touchStartY.current = touch.clientY;
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX.current;
+      const deltaY = touch.clientY - touchStartY.current;
+
+      touchStartX.current = null;
+      touchStartY.current = null;
+
+      if (Math.abs(deltaX) < swipeThreshold) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+      if (activePanel === "none") {
+        if (deltaX < 0) {
+          setActivePanel("right");
+          return;
+        }
+        if (deltaX > 0 && leftPanel) {
+          setActivePanel("left");
+        }
+        return;
+      }
+
+      if (activePanel === "right" && deltaX > 0) {
+        setActivePanel("none");
+      }
+      if (activePanel === "left" && deltaX < 0) {
+        setActivePanel("none");
+      }
+    };
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [activePanel, leftPanel]);
 
   const controls = useMemo(
     () => ({
