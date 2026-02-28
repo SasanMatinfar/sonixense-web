@@ -29,7 +29,7 @@ Make homepage structure reliable across display sizes/orientations (phone portra
   - page max width
   - horizontal gutters
   - section vertical spacing
-  - content gaps
+  - content gapsnow 
   - responsive icon sizing tokens (if needed)
 - Ensure tokens use `clamp()` where appropriate.
 

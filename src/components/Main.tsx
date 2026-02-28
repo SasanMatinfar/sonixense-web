@@ -47,10 +47,17 @@ function SubPage() {
         <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
             <div className="w-full md:flex-[0_0_68%]">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
-                <p className="text-sm sm:text-base tracking-wide text-white/70">
-                  Guidance video placeholder
-                </p>
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                {showVideo ? (
+                  <iframe
+                    className="h-full w-full"
+                    src="https://www.youtube.com/embed/xdZDjTFcwGA"
+                    title="Navigation video 2"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                ) : null}
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
@@ -64,10 +71,17 @@ function SubPage() {
         <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
             <div className="w-full md:flex-[0_0_68%]">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
-                <p className="text-sm sm:text-base tracking-wide text-white/70">
-                  Guidance video placeholder
-                </p>
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                {showVideo ? (
+                  <iframe
+                    className="h-full w-full"
+                    src="https://www.youtube.com/embed/ThwUXiUlZEI"
+                    title="Navigation video 3"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                ) : null}
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
@@ -119,10 +133,37 @@ function GeneralSonificationPage() {
         <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
             <div className="w-full md:flex-[0_0_68%]">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
-                <p className="text-sm sm:text-base tracking-wide text-white/70">
-                  ArtScience video placeholder
-                </p>
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                {showVideo ? (
+                  <iframe
+                    className="h-full w-full"
+                    src="https://player.vimeo.com/video/1064898268?fl=pl&fe=sh"
+                    title="ArtScience video 2"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                    allowFullScreen
+                  />
+                ) : null}
+              </div>
+            </div>
+            <div className="md:flex-1" />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+            <div className="w-full md:flex-[0_0_68%]">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                {showVideo ? (
+                  <iframe
+                    className="h-full w-full"
+                    src="https://player.vimeo.com/video/124601569?fl=pl&fe=sh"
+                    title="ArtScience video 3"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                    allowFullScreen
+                  />
+                ) : null}
               </div>
             </div>
             <div className="md:flex-1" />
