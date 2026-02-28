@@ -220,7 +220,7 @@ const founders: FounderProfile[] = [
     objectPosition: "center 26%",
     bio: "Navid Navab is ArtScientist and composer who brings over decade experience of interdisciplinary research and production.",
     details: "",
-    gallery: ["/images/founders/navid-award.jpg", "/images/founders/navid-nica.jpg"],
+    gallery: ["/images/founders/navid-award.jpg", "/images/founders/navid-award-nica.jpg"],
   },
   {
     id: "founder-3",
