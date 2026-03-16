@@ -564,10 +564,15 @@ function MainContent() {
             </h2>
 
             <div className="w-full max-w-3xl">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/20 flex items-center justify-center">
-                <p className="text-sm sm:text-base tracking-wide text-white/70">
-                  Navigation video placeholder
-                </p>
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
+                <iframe
+                  className="h-full w-full"
+                  src="https://www.youtube.com/embed/IuDm7Pg7I40"
+                  title="Navigation video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
               </div>
             </div>
 
