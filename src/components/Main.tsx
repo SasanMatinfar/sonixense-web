@@ -18,6 +18,10 @@ function SubPage() {
       <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
         Partners for the next generation of medtech
       </p>
+      <p className="max-w-3xl text-sm sm:text-base leading-relaxed text-white/75">
+        For medical device teams and hospital operating-room teams exploring
+        sound-guided surgical workflows.
+      </p>
 
       <div className="w-full">
         <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
@@ -107,6 +111,10 @@ function GeneralSonificationPage() {
       <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
         Where science, technology, and art converge to redefine perception
       </p>
+      <p className="max-w-3xl text-sm sm:text-base leading-relaxed text-white/75">
+        For creative-technology and experience-design partners building
+        multisensory installations and interactions.
+      </p>
 
       <div className="w-full">
         <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
@@ -188,6 +196,8 @@ type FounderProfile = {
   id: string;
   name: string;
   role: string;
+  credibility: string;
+  profileHref: string;
   thumbnailSrc: string;
   portraitSrc: string;
   objectPosition?: string;
@@ -200,7 +210,9 @@ const founders: FounderProfile[] = [
   {
     id: "founder-1",
     name: "Dr. Sasan Matinfar",
-    role: "Co-Founder, Sonification and Machine Learning",
+    role: "Co-Founder · CEO · Sonification and Machine Learning",
+    credibility: "PhD (summa cum laude), 3x Sonification Award winner, MICCAI Best Paper finalist",
+    profileHref: "https://www.linkedin.com/in/sasan-matinfar",
     thumbnailSrc: "/images/founders/sasan.jpg",
     portraitSrc: "/images/founders/sasan.jpg",
     objectPosition: "center 38%",
@@ -214,7 +226,9 @@ const founders: FounderProfile[] = [
   {
     id: "founder-2",
     name: "Navid Navab",
-    role: "Co-Founder, ArtScientist",
+    role: "Co-Founder · CIO (Chief of Innovation) · ArtScientist",
+    credibility: "Media artist and creative technologist — kinetic sculpture, sound art, and responsive installations exhibited internationally, 2008–2024",
+    profileHref: "https://www.navidnavab.com/",
     thumbnailSrc: "/images/founders/navid.png",
     portraitSrc: "/images/founders/navid.png",
     objectPosition: "center 26%",
@@ -225,7 +239,9 @@ const founders: FounderProfile[] = [
   {
     id: "founder-3",
     name: "Veronica Ruozzi",
-    role: "Co-Founder, Biomechanical Modeling",
+    role: "Co-Founder · CTO · Biomechanical Modeling",
+    credibility: "Senior Researcher, TUM CAMP — extended reality and multisensory applications for computer-assisted procedures",
+    profileHref: "https://www.linkedin.com/in/veronica-ruozzi-4aaa731bb/",
     thumbnailSrc: "/images/founders/veronica.jpg",
     portraitSrc: "/images/founders/veronica.jpg",
     objectPosition: "center 40%",
@@ -236,7 +252,9 @@ const founders: FounderProfile[] = [
   {
     id: "founder-4",
     name: "Prof. Dr. Nassir Navab",
-    role: "Co-Founder, Scientific Advisory and Research Direction",
+    role: "Co-Founder · CSO · Scientific Advisory and Research Direction",
+    credibility: "70,000+ citations, TUM Chair for Computer Aided Medical Procedures & AR, MICCAI board member",
+    profileHref: "https://www.linkedin.com/in/nassir-navab-0251103/",
     thumbnailSrc: "/images/founders/nassir.jpg",
     portraitSrc: "/images/founders/nassir.jpg",
     objectPosition: "center",
@@ -442,6 +460,23 @@ function MainContent() {
 
   return (
     <div className="bg-[rgb(var(--bg))] text-white overflow-x-clip">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0D2833]/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[var(--page-max)] flex-wrap items-center justify-between gap-y-2 px-[var(--gutter-x)] py-2 sm:h-14 sm:flex-nowrap sm:py-0">
+          <a href="#hero-section" className="heading-font text-sm font-semibold tracking-wide text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">
+            soniXense
+          </a>
+          <nav aria-label="Primary navigation" className="order-last flex w-full items-center justify-between gap-3 border-t border-white/10 pt-2 sm:order-none sm:w-auto sm:gap-5 sm:border-0 sm:pt-0">
+            <a href="#demo-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">What we do</a>
+            <a href="#founders-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Team</a>
+            <a href="#patents-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Patents</a>
+            <a href="#contact-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Contact</a>
+          </nav>
+          {/* TODO: Move this temporary address to contact@sonixense.com or a contact form once ready. */}
+          <a href="mailto:sasan.matinfar@tum.de" className="rounded-full bg-[#F2D3C5] px-4 py-2 text-xs font-semibold text-[#0D2833] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:text-sm">
+            Get in touch
+          </a>
+        </div>
+      </header>
       <section
         id="hero-section"
         className="h-[100svh] snap-start overflow-hidden"
@@ -569,6 +604,7 @@ function MainContent() {
                   className="h-full w-full"
                   src="https://www.youtube.com/embed/IuDm7Pg7I40"
                   title="Navigation video"
+                  loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
@@ -579,6 +615,13 @@ function MainContent() {
             <p className="heading-font mx-auto max-w-full text-center text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight md:whitespace-nowrap">
               Transforming products through precision-engineered sound
             </p>
+            {/* TODO: Move this temporary address to contact@sonixense.com or a contact form once ready. */}
+            <a
+              href="mailto:sasan.matinfar@tum.de"
+              className="rounded-full bg-[#F2D3C5] px-6 py-3 text-sm font-semibold text-[#0D2833] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Get in touch
+            </a>
           </div>
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
@@ -628,19 +671,33 @@ function MainContent() {
                 early vision to full integration - turning research into real life
                 solutions.
               </p>
+              <p className="mx-auto mt-5 max-w-3xl border-y border-white/10 py-4 text-sm leading-relaxed text-[#F2D3C5] sm:text-base">
+                SoniXense is a spin-off in formation from the DFG-funded{" "}
+                <a
+                  href="https://synergia.camp.cit.tum.de/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-[#DB5F42] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]"
+                >
+                  Synergia
+                </a>{" "}
+                project at TUM&apos;s Chair for Computer Aided Medical Procedures &amp; AR.
+              </p>
             </div>
 
             <div className="mt-8 sm:mt-10 grid grid-cols-1 min-[500px]:grid-cols-2 gap-[var(--content-gap)] lg:grid-cols-4">
               {founders.map((founder) => (
-                <button
+                <article
                   key={founder.id}
-                  type="button"
-                  onClick={() => openFounderModal(founder)}
                   className="group relative flex min-h-[17.5rem] sm:min-h-[18.5rem] flex-col items-center border border-white/10 bg-[linear-gradient(180deg,rgba(24,66,82,0.6)_0%,rgba(11,34,44,0.92)_100%)] px-3 sm:px-4 py-4 sm:py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.03]"
-                  aria-label={`Open profile for ${founder.name}`}
                 >
                   <span className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#E9C9DF]/50 to-transparent" />
-                  <div className="relative h-28 w-28 sm:h-[8.5rem] sm:w-[8.5rem] md:h-36 md:w-36 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => openFounderModal(founder)}
+                    className="relative h-28 w-28 shrink-0 rounded-full focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-[#F2D3C5] sm:h-[8.5rem] sm:w-[8.5rem] md:h-36 md:w-36"
+                    aria-label={`Open profile for ${founder.name}`}
+                  >
                     <span className="absolute -inset-1 rounded-full border-[2.5px] border-[#DB5F42]/85 wave-founder morph-ring" />
                     <span
                       className="absolute inset-1 rounded-full border-[2.5px] border-[#E9C9DF]/80 wave-founder-alt morph-ring morph-fast"
@@ -660,15 +717,23 @@ function MainContent() {
                         style={{ objectPosition: founder.objectPosition ?? "center" }}
                       />
                     </span>
-                  </div>
+                  </button>
 
-                  <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold tracking-wide text-[#F7DACC] leading-snug">
+                  <a
+                    href={founder.profileHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 text-xs font-semibold leading-snug tracking-wide text-[#F7DACC] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5] sm:mt-4 sm:text-sm"
+                  >
                     {founder.name}
-                  </p>
+                  </a>
                   <p className="mt-1 text-[11px] sm:text-xs text-white/65 leading-snug max-w-[24ch]">
                     {founder.role}
                   </p>
-                </button>
+                  <p className="mt-2 max-w-[30ch] text-[10px] leading-snug text-white/75 sm:text-[11px]">
+                    {founder.credibility}
+                  </p>
+                </article>
               ))}
             </div>
 
@@ -723,6 +788,18 @@ function MainContent() {
                 and for transforming medical images into granular acoustic cues that let surgeons &quot;hear&quot; the anatomy.
               </span>
             </p>
+            <div className="mt-10 grid w-full max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                "5 patent applications (3 published, 2 filed)",
+                "3x Sonification Award winner",
+                "DFG-funded research origin",
+                "Published in Medical Image Analysis (2025)",
+              ].map((stat) => (
+                <div key={stat} className="border border-white/15 bg-white/[0.03] px-4 py-4 text-sm font-semibold text-[#F2D3C5]">
+                  {stat}
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
@@ -762,7 +839,7 @@ function MainContent() {
             }}
           >
             <div className="w-full bg-[rgb(var(--bg))] px-5 py-6 sm:px-8 sm:py-8">
-              <div className="grid gap-8 md:grid-cols-[1fr,220px] items-center">
+              <div className="grid gap-8 items-center">
                 <div className="text-center">
                   <h2 className="heading-font text-3xl sm:text-4xl font-semibold tracking-tight text-[#F2D3C5]">
                     Contact
@@ -775,20 +852,14 @@ function MainContent() {
                   <p className="mt-2 text-white/80 leading-relaxed">
                     contact@sonixense.com
                   </p>
+                  {/* TODO: Move this temporary address to contact@sonixense.com or a contact form once ready. */}
+                  <a
+                    href="mailto:sasan.matinfar@tum.de"
+                    className="mt-6 inline-flex rounded-full bg-[#F2D3C5] px-6 py-3 text-sm font-semibold text-[#0D2833] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                  >
+                    Get in touch
+                  </a>
                 </div>
-                <a
-                  href="https://api.qrserver.com/v1/create-qr-code/?size=900x900&data=here%20is%20sonixense!"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mx-auto block h-40 w-40"
-                  aria-label="Open Sonixense QR code"
-                >
-                  <img
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=here%20is%20sonixense!"
-                    alt="QR code for Sonixense"
-                    className="h-full w-full object-contain"
-                  />
-                </a>
               </div>
             </div>
 
@@ -841,6 +912,15 @@ function MainContent() {
                 </div>
               </div>
             </div>
+            <footer className="border-t border-white/10 px-5 py-4 text-center text-xs text-white/60 sm:px-8">
+              <p>© {new Date().getFullYear()} soniXense — spin-off in formation</p>
+              <nav aria-label="Founder social profiles" className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-2">
+                <a href="https://www.linkedin.com/in/sasan-matinfar" target="_blank" rel="noopener noreferrer" className="hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Sasan on LinkedIn</a>
+                <a href="https://www.linkedin.com/in/veronica-ruozzi-4aaa731bb/" target="_blank" rel="noopener noreferrer" className="hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Veronica on LinkedIn</a>
+                <a href="https://www.linkedin.com/in/nassir-navab-0251103/" target="_blank" rel="noopener noreferrer" className="hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Nassir on LinkedIn</a>
+              </nav>
+              {/* TODO: Add a company-wide social link only if the team creates or supplies one. */}
+            </footer>
           </div>
         </div>
       </section>

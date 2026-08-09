@@ -30,6 +30,31 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+@media (min-width: 40rem) {
+  html {
+    scroll-padding-top: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .wave,
+  .wave-alt,
+  .wave-founder,
+  .wave-founder-alt,
+  .morph-ring {
+    animation: none !important;
+  }
+}
+
 .heading-font {
   font-family: var(--font-heading), system-ui, sans-serif;
 }
