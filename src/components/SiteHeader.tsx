@@ -1,7 +1,7 @@
 import MobileMenu from "@/components/layout/MobileMenu";
 import HomeLogoLink from "@/components/brand/HomeLogoLink";
 
-const links = [["Technology", "/#technology"], ["Applications", "/#surgery"], ["Team", "/#team"], ["About", "/#company"]] as const;
+const links = [["Technology", "/#technology"], ["Applications", "/#surgery"], ["ArtScience", "/#artscience"], ["Team", "/#team"], ["Company", "/#company"]] as const;
 
 export default function SiteHeader() {
   return <header className="site-header">
