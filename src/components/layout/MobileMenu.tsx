@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const links = [
   ["01", "Technology", "/#technology"], ["02", "Applications", "/#surgery"],
-  ["03", "Research", "/#evidence"], ["04", "Company", "/#company"], ["05", "Contact", "/#contact"],
+  ["03", "Team", "/#team"], ["04", "About", "/#company"],
 ] as const;
 
 export default function MobileMenu() {
@@ -41,7 +41,7 @@ export default function MobileMenu() {
         <nav aria-label="Mobile navigation" className="mobile-menu__nav">
           {links.map(([index, label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}><span>{index}</span>{label}</a>)}
         </nav>
-        <a className="mobile-menu__social" href="https://www.linkedin.com/in/sasan-matinfar" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <div className="mobile-menu__footer"><a className="mobile-menu__cta" href="mailto:sasan.matinfar@tum.de">Get in Touch</a><a className="mobile-menu__social" href="https://www.linkedin.com/in/sasan-matinfar" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
       </div> : null}
     </>
   );

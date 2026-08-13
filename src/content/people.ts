@@ -10,6 +10,11 @@ export type Person = {
   bio: string;
   affiliation: string;
   expertiseAreas: readonly string[];
+  selectedProjects?: readonly string[];
+  selectedPublications?: readonly string[];
+  patents?: readonly string[];
+  awards?: readonly string[];
+  contextualImages?: readonly { src: string; alt: string }[];
 };
 
 export const people: Person[] = [
@@ -25,6 +30,19 @@ export const people: Person[] = [
     bio: "Biomedical engineer and sonic interaction researcher working at the intersection of medical imaging, medical XR, and sound.",
     affiliation: "SoniXense · TUM CAMP research origin",
     expertiseAreas: ["Sonification", "Machine learning", "Medical XR"],
+  },
+  {
+    id: "navid-navab",
+    name: "Navid Navab",
+    title: "CIO (Chief of Innovation)",
+    expertise: "ArtScientist",
+    credibility: "Media artist and creative technologist — kinetic sculpture, sound art, and responsive installations exhibited internationally, 2008–2024",
+    profileHref: "https://www.navidnavab.com/",
+    image: "/images/founders/navid.png",
+    imagePosition: "center 26%",
+    bio: "ArtScientist and composer with over a decade of interdisciplinary research and production experience.",
+    affiliation: "Independent media artist and creative technologist",
+    expertiseAreas: ["Sound art", "Responsive installations", "Creative technology"],
   },
   {
     id: "veronica-ruozzi",
@@ -50,18 +68,5 @@ export const people: Person[] = [
     bio: "A pioneer in biomedical engineering, surgical data science, medical XR, and medical robotics.",
     affiliation: "TUM Chair for Computer Aided Medical Procedures & AR",
     expertiseAreas: ["Surgical data science", "Medical XR", "Medical robotics"],
-  },
-  {
-    id: "navid-navab",
-    name: "Navid Navab",
-    title: "CIO (Chief of Innovation)",
-    expertise: "ArtScientist",
-    credibility: "Media artist and creative technologist — kinetic sculpture, sound art, and responsive installations exhibited internationally, 2008–2024",
-    profileHref: "https://www.navidnavab.com/",
-    image: "/images/founders/navid.png",
-    imagePosition: "center 26%",
-    bio: "ArtScientist and composer with over a decade of interdisciplinary research and production experience.",
-    affiliation: "Independent media artist and creative technologist",
-    expertiseAreas: ["Sound art", "Responsive installations", "Creative technology"],
   },
 ];

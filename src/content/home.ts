@@ -18,8 +18,8 @@ export const integration = [
   { name: "Future systems", body: "Auditory support for increasingly intelligent, automated, and autonomous systems." },
 ] as const;
 
-export const machineEvents = ["Acquisition", "Computation", "Inference", "Update", "Acquisition", "Computation", "Inference", "Update"] as const;
-export const humanEvents = ["Perceive", "Integrate", "Decide", "Act"] as const;
+export const machineEvents = ["Imaging", "Tracking", "Force", "Spatial", "Physiology", "AI inference", "Robotics", "Models"] as const;
+export const humanEvents = ["Limited attention", "Critical decisions", "Real-time action"] as const;
 
 export const associations = [
   { name: "TUM", image: "/images/logos/tum.png", width: 1730, height: 590 },

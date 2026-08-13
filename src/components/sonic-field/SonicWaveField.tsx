@@ -25,6 +25,44 @@ const crossWaves = [
   "M324 524C386 453 414 384 470 329C527 273 598 253 771 250",
 ] as const;
 
+const inputSignals = [
+  "M24 106C83 102 111 145 168 137S251 83 329 167S424 274 503 289",
+  "M18 137C66 130 97 172 145 165C218 154 239 101 312 179C376 248 422 279 506 291",
+  "M51 174C101 188 111 225 171 206C228 188 271 135 330 202C385 265 434 290 509 295",
+  "M20 216C84 195 123 251 181 231S268 167 337 218S423 288 512 298",
+  "M71 251C115 239 155 282 205 252C254 223 293 197 348 238S440 296 514 301",
+  "M17 290C72 266 107 312 167 287C227 262 290 220 355 250S443 300 516 303",
+  "M44 329C96 296 142 341 199 310C257 278 303 245 364 263S450 304 518 305",
+  "M16 368C79 326 122 379 187 344C250 310 309 268 373 276S456 308 520 307",
+  "M64 407C112 359 160 406 215 372C273 336 323 289 384 289S461 311 521 309",
+  "M18 449C89 395 135 440 203 405C274 368 335 307 395 302S469 314 523 311",
+  "M86 488C144 425 193 456 251 421C311 384 352 323 407 314S477 317 525 313",
+  "M142 527C188 463 233 482 282 447C333 409 371 338 420 325S484 319 527 315",
+  "M32 122C72 158 84 111 127 151S174 201 219 173S280 170 329 217",
+  "M29 475C70 432 96 483 139 444S190 394 232 422S287 394 337 341",
+  "M104 88C137 111 146 76 178 112S224 152 254 130S302 144 346 207",
+  "M116 553C151 515 171 545 205 506S250 463 284 481S333 430 374 373",
+] as const;
+
+const coreSignals = [
+  "M350 207C399 244 414 314 460 281S501 254 532 302S574 348 621 302",
+  "M369 224C407 270 425 280 458 310S498 267 532 304S570 325 612 287",
+  "M384 246C415 286 438 252 466 297S503 338 533 306S570 278 607 320",
+  "M401 265C429 245 444 319 472 286S507 279 534 307S565 341 598 303",
+  "M413 329C437 291 454 347 479 311S509 277 535 309S561 329 592 291",
+  "M421 355C446 316 462 336 486 304S513 294 536 311S560 350 586 318",
+  "M438 376C456 339 470 357 492 320S516 300 537 313S558 333 581 305",
+  "M449 231C465 265 474 248 492 281S516 292 537 303S559 279 579 299",
+] as const;
+
+const emergentSignals = [
+  { d: "M526 299C576 286 611 251 653 259S718 293 790 247", family: "coral" },
+  { d: "M527 303C575 295 609 270 650 277S719 303 782 275", family: "pink" },
+  { d: "M528 307C575 304 610 290 650 292S714 315 772 302", family: "white" },
+  { d: "M529 311C574 313 608 309 649 307S710 327 760 329", family: "teal" },
+  { d: "M530 315C573 322 606 329 645 322S705 341 747 354", family: "pink" },
+] as const;
+
 const ribbonBundles = [
   { d: "M38 287C132 211 225 160 324 215C411 264 466 298 531 300C618 302 695 274 776 254", family: "teal", level: "outer" },
   { d: "M54 296C144 218 233 168 329 220C413 266 468 299 531 301C615 303 687 280 764 263", family: "teal", level: "outer" },
@@ -68,11 +106,20 @@ export default function SonicWaveField() {
           </radialGradient>
         </defs>
         <ellipse cx="620" cy="306" rx="175" ry="210" fill="url(#wave-coherence)" />
+        <g className="hero-wave-field__inputs" fill="none" mask="url(#wave-edge-fade)" stroke="var(--color-structure)" strokeLinecap="round">
+          {inputSignals.map((d, index) => <path key={index} className={index > 11 ? "hero-wave-field__input--fragment" : ""} d={d} />)}
+        </g>
         <g className="hero-wave-field__waves" fill="none" mask="url(#wave-edge-fade)" strokeLinecap="round">
           {waves.map((wave, index) => <path key={index} className={`hero-wave-field__strand hero-wave-field__strand--${wave.family} hero-wave-field__strand--${wave.depth}${"ridge" in wave ? ` hero-wave-field__ridge--${wave.ridge}` : ""}`} d={wave.d} />)}
         </g>
         <g className="hero-wave-field__ribbon" fill="none" mask="url(#wave-edge-fade)" strokeLinecap="round">
           {ribbonBundles.map((strand, index) => <path key={index} className={`hero-wave-field__bundle hero-wave-field__bundle--${strand.family} hero-wave-field__bundle--${strand.level}`} d={strand.d} />)}
+        </g>
+        <g className="hero-wave-field__core" fill="none" stroke="var(--color-perception-secondary)" strokeLinecap="round">
+          {coreSignals.map((d, index) => <path key={index} d={d} />)}
+        </g>
+        <g className="hero-wave-field__emergence" fill="none" mask="url(#wave-edge-fade)" strokeLinecap="round">
+          {emergentSignals.map((signal, index) => <path key={index} className={`hero-wave-field__emergence--${signal.family}`} d={signal.d} />)}
         </g>
         <g className="hero-wave-field__crossflow" fill="none" mask="url(#wave-edge-fade)" stroke="var(--color-structure)" strokeLinecap="round">
           {crossWaves.map((d, index) => <path key={index} d={d} />)}
@@ -85,6 +132,9 @@ export default function SonicWaveField() {
         </g>
         <g className="hero-wave-field__sequence" fill="var(--color-foreground)" opacity=".34">
           <circle cx="522" cy="254" r="1.4" /><circle cx="536" cy="259" r="1.4" /><circle cx="550" cy="264" r="1.4" /><circle cx="564" cy="269" r="1.4" /><circle cx="578" cy="274" r="1.4" />
+        </g>
+        <g className="hero-wave-field__core-events" fill="var(--color-perception-secondary)">
+          <circle cx="451" cy="286" r="1.8" /><circle cx="481" cy="311" r="2.2" /><circle cx="507" cy="279" r="1.4" /><circle cx="534" cy="307" r="3" /><circle cx="559" cy="329" r="1.7" /><circle cx="583" cy="296" r="1.3" />
         </g>
       </svg>
     </div>
