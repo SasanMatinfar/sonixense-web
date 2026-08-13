@@ -15,14 +15,14 @@ const syne = Syne({
 
 export const metadata = {
   metadataBase: new URL("https://sonixense.com"),
-  title: "soniXense",
-  // TODO: Confirm final marketing tone before launch; medical focus and TUM origin are intentional.
+  title: { default: "SoniXense — Beyond Vision", template: "%s | SoniXense" },
   description:
-    "SoniXense turns medical imaging and surgical data into sound — deep-tech sonification for the operating room, spinning out of TUM.",
+    "SoniXense transforms complex information into intelligent auditory interaction — sonification for surgical navigation, medical technology, and human perception.",
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "soniXense",
+    title: "SoniXense — Beyond Vision",
     description:
-      "SoniXense turns medical imaging and surgical data into sound — deep-tech sonification for the operating room, spinning out of TUM.",
+      "Intelligent auditory interaction and sonification for complex systems, with surgery as the first frontier.",
     url: "https://sonixense.com/",
     siteName: "soniXense",
     images: [
@@ -35,9 +35,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "soniXense",
+    title: "SoniXense — Beyond Vision",
     description:
-      "SoniXense turns medical imaging and surgical data into sound — deep-tech sonification for the operating room, spinning out of TUM.",
+      "Intelligent auditory interaction and sonification for complex systems, with surgery as the first frontier.",
     images: ["/images/teaser.png"],
   },
   icons: {

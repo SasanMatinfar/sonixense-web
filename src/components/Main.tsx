@@ -3,12 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { site } from "@/content/siteContent";
-import SlidePanelShell, { useSlidePanel } from "@/components/SlidePanelShell";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
-function SubPage() {
-  const { activePanel } = useSlidePanel();
-  const showVideo = activePanel === "right";
-
+function SurgicalGuidanceSection() {
   return (
     <div className="space-y-6">
       <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
@@ -28,8 +26,7 @@ function SubPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
             <div className="w-full md:flex-[0_0_68%]">
               <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-                {showVideo ? (
-                  <iframe
+                <iframe
                     className="h-full w-full"
                     src="https://www.youtube.com/embed/63ylNd6sqIE"
                     title="Navigation video"
@@ -37,7 +34,6 @@ function SubPage() {
                     referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   />
-                ) : null}
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
@@ -52,8 +48,7 @@ function SubPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
             <div className="w-full md:flex-[0_0_68%]">
               <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-                {showVideo ? (
-                  <iframe
+                <iframe
                     className="h-full w-full"
                     src="https://www.youtube.com/embed/xdZDjTFcwGA"
                     title="Navigation video 2"
@@ -61,7 +56,6 @@ function SubPage() {
                     referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   />
-                ) : null}
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
@@ -76,8 +70,7 @@ function SubPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
             <div className="w-full md:flex-[0_0_68%]">
               <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-                {showVideo ? (
-                  <iframe
+                <iframe
                     className="h-full w-full"
                     src="https://www.youtube.com/embed/ThwUXiUlZEI"
                     title="Navigation video 3"
@@ -85,7 +78,6 @@ function SubPage() {
                     referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   />
-                ) : null}
               </div>
             </div>
             <p className="heading-font md:flex-1 text-sm sm:text-base md:text-lg tracking-wide text-[#E9C9DF] font-bold leading-tight">
@@ -98,86 +90,22 @@ function SubPage() {
   );
 }
 
-function GeneralSonificationPage() {
-  const { activePanel } = useSlidePanel();
-  const showVideo = activePanel === "left";
-
+function ArtScienceTeaser() {
   return (
-    <div className="space-y-6">
-      <h2 className="heading-font text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-[#F2D3C5]">
+    <div className="mx-auto max-w-3xl space-y-5 text-center">
+      <h2 className="heading-font text-4xl sm:text-5xl font-semibold tracking-tight text-[#F2D3C5]">
         ArtScience
       </h2>
-
       <p className="heading-font text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight">
         Where science, technology, and art converge to redefine perception
       </p>
-      <p className="max-w-3xl text-sm sm:text-base leading-relaxed text-white/75">
-        For creative-technology and experience-design partners building
-        multisensory installations and interactions.
+      <p className="text-base leading-relaxed text-white/75 sm:text-lg">
+        We also apply this same sonification expertise to immersive art and
+        experience design.
       </p>
-
-      <div className="w-full">
-        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
-            <div className="w-full md:flex-[0_0_68%]">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-                {showVideo ? (
-                  <iframe
-                    className="h-full w-full"
-                    src="https://player.vimeo.com/video/329952640"
-                    title="ArtScience video"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                    allowFullScreen
-                  />
-                ) : null}
-              </div>
-            </div>
-            <div className="md:flex-1" />
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full">
-        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
-            <div className="w-full md:flex-[0_0_68%]">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-                {showVideo ? (
-                  <iframe
-                    className="h-full w-full"
-                    src="https://player.vimeo.com/video/1064898268?fl=pl&fe=sh"
-                    title="ArtScience video 2"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                    allowFullScreen
-                  />
-                ) : null}
-              </div>
-            </div>
-            <div className="md:flex-1" />
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full">
-        <div className="w-full md:w-[92%] lg:w-[90%] mr-auto">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
-            <div className="w-full md:flex-[0_0_68%]">
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/40">
-                {showVideo ? (
-                  <iframe
-                    className="h-full w-full"
-                    src="https://player.vimeo.com/video/124601569?fl=pl&fe=sh"
-                    title="ArtScience video 3"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                    allowFullScreen
-                  />
-                ) : null}
-              </div>
-            </div>
-            <div className="md:flex-1" />
-          </div>
-        </div>
-      </div>
+      <a href="/artscience" className="inline-flex rounded-full border border-[#F2D3C5]/70 px-6 py-3 text-sm font-semibold text-[#F2D3C5] transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+        Learn more about ArtScience
+      </a>
     </div>
   );
 }
@@ -366,7 +294,6 @@ function WaveArrowButton({
 }
 
 function MainContent() {
-  const { openPanel, openLeftPanel } = useSlidePanel();
   const { subtitle, heroImage, endtitle } = site.main;
   const canUseDOM = typeof window !== "undefined";
   const subtitleBreak = "Intelligent Sonic Innovation";
@@ -420,19 +347,18 @@ function MainContent() {
       block: "start",
     });
   };
-  const handleScrollToDemo = () => {
-    const demoSection = document.getElementById("demo-section");
-    demoSection?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
   const handleScrollToFounders = () => {
     const foundersSection = document.getElementById("founders-section");
     foundersSection?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
+  };
+  const handleScrollToSurgicalGuidance = () => {
+    document.getElementById("surgical-guidance")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const handleScrollToArtScience = () => {
+    document.getElementById("artscience")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   const handleScrollToHero = () => {
     const heroSection = document.getElementById("hero-section");
@@ -459,27 +385,11 @@ function MainContent() {
   };
 
   return (
-    <div className="bg-[rgb(var(--bg))] text-white overflow-x-clip">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0D2833]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[var(--page-max)] flex-wrap items-center justify-between gap-y-2 px-[var(--gutter-x)] py-2 sm:h-14 sm:flex-nowrap sm:py-0">
-          <a href="#hero-section" className="heading-font text-sm font-semibold tracking-wide text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">
-            soniXense
-          </a>
-          <nav aria-label="Primary navigation" className="order-last flex w-full items-center justify-between gap-3 border-t border-white/10 pt-2 sm:order-none sm:w-auto sm:gap-5 sm:border-0 sm:pt-0">
-            <a href="#demo-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">What we do</a>
-            <a href="#founders-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Team</a>
-            <a href="#patents-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Patents</a>
-            <a href="#contact-section" className="text-sm text-white/80 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Contact</a>
-          </nav>
-          {/* TODO: Move this temporary address to contact@sonixense.com or a contact form once ready. */}
-          <a href="mailto:sasan.matinfar@tum.de" className="rounded-full bg-[#F2D3C5] px-4 py-2 text-xs font-semibold text-[#0D2833] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:text-sm">
-            Get in touch
-          </a>
-        </div>
-      </header>
+    <div className="flex flex-col bg-[rgb(var(--bg))] text-white overflow-x-clip">
+      <SiteHeader />
       <section
         id="hero-section"
-        className="h-[100svh] snap-start overflow-hidden"
+        className="order-1 h-[100svh] snap-start overflow-hidden"
         style={{
           paddingTop: "max(var(--section-y), var(--safe-top))",
           paddingBottom: "max(var(--section-y), var(--safe-bottom))",
@@ -514,39 +424,10 @@ function MainContent() {
             <div className="mt-4 sm:mt-6 flex justify-center relative">
               <div className="w-full max-w-[95vw] sm:max-w-2xl md:max-w-3xl">
                 <div className="relative">
-                  <WaveArrowButton
-                    onClick={openLeftPanel}
-                    ariaLabel="Open general sonification page"
-                    direction="left"
-                    className="hidden md:block absolute top-1/2 -left-10 lg:-left-12 z-30 -translate-y-1/2"
-                  />
-
-                  <WaveArrowButton
-                    onClick={openPanel}
-                    ariaLabel="Open navigation page"
-                    direction="right"
-                    className="hidden md:block absolute top-1/2 -right-10 lg:-right-12 z-30 -translate-y-1/2"
-                  />
-
                   <img
                     src={heroImage.src}
                     alt={heroImage.alt}
                     className="block w-full object-contain max-h-[30vh] sm:max-h-[35vh]"
-                  />
-                </div>
-
-                <div className="mt-4 flex items-center justify-center gap-[var(--content-gap)] md:hidden">
-                  <WaveArrowButton
-                    onClick={openLeftPanel}
-                    ariaLabel="Open general sonification page"
-                    direction="left"
-                    className="scale-90"
-                  />
-                  <WaveArrowButton
-                    onClick={openPanel}
-                    ariaLabel="Open navigation page"
-                    direction="right"
-                    className="scale-90"
                   />
                 </div>
 
@@ -570,7 +451,7 @@ function MainContent() {
 
       <section
         id="demo-section"
-        className="h-[100svh] snap-start overflow-hidden"
+        className="order-2 h-[100svh] snap-start overflow-hidden"
         style={{
           paddingTop: "max(var(--section-y), var(--safe-top))",
           paddingBottom: "max(var(--section-y), var(--safe-bottom))",
@@ -626,8 +507,8 @@ function MainContent() {
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
             <WaveArrowButton
-              onClick={handleScrollToFounders}
-              ariaLabel="Scroll to founders section"
+              onClick={handleScrollToSurgicalGuidance}
+              ariaLabel="Scroll to Surgical Guidance"
               direction="down"
             />
           </div>
@@ -635,8 +516,26 @@ function MainContent() {
       </section>
 
       <section
+        id="surgical-guidance"
+        className="order-3 min-h-[100svh] snap-start overflow-y-auto"
+        style={{ padding: "max(var(--section-y), var(--safe-top)) max(var(--gutter-x), var(--safe-x))" }}
+      >
+        <div className="mx-auto w-full max-w-[var(--page-max)] pt-14">
+          <p className="mx-auto mb-12 max-w-3xl border-y border-white/10 py-4 text-center text-sm leading-relaxed text-[#F2D3C5] sm:text-base">
+            SoniXense is a spin-off in formation from the DFG-funded{" "}
+            <a href="https://synergia.camp.cit.tum.de/" target="_blank" rel="noopener noreferrer" className="underline decoration-[#DB5F42] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Synergia</a>{" "}
+            project at TUM&apos;s Chair for Computer Aided Medical Procedures &amp; AR.
+          </p>
+          <SurgicalGuidanceSection />
+          <div className="mt-12 flex justify-center">
+            <WaveArrowButton onClick={handleScrollToPatents} ariaLabel="Scroll to patents section" direction="down" />
+          </div>
+        </div>
+      </section>
+
+      <section
         id="founders-section"
-        className="h-[100svh] snap-start overflow-y-auto"
+        className="order-6 h-[100svh] snap-start overflow-y-auto"
         style={{
           paddingTop: "max(var(--section-y), var(--safe-top))",
           paddingBottom: "max(var(--section-y), var(--safe-bottom))",
@@ -647,8 +546,8 @@ function MainContent() {
         <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-full relative flex flex-col items-center">
           <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
             <WaveArrowButton
-              onClick={handleScrollToDemo}
-              ariaLabel="Scroll to demo section"
+              onClick={handleScrollToArtScience}
+              ariaLabel="Scroll to ArtScience"
               direction="up"
             />
           </div>
@@ -670,18 +569,6 @@ function MainContent() {
                 We combine consultancy and co-development, guiding companies from
                 early vision to full integration - turning research into real life
                 solutions.
-              </p>
-              <p className="mx-auto mt-5 max-w-3xl border-y border-white/10 py-4 text-sm leading-relaxed text-[#F2D3C5] sm:text-base">
-                SoniXense is a spin-off in formation from the DFG-funded{" "}
-                <a
-                  href="https://synergia.camp.cit.tum.de/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-[#DB5F42] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]"
-                >
-                  Synergia
-                </a>{" "}
-                project at TUM&apos;s Chair for Computer Aided Medical Procedures &amp; AR.
               </p>
             </div>
 
@@ -742,8 +629,8 @@ function MainContent() {
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
             <WaveArrowButton
-              onClick={handleScrollToPatents}
-              ariaLabel="Scroll to patents section"
+              onClick={handleScrollToContactSection}
+              ariaLabel="Scroll to contact section"
               direction="down"
             />
           </div>
@@ -752,7 +639,7 @@ function MainContent() {
 
       <section
         id="patents-section"
-        className="h-[100svh] snap-start overflow-y-auto"
+        className="order-4 h-[100svh] snap-start overflow-y-auto"
         style={{
           paddingTop: "max(var(--section-y), var(--safe-top))",
           paddingBottom: "max(var(--section-y), var(--safe-bottom))",
@@ -763,8 +650,8 @@ function MainContent() {
         <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-full relative flex flex-col items-center text-center">
           <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
             <WaveArrowButton
-              onClick={handleScrollToFounders}
-              ariaLabel="Scroll to founders section"
+              onClick={handleScrollToSurgicalGuidance}
+              ariaLabel="Scroll to Surgical Guidance"
               direction="up"
             />
           </div>
@@ -804,17 +691,21 @@ function MainContent() {
 
           <div className="absolute bottom-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
             <WaveArrowButton
-              onClick={handleScrollToContactSection}
-              ariaLabel="Scroll to contact and associations section"
+              onClick={handleScrollToArtScience}
+              ariaLabel="Scroll to ArtScience"
               direction="down"
             />
           </div>
         </div>
       </section>
 
+      <section id="artscience" className="order-5 flex min-h-[60svh] snap-start items-center px-[var(--gutter-x)] py-24">
+        <ArtScienceTeaser />
+      </section>
+
       <section
         id="contact-section"
-        className="h-[100svh] snap-start overflow-y-auto"
+        className="order-7 h-[100svh] snap-start overflow-y-auto"
         style={{
           paddingTop: "max(var(--section-y), var(--safe-top))",
           paddingBottom: "max(var(--section-y), var(--safe-bottom))",
@@ -825,8 +716,8 @@ function MainContent() {
         <div className="mx-auto w-full max-w-[var(--page-max)] px-[var(--gutter-x)] min-h-full relative flex flex-col">
           <div className="absolute top-[var(--arrow-anchor-offset)] left-1/2 -translate-x-1/2">
             <WaveArrowButton
-              onClick={handleScrollToPatents}
-              ariaLabel="Scroll to patents section"
+              onClick={handleScrollToFounders}
+              ariaLabel="Scroll to founders section"
               direction="up"
             />
           </div>
@@ -912,15 +803,7 @@ function MainContent() {
                 </div>
               </div>
             </div>
-            <footer className="border-t border-white/10 px-5 py-4 text-center text-xs text-white/60 sm:px-8">
-              <p>© {new Date().getFullYear()} soniXense — spin-off in formation</p>
-              <nav aria-label="Founder social profiles" className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-2">
-                <a href="https://www.linkedin.com/in/sasan-matinfar" target="_blank" rel="noopener noreferrer" className="hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Sasan on LinkedIn</a>
-                <a href="https://www.linkedin.com/in/veronica-ruozzi-4aaa731bb/" target="_blank" rel="noopener noreferrer" className="hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Veronica on LinkedIn</a>
-                <a href="https://www.linkedin.com/in/nassir-navab-0251103/" target="_blank" rel="noopener noreferrer" className="hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2D3C5]">Nassir on LinkedIn</a>
-              </nav>
-              {/* TODO: Add a company-wide social link only if the team creates or supplies one. */}
-            </footer>
+            <SiteFooter />
           </div>
         </div>
       </section>
@@ -1011,9 +894,5 @@ function MainContent() {
 }
 
 export default function Main() {
-  return (
-    <SlidePanelShell panel={<SubPage />} leftPanel={<GeneralSonificationPage />}>
-      <MainContent />
-    </SlidePanelShell>
-  );
+  return <MainContent />;
 }

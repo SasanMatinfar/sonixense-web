@@ -1,9 +1,5 @@
-import Main from "@/components/Main";
+import Homepage from "@/components/sections/Homepage";
 
 export default function Home() {
-  return (
-    <main className="bg-black">
-      <Main />
-    </main>
-  );
+  return <Homepage />;
 }
