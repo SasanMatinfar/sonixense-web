@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-type Particle = { x: number; y: number; z: number; vx: number; vy: number; seed: number };
+type Particle = { x: number; y: number; z: number; vx: number; vy: number; seed: number; branch: number };
 
 const TAU = Math.PI * 2;
 
@@ -42,62 +42,64 @@ export default function LivingSonicField() {
         vx: 0,
         vy: 0,
         seed: index * 0.61803398875,
+        branch: index % 3 - 1,
       }));
     };
 
-    const drawMembrane = (time: number, emergence: number, pulse: number) => {
+    const drawScaffold = (time: number, structure: number, vibration: number, wave: number) => {
+      if (structure <= .01) return;
       const centerX = width * .69;
-      const centerY = height * .5;
-      const columns = coarsePointer.matches ? 9 : 14;
-      const rows = coarsePointer.matches ? 6 : 9;
-      const spanX = width * .34;
-      const spanY = height * .42;
-      const nodes: { x: number; y: number; energy: number }[][] = [];
+      const centerY = height * .51;
+      const count = coarsePointer.matches ? 18 : 30;
+      const nodes = Array.from({ length: count }, (_, index) => {
+        const angle = index * 2.399963 + Math.sin(index * 1.7) * .18;
+        const radius = Math.sqrt((index + .6) / count);
+        const nx = Math.cos(angle) * radius;
+        const ny = Math.sin(angle) * radius;
+        const distanceFromEvent = Math.hypot(nx + .23, ny + .08);
+        const propagation = Math.sin(distanceFromEvent * 18 - vibration * TAU * 2.2) * Math.exp(-distanceFromEvent * 2.7);
+        const modal = Math.sin(nx * 7 + time * .00055 + index * .19) * Math.cos(ny * 5);
+        const displacement = (propagation * .8 + modal * .2) * structure * Math.sin(vibration * Math.PI);
+        return {
+          x: centerX + nx * width * .145 + Math.sin(ny * 4 + time * .00016) * 5 * structure,
+          y: centerY + ny * height * .19 + displacement * 18,
+          energy: Math.abs(displacement),
+          seed: (index * .61803398875) % 1,
+        };
+      });
 
-      for (let row = 0; row < rows; row++) {
-        const line = [];
-        for (let column = 0; column < columns; column++) {
-          const nx = column / (columns - 1) - .5;
-          const ny = row / (rows - 1) - .5;
-          const radius = Math.hypot(nx * 1.25, ny);
-          const propagation = Math.sin(radius * 20 - pulse * TAU * 2.1) * Math.exp(-radius * 2.6);
-          const mode = Math.sin(nx * Math.PI * 3 + time * .00045) * Math.cos(ny * Math.PI * 2);
-          const energy = (propagation * .72 + mode * .28) * emergence;
-          line.push({
-            x: centerX + nx * spanX + Math.sin(ny * 5 + time * .00025) * 12 * emergence,
-            y: centerY + ny * spanY + energy * 22 + Math.sin(nx * 4) * 9,
-            energy,
-          });
+      context.lineWidth = .5;
+      for (let index = 0; index < nodes.length; index++) {
+        const node = nodes[index];
+        const neighbors = nodes.map((candidate, candidateIndex) => ({ candidate, candidateIndex, distance: Math.hypot(node.x - candidate.x, node.y - candidate.y) })).filter(({ candidateIndex }) => candidateIndex > index).sort((a, b) => a.distance - b.distance).slice(0, 2);
+        for (const neighbor of neighbors) {
+          if (neighbor.distance > width * .09 || (index + neighbor.candidateIndex) % 5 === 0) continue;
+          context.strokeStyle = `rgba(74,143,162,${(.055 + node.energy * .2) * structure})`;
+          context.beginPath(); context.moveTo(node.x, node.y); context.lineTo(neighbor.candidate.x, neighbor.candidate.y); context.stroke();
         }
-        nodes.push(line);
+        context.fillStyle = node.energy > .2 ? `rgba(242,211,197,${(.18 + node.energy * .35) * structure})` : `rgba(103,180,194,${.22 * structure})`;
+        context.beginPath(); context.arc(node.x, node.y, .65 + node.seed * .85, 0, TAU); context.fill();
       }
 
-      context.lineWidth = .65;
-      for (let row = 0; row < rows; row++) {
-        for (let column = 0; column < columns; column++) {
-          const node = nodes[row][column];
-          context.strokeStyle = `rgba(74, 143, 162, ${(.08 + Math.abs(node.energy) * .24) * emergence})`;
-          context.beginPath();
-          if (column < columns - 1) { context.moveTo(node.x, node.y); context.lineTo(nodes[row][column + 1].x, nodes[row][column + 1].y); }
-          if (row < rows - 1) { context.moveTo(node.x, node.y); context.lineTo(nodes[row + 1][column].x, nodes[row + 1][column].y); }
-          if (row < rows - 1 && column < columns - 1 && (row + column) % 2 === 0) { context.moveTo(node.x, node.y); context.lineTo(nodes[row + 1][column + 1].x, nodes[row + 1][column + 1].y); }
-          context.stroke();
-          if (Math.abs(node.energy) > .28) {
-            context.fillStyle = `rgba(242, 211, 197, ${Math.min(.55, Math.abs(node.energy)) * emergence})`;
-            context.beginPath(); context.arc(node.x, node.y, 1.1 + Math.abs(node.energy), 0, TAU); context.fill();
-          }
-        }
-      }
+      const eventX = centerX - width * .055;
+      const eventY = centerY - height * .025;
+      const eventStrength = Math.sin(Math.min(1, vibration) * Math.PI);
+      context.fillStyle = `rgba(219,95,66,${eventStrength * .78})`;
+      context.beginPath(); context.arc(eventX, eventY, 2.1 + eventStrength * 1.6, 0, TAU); context.fill();
 
-      const eventX = centerX - spanX * .18;
-      const eventY = centerY - spanY * .05;
-      context.fillStyle = `rgba(219, 95, 66, ${.45 + pulse * .45})`;
-      context.beginPath(); context.arc(eventX, eventY, 2.8 + pulse * 2.2, 0, TAU); context.fill();
-      for (let ring = 0; ring < 3; ring++) {
-        const progress = (pulse + ring / 3) % 1;
-        context.strokeStyle = `rgba(219, 95, 66, ${(1 - progress) * .22 * emergence})`;
-        context.lineWidth = .8;
-        context.beginPath(); context.ellipse(eventX, eventY, progress * spanX * .44, progress * spanY * .54, -.18, 0, TAU); context.stroke();
+      if (wave > 0 && wave < 1) {
+        const packetStart = centerX + width * .045;
+        const packetLength = width * .25;
+        for (let index = 0; index < 34; index++) {
+          const progress = index / 33;
+          const envelope = Math.sin(progress * Math.PI) * Math.sin(wave * Math.PI);
+          const travel = wave * width * .12;
+          const x = packetStart + progress * packetLength + travel;
+          const y = centerY + Math.sin(progress * TAU * 3.2 - wave * TAU * 1.4) * 18 * envelope;
+          const coral = index % 9 === 0;
+          context.fillStyle = coral ? `rgba(219,95,66,${envelope * .48})` : `rgba(103,180,194,${envelope * .38})`;
+          context.beginPath(); context.arc(x, y, coral ? 1.6 : 1, 0, TAU); context.fill();
+        }
       }
     };
 
@@ -106,16 +108,21 @@ export default function LivingSonicField() {
       if (!visible) { frame = requestAnimationFrame(render); return; }
       const staticTime = reduceMotion.matches ? 6800 : time;
       const cycle = (staticTime % 14000) / 14000;
-      const emergence = reduceMotion.matches ? .82 : Math.max(0, Math.sin(Math.PI * Math.min(1, Math.max(0, (cycle - .12) / .78))));
-      const pulse = reduceMotion.matches ? .55 : ((cycle - .38 + 1) % 1);
+      const structure = reduceMotion.matches ? .7 : Math.max(0, Math.sin(Math.PI * Math.min(1, Math.max(0, (cycle - .18) / .62))));
+      const vibration = reduceMotion.matches ? .52 : Math.min(1, Math.max(0, (cycle - .4) / .3));
+      const wave = reduceMotion.matches ? .56 : Math.min(1, Math.max(0, (cycle - .53) / .31));
 
       context.clearRect(0, 0, width, height);
       const calmBoundary = width * .46;
       for (const particle of particles) {
-        const depthSpeed = .12 + particle.z * .34;
-        const angle = Math.sin(particle.y * .008 + staticTime * .00013 + particle.seed) * 1.15 + Math.cos(particle.x * .004 - staticTime * .00009) * .62;
+        particle.z = (particle.z + (reduceMotion.matches ? 0 : .00016 + particle.seed % 1 * .00012)) % 1;
+        const depthSpeed = .08 + particle.z * .42;
+        const normalizedX = particle.x / width;
+        const corridorCenter = height * (.5 + Math.sin(normalizedX * 5.4 + staticTime * .00008) * .16 + particle.branch * (.045 + .08 * Math.sin(normalizedX * Math.PI)));
+        const corridorPull = particle.x > calmBoundary ? (corridorCenter - particle.y) * (.00022 + particle.z * .00034) : 0;
+        const angle = Math.sin(particle.y * .006 + staticTime * .0001 + particle.seed) * .75 + Math.cos(particle.x * .003 - staticTime * .00007) * .38;
         const flowX = Math.cos(angle) * depthSpeed;
-        const flowY = Math.sin(angle) * depthSpeed;
+        const flowY = Math.sin(angle) * depthSpeed + corridorPull;
         let forceX = 0;
         let forceY = 0;
         if (pointer.active && !reduceMotion.matches) {
@@ -124,9 +131,9 @@ export default function LivingSonicField() {
           const distance = Math.max(30, Math.hypot(dx, dy));
           if (distance < 150) { const force = (1 - distance / 150) * .055; forceX += dx / distance * force; forceY += dy / distance * force; }
         }
-        const targetX = width * .68 + Math.cos(particle.seed * TAU) * width * .18;
-        const targetY = height * .5 + Math.sin(particle.seed * TAU * 1.7) * height * .22;
-        const assemble = emergence * (particle.seed % 1 > .32 ? .012 : .004);
+        const targetX = width * .69 + Math.cos(particle.seed * TAU) * width * .13;
+        const targetY = height * .51 + Math.sin(particle.seed * TAU * 1.7) * height * .17;
+        const assemble = structure * (particle.seed % 1 > .72 ? .008 : .0012);
         particle.vx = particle.vx * .94 + flowX * .06 + (targetX - particle.x) * assemble * .012 + forceX;
         particle.vy = particle.vy * .94 + flowY * .06 + (targetY - particle.y) * assemble * .012 + forceY;
         particle.x += particle.vx;
@@ -137,8 +144,8 @@ export default function LivingSonicField() {
         if (particle.y > height + 20) particle.y = -20;
 
         const textCalm = particle.x < calmBoundary ? .13 : 1;
-        const alpha = (.05 + particle.z * .28) * textCalm;
-        const size = .35 + particle.z * 1.25;
+        const alpha = (.035 + particle.z * .3) * textCalm;
+        const size = .28 + particle.z * particle.z * 1.55;
         context.fillStyle = particle.seed % 1 > .94 ? `rgba(219,95,66,${alpha * 1.6})` : `rgba(103,180,194,${alpha})`;
         context.beginPath(); context.arc(particle.x, particle.y, size, 0, TAU); context.fill();
         if (particle.z > .75 && particle.seed % 1 > .68) {
@@ -147,7 +154,7 @@ export default function LivingSonicField() {
           context.beginPath(); context.moveTo(particle.x, particle.y); context.lineTo(particle.x - particle.vx * 14, particle.y - particle.vy * 14); context.stroke();
         }
       }
-      drawMembrane(staticTime, emergence, pulse);
+      drawScaffold(staticTime, structure, vibration, wave);
       if (!reduceMotion.matches) frame = requestAnimationFrame(render);
     };
 
