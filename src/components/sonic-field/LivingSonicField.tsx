@@ -50,35 +50,67 @@ export default function LivingSonicField() {
       if (structure <= .01) return;
       const centerX = width * .69;
       const centerY = height * .51;
-      const count = coarsePointer.matches ? 18 : 30;
-      const nodes = Array.from({ length: count }, (_, index) => {
-        const angle = index * 2.399963 + Math.sin(index * 1.7) * .18;
-        const radius = Math.sqrt((index + .6) / count);
-        const nx = Math.cos(angle) * radius;
-        const ny = Math.sin(angle) * radius;
-        const distanceFromEvent = Math.hypot(nx + .23, ny + .08);
-        const propagation = Math.sin(distanceFromEvent * 18 - vibration * TAU * 2.2) * Math.exp(-distanceFromEvent * 2.7);
-        const modal = Math.sin(nx * 7 + time * .00055 + index * .19) * Math.cos(ny * 5);
-        const displacement = (propagation * .8 + modal * .2) * structure * Math.sin(vibration * Math.PI);
-        return {
-          x: centerX + nx * width * .145 + Math.sin(ny * 4 + time * .00016) * 5 * structure,
-          y: centerY + ny * height * .19 + displacement * 18,
-          energy: Math.abs(displacement),
-          seed: (index * .61803398875) % 1,
-        };
-      });
+      const topologyTime = time * .000045;
+      const regions = [
+        { x: .77, y: .25, rx: .3, ry: .28, phase: 0, density: .67, reach: .1 },
+        { x: .63, y: .52, rx: .36, ry: .18, phase: 2.1, density: .6, reach: .12 },
+        { x: .81, y: .78, rx: .28, ry: .26, phase: 4.2, density: .52, reach: .115 },
+      ];
 
-      context.lineWidth = .5;
-      for (let index = 0; index < nodes.length; index++) {
-        const node = nodes[index];
-        const neighbors = nodes.map((candidate, candidateIndex) => ({ candidate, candidateIndex, distance: Math.hypot(node.x - candidate.x, node.y - candidate.y) })).filter(({ candidateIndex }) => candidateIndex > index).sort((a, b) => a.distance - b.distance).slice(0, 2);
-        for (const neighbor of neighbors) {
-          if (neighbor.distance > width * .09 || (index + neighbor.candidateIndex) % 5 === 0) continue;
-          context.strokeStyle = `rgba(74,143,162,${(.055 + node.energy * .2) * structure})`;
-          context.beginPath(); context.moveTo(node.x, node.y); context.lineTo(neighbor.candidate.x, neighbor.candidate.y); context.stroke();
+      for (let regionIndex = 0; regionIndex < regions.length; regionIndex++) {
+        const region = regions[regionIndex];
+        const localLife = .32 + .68 * (.5 + .5 * Math.sin(topologyTime + region.phase));
+        const regionX = width * (region.x + Math.sin(topologyTime * .41 + region.phase) * .035);
+        const regionY = height * (region.y + Math.cos(topologyTime * .33 + region.phase) * .035);
+        const nodes = particles.filter((particle) => {
+          const nx = (particle.x - regionX) / (width * region.rx);
+          const ny = (particle.y - regionY) / (height * region.ry);
+          const organicBoundary = nx * nx + ny * ny + Math.sin(nx * 5 + ny * 3 + region.phase) * .16;
+          const selection = (particle.seed * (1.73 + regionIndex * .19)) % 1;
+          return particle.x > width * .43 && organicBoundary < 1.08 && selection > region.density;
+        });
+
+        for (let index = 0; index < nodes.length; index++) {
+          const node = nodes[index];
+          const nodeLife = Math.max(0, Math.sin(topologyTime * .74 + node.seed * TAU + region.phase));
+          if (nodeLife < .16) continue;
+          const neighborLimit = node.seed % 1 > .72 ? 3 : node.seed % 1 > .3 ? 2 : 1;
+          const neighbors = nodes
+            .map((candidate, candidateIndex) => ({
+              candidate,
+              candidateIndex,
+              distance: Math.hypot(node.x - candidate.x, node.y - candidate.y),
+            }))
+            .filter(({ candidateIndex }) => candidateIndex > index)
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, neighborLimit);
+
+          for (const { candidate, candidateIndex, distance } of neighbors) {
+            const depth = (node.z + candidate.z) * .5;
+            const reach = width * region.reach * (.68 + depth * .55);
+            const edgeSeed = (node.seed + candidate.seed + regionIndex * .31) % 1;
+            if (distance > reach || edgeSeed < .2) continue;
+            const edgeLife = structure * localLife * nodeLife * (.45 + depth * .55);
+            const midpointX = (node.x + candidate.x) * .5;
+            const midpointY = (node.y + candidate.y) * .5;
+            const dx = candidate.x - node.x;
+            const dy = candidate.y - node.y;
+            const bend = Math.sin(node.seed * 9 + candidateIndex + topologyTime) * distance * .08;
+            const length = Math.max(1, distance);
+            context.strokeStyle = `rgba(74,143,162,${edgeLife * (.07 + depth * .11)})`;
+            context.lineWidth = .32 + depth * .38;
+            context.beginPath();
+            context.moveTo(node.x, node.y);
+            context.quadraticCurveTo(midpointX - dy / length * bend, midpointY + dx / length * bend, candidate.x, candidate.y);
+            context.stroke();
+          }
+
+          const nodeAlpha = structure * localLife * nodeLife * (.12 + node.z * .3);
+          context.fillStyle = `rgba(103,180,194,${nodeAlpha})`;
+          context.beginPath();
+          context.arc(node.x, node.y, .4 + node.z * 1.15, 0, TAU);
+          context.fill();
         }
-        context.fillStyle = node.energy > .2 ? `rgba(242,211,197,${(.18 + node.energy * .35) * structure})` : `rgba(103,180,194,${.22 * structure})`;
-        context.beginPath(); context.arc(node.x, node.y, .65 + node.seed * .85, 0, TAU); context.fill();
       }
 
       const eventX = centerX - width * .055;
