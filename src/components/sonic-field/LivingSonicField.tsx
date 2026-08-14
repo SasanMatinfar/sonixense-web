@@ -46,11 +46,25 @@ export default function LivingSonicField() {
       }));
     };
 
+    const particleExcitation = (particle: Particle, time: number) => {
+      const identity = particle.seed % 1;
+      if (identity < .965) return 0;
+      const strengthNoise = .5 + .5 * Math.sin(particle.seed * 37.17);
+      const strength = strengthNoise > .86 ? 1 : strengthNoise > .42 ? .62 : .3;
+      const period = 10500 + (particle.seed * 7919) % 13500;
+      const phase = ((time + particle.seed * 1837) % period) / period;
+      const fadeIn = Math.min(1, phase / (.1 + strengthNoise * .08));
+      const fadeOutStart = .25 + strengthNoise * .18;
+      const fadeOut = phase < fadeOutStart ? 1 : Math.max(0, 1 - (phase - fadeOutStart) / (.22 + (1 - strengthNoise) * .18));
+      return Math.sin(fadeIn * Math.PI * .5) * fadeOut * strength;
+    };
+
     const drawScaffold = (time: number, structure: number, vibration: number, wave: number) => {
       if (structure <= .01) return;
       const centerX = width * .69;
       const centerY = height * .51;
       const topologyTime = time * .000045;
+      const structuralNodes: Particle[] = [];
       const regions = [
         { x: .77, y: .25, rx: .3, ry: .28, phase: 0, density: .67, reach: .1 },
         { x: .63, y: .52, rx: .36, ry: .18, phase: 2.1, density: .6, reach: .12 },
@@ -69,12 +83,13 @@ export default function LivingSonicField() {
           const selection = (particle.seed * (1.73 + regionIndex * .19)) % 1;
           return particle.x > width * .43 && organicBoundary < 1.08 && selection > region.density;
         });
+        structuralNodes.push(...nodes);
 
         for (let index = 0; index < nodes.length; index++) {
           const node = nodes[index];
           const nodeLife = Math.max(0, Math.sin(topologyTime * .74 + node.seed * TAU + region.phase));
           if (nodeLife < .16) continue;
-          const neighborLimit = node.seed % 1 > .72 ? 3 : node.seed % 1 > .3 ? 2 : 1;
+          const neighborLimit = node.seed % 1 > .84 ? 4 : node.seed % 1 > .58 ? 3 : node.seed % 1 > .24 ? 2 : 1;
           const neighbors = nodes
             .map((candidate, candidateIndex) => ({
               candidate,
@@ -97,20 +112,61 @@ export default function LivingSonicField() {
             const dy = candidate.y - node.y;
             const bend = Math.sin(node.seed * 9 + candidateIndex + topologyTime) * distance * .08;
             const length = Math.max(1, distance);
-            context.strokeStyle = `rgba(74,143,162,${edgeLife * (.07 + depth * .11)})`;
-            context.lineWidth = .32 + depth * .38;
+            const excitation = Math.max(0, Math.sin(vibration * Math.PI - distance / width * 4));
+            const nodeExcitation = particleExcitation(node, time);
+            const propagatedExcitation = particleExcitation(candidate, time - 700 - edgeSeed * 1400) * .72;
+            const edgeExcitation = Math.max(nodeExcitation, propagatedExcitation, excitation * (edgeSeed > .86 ? .42 : 0));
+            const coralEdge = edgeExcitation > .24;
+            context.strokeStyle = coralEdge
+              ? `rgba(219,95,66,${edgeLife * (.27 + edgeExcitation * .3)})`
+              : `rgba(86,166,181,${edgeLife * (.24 + depth * .28 + excitation * .11)})`;
+            context.lineWidth = .36 + depth * .42;
+            context.shadowColor = coralEdge ? `rgba(219,95,66,${edgeExcitation * .2})` : `rgba(103,180,194,${excitation * .1})`;
+            context.shadowBlur = edgeExcitation > .38 || excitation > .6 ? 2.5 : 0;
             context.beginPath();
             context.moveTo(node.x, node.y);
             context.quadraticCurveTo(midpointX - dy / length * bend, midpointY + dx / length * bend, candidate.x, candidate.y);
             context.stroke();
+            context.shadowBlur = 0;
           }
 
           const nodeAlpha = structure * localLife * nodeLife * (.12 + node.z * .3);
-          context.fillStyle = `rgba(103,180,194,${nodeAlpha})`;
+          const nodeExcitation = particleExcitation(node, time);
+          context.fillStyle = nodeExcitation > .08
+            ? `rgba(219,95,66,${Math.min(.92, nodeAlpha + nodeExcitation * .72)})`
+            : `rgba(103,180,194,${nodeAlpha})`;
           context.beginPath();
           context.arc(node.x, node.y, .4 + node.z * 1.15, 0, TAU);
           context.fill();
         }
+      }
+
+      const bridgeNodes = Array.from(new Set(structuralNodes))
+        .filter((node) => node.seed % 1 > .62)
+        .sort((a, b) => a.x - b.x);
+      for (let index = 0; index < bridgeNodes.length - 1; index++) {
+        const node = bridgeNodes[index];
+        const stride = node.seed % 1 > .9 ? 3 : 2;
+        const candidate = bridgeNodes[index + stride];
+        if (!candidate) continue;
+        const distance = Math.hypot(candidate.x - node.x, candidate.y - node.y);
+        if (distance < width * .14 || distance > width * .48 || (node.seed + candidate.seed) % 1 < .52) continue;
+        const depth = (node.z + candidate.z) * .5;
+        const life = structure * (.28 + .34 * Math.sin(topologyTime + node.seed * TAU));
+        const midpointX = (node.x + candidate.x) * .5;
+        const midpointY = (node.y + candidate.y) * .5 + Math.sin(node.seed * 11 + topologyTime) * distance * .055;
+        const bridgeExcitation = Math.max(particleExcitation(node, time), particleExcitation(candidate, time - 1600) * .58);
+        context.strokeStyle = bridgeExcitation > .22
+          ? `rgba(219,95,66,${Math.max(0, life) * (.18 + bridgeExcitation * .24)})`
+          : `rgba(74,143,162,${Math.max(0, life) * (.17 + depth * .2)})`;
+        context.lineWidth = .32 + depth * .3;
+        context.shadowColor = `rgba(103,180,194,${bridgeExcitation * .08})`;
+        context.shadowBlur = bridgeExcitation > .38 ? 2 : 0;
+        context.beginPath();
+        context.moveTo(node.x, node.y);
+        context.quadraticCurveTo(midpointX, midpointY, candidate.x, candidate.y);
+        context.stroke();
+        context.shadowBlur = 0;
       }
 
       const eventX = centerX - width * .055;
@@ -178,8 +234,11 @@ export default function LivingSonicField() {
         const textCalm = particle.x < calmBoundary ? .13 : 1;
         const alpha = (.035 + particle.z * .3) * textCalm;
         const size = .28 + particle.z * particle.z * 1.55;
-        context.fillStyle = particle.seed % 1 > .94 ? `rgba(219,95,66,${alpha * 1.6})` : `rgba(103,180,194,${alpha})`;
-        context.beginPath(); context.arc(particle.x, particle.y, size, 0, TAU); context.fill();
+        const excitation = particleExcitation(particle, staticTime) * (particle.x < calmBoundary ? .15 : 1);
+        context.fillStyle = excitation > .025
+          ? `rgba(219,95,66,${Math.min(.94, alpha * .75 + excitation * .86)})`
+          : `rgba(103,180,194,${alpha})`;
+        context.beginPath(); context.arc(particle.x, particle.y, size * (1 + excitation * .32), 0, TAU); context.fill();
         if (particle.z > .75 && particle.seed % 1 > .68) {
           context.strokeStyle = `rgba(74,143,162,${alpha * .35})`;
           context.lineWidth = .45;
