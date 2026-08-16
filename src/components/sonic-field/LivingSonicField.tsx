@@ -367,16 +367,90 @@ export default function LivingSonicField() {
       if (wave > 0 && wave < 1) {
         const packetStart = centerX + width * .045;
         const packetLength = width * .25;
-        for (let index = 0; index < 34; index++) {
-          const progress = index / 33;
-          const envelope = Math.sin(progress * Math.PI) * Math.sin(wave * Math.PI);
-          const travel = wave * width * .12;
-          const x = packetStart + progress * packetLength + travel;
-          const y = centerY + Math.sin(progress * TAU * 3.2 - wave * TAU * 1.4) * 18 * envelope;
-          const packetPoint = deformedPoint(x, y, .65 + progress * .18, time);
-          const coral = index % 9 === 0;
-          context.fillStyle = coral ? `rgba(219,95,66,${envelope * .48})` : `rgba(103,180,194,${envelope * .38})`;
-          context.beginPath(); context.arc(packetPoint.x, packetPoint.y, (coral ? 1.6 : 1) * (1 + packetPoint.displacement * .04), 0, TAU); context.fill();
+        const eventIndex = Math.floor(time / 14000);
+        const eventSeed = Math.abs(Math.sin((eventIndex + 1) * 12.9898) * 43758.5453) % 1;
+        const family = Math.min(5, Math.floor(eventSeed * 6));
+        const fundamental = 1.8 + eventSeed * 1.05;
+        const baseAmplitude = 28 + eventSeed * 14;
+        const morph = Math.sin(wave * Math.PI);
+        const complexityMorph = Math.pow(Math.sin(Math.min(1, wave / .72) * Math.PI), .55);
+        const strandCount = eventSeed > .32 ? 3 : 2;
+
+        for (let strand = 0; strand < strandCount; strand++) {
+          const count = strand === 0 ? 68 : 46;
+          const strandStrength = strand === 0 ? 1 : .34 - strand * .055;
+          let previousPoint: ReturnType<typeof deformedPoint> | null = null;
+          for (let index = 0; index < count; index++) {
+            const progress = index / (count - 1);
+            const swell = Math.pow(Math.sin(progress * Math.PI), .72);
+            const doubleSwell = Math.pow(Math.sin(progress * Math.PI), .7) * (.48 + .52 * Math.pow(Math.sin(progress * TAU * 1.25 + eventSeed), 2));
+            const attackDecay = (1 - Math.exp(-progress * 15)) * Math.exp(-progress * (1.1 + eventSeed));
+            const clusterEnvelope = Math.min(1,
+              Math.exp(-Math.pow((progress - .24) / .16, 2)) * .72
+              + Math.exp(-Math.pow((progress - .58) / .2, 2))
+              + Math.exp(-Math.pow((progress - .82) / .11, 2)) * .55
+            );
+            const asymmetricSwell = Math.pow(Math.sin(progress * Math.PI), .9) * (.55 + progress * .7);
+            const pulsedEnvelope = swell * (.55 + .45 * Math.pow(Math.sin(progress * TAU * 2.15 + eventSeed * 3), 2));
+            const envelopes = [swell, doubleSwell, attackDecay, asymmetricSwell, clusterEnvelope, pulsedEnvelope];
+            const amplitudeEnvelope = envelopes[family] * (.92 + .08 * Math.sin(progress * TAU * 3 + wave * 2));
+
+            const modulation = Math.sin(progress * TAU * (1.15 + eventSeed * .55) + eventSeed * 4) * (.22 + eventSeed * .18);
+            const sweep = (progress - .5) ** 3 * (1.1 + eventSeed * 1.3);
+            const phase = TAU * (fundamental * progress + modulation + sweep) - wave * TAU * (1.12 + eventSeed * .4);
+            const detailCenter = .3 + eventSeed * .38;
+            const detailWindow = Math.exp(-Math.pow((progress - detailCenter) / (.13 + eventSeed * .08), 2));
+            const tailWindow = Math.exp(-Math.pow((progress - (.72 + eventSeed * .08)) / .16, 2));
+            const weight17 = (.38 + detailWindow * .46) * complexityMorph;
+            const weight23 = (.23 + detailWindow * .4 + tailWindow * .18) * complexityMorph;
+            const weight38 = (.1 + detailWindow * .3) * complexityMorph;
+            const beating = Math.sin(phase * 2.72 + eventSeed * 5) * Math.sin(progress * TAU * (.62 + eventSeed * .35)) * (.13 + detailWindow * .23) * complexityMorph;
+            const transientCenter = .38 + eventSeed * .34;
+            const transientWindow = Math.exp(-Math.pow((progress - transientCenter) / (.055 + eventSeed * .035), 2));
+            const transient = Math.sin(phase * (4.45 + eventSeed * .8) + 1.7) * transientWindow * (.34 + eventSeed * .28) * complexityMorph;
+            const composite = Math.sin(phase)
+              + Math.sin(phase * 1.71 + eventSeed * 2.7) * weight17
+              + Math.sin(phase * 2.33 - eventSeed * 4.1) * weight23
+              + Math.sin(phase * 3.81 + eventSeed * 6.2) * weight38
+              + beating
+              + transient;
+            const saturated = Math.tanh(composite * (1.02 + complexityMorph * .24));
+            const asymmetric = saturated >= 0
+              ? saturated * (1.08 + eventSeed * .22)
+              : saturated * (.68 + (1 - eventSeed) * .18);
+            const strandPhase = strand === 0 ? 0 : strand * .72 + eventSeed;
+            const strandDetail = strand === 0
+              ? 0
+              : Math.sin(phase * (1.43 + strand * .37) + strandPhase) * (.24 + detailWindow * .22);
+            const signal = asymmetric + strandDetail;
+            const travel = wave * width * (.1 + eventSeed * .035);
+            const x = packetStart + progress * packetLength + travel;
+            const offset = strand === 0 ? 0 : (strand === 1 ? -1 : 1) * (7 + eventSeed * 5);
+            const y = centerY + offset + signal * baseAmplitude * amplitudeEnvelope * morph * strandStrength;
+            const packetPoint = deformedPoint(x, y, .62 + progress * .2 - strand * .06, time);
+            const fragment = Math.sin(index * 1.73 + strand * 2.2 + eventSeed * 11);
+            const visible = fragment > (strand === 0 ? -.72 : -.18);
+
+            if (visible) {
+              const coral = strand === 0 && index % 13 === 0;
+              const opacity = morph * amplitudeEnvelope * strandStrength;
+              context.fillStyle = coral ? `rgba(219,95,66,${opacity * .5})` : `rgba(103,180,194,${opacity * .42})`;
+              context.beginPath();
+              context.arc(packetPoint.x, packetPoint.y, (coral ? 1.55 : .8 + strandStrength * .28) * (1 + packetPoint.displacement * .04), 0, TAU);
+              context.fill();
+              if (previousPoint && index % 5 !== 0 && fragment > .05) {
+                context.strokeStyle = `rgba(103,180,194,${opacity * (strand === 0 ? .2 : .09)})`;
+                context.lineWidth = strand === 0 ? .48 : .34;
+                context.beginPath();
+                context.moveTo(previousPoint.x, previousPoint.y);
+                context.lineTo(packetPoint.x, packetPoint.y);
+                context.stroke();
+              }
+              previousPoint = packetPoint;
+            } else {
+              previousPoint = null;
+            }
+          }
         }
       }
     };
