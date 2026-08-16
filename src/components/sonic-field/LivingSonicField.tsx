@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 type Particle = { x: number; y: number; z: number; vx: number; vy: number; seed: number; branch: number };
+type Ripple = { x: number; y: number; startedAt: number; duration: number; radius: number; harmonics: number; tilt: number; rotation: number; seed: number; coral: boolean; complexity: number; frequency: number; directionality: number };
 
 const TAU = Math.PI * 2;
 
@@ -25,6 +26,9 @@ export default function LivingSonicField() {
     let running = true;
     let visible = true;
     let particles: Particle[] = [];
+    let ripples: Ripple[] = [];
+    const regionWasComplex = [false, false, false];
+    const regionCooldownUntil = [0, 0, 0];
 
     const reset = () => {
       const bounds = canvas.getBoundingClientRect();
@@ -59,6 +63,86 @@ export default function LivingSonicField() {
       return Math.sin(fadeIn * Math.PI * .5) * fadeOut * strength;
     };
 
+    const drawRipples = (time: number) => {
+      ripples = ripples.filter((ripple) => time - ripple.startedAt < ripple.duration);
+      for (const ripple of ripples) {
+        const age = (time - ripple.startedAt) / ripple.duration;
+        const attack = Math.sin(Math.min(1, age / .18) * Math.PI * .5);
+        const decay = Math.pow(1 - age, 1.35);
+        const envelope = attack * decay;
+        const travel = (1 - Math.pow(1 - age, 2.1)) * ripple.radius * (.58 + ripple.directionality * .32);
+        const packetLength = ripple.radius * (.5 + ripple.complexity * .25);
+        const amplitude = ripple.radius * (.035 + (1 - ripple.frequency / 5) * .035);
+        context.save();
+        context.translate(ripple.x, ripple.y);
+        context.rotate(ripple.rotation);
+        context.scale(1, .72 + ripple.tilt * .18);
+
+        for (let harmonic = 0; harmonic < ripple.harmonics; harmonic++) {
+          const harmonicStrength = 1 - harmonic / (ripple.harmonics + .5);
+          const strandOffset = (harmonic - (ripple.harmonics - 1) * .5) * amplitude * .9;
+          const samples = coarsePointer.matches ? 36 : 58;
+          let previous: { x: number; y: number } | null = null;
+          for (let sample = 0; sample <= samples; sample++) {
+            const u = sample / samples - .5;
+            const packetEnvelope = Math.pow(Math.max(0, Math.cos(u * Math.PI)), 1.35);
+            const localPhase = u * TAU * (ripple.frequency + harmonic * .42) - age * TAU * (1.25 + harmonic * .18) + ripple.seed * 9;
+            const turbulence = Math.sin(u * 13 + ripple.seed * 17 + harmonic) * amplitude * .08;
+            const curve = Math.sin(u * Math.PI + ripple.seed * 4) * packetLength * .055 * ripple.directionality;
+            const x = travel + u * packetLength;
+            const y = strandOffset + curve + Math.sin(localPhase) * amplitude * packetEnvelope * harmonicStrength + turbulence;
+            const visibility = packetEnvelope * envelope * harmonicStrength * (.55 + .45 * Math.sin(sample * 1.7 + harmonic * 2.4 + ripple.seed * 13));
+            if (previous && visibility > .075) {
+              const coralAccent = ripple.coral && harmonic === 0 && sample % 9 === 0;
+              context.strokeStyle = coralAccent
+                ? `rgba(219,95,66,${visibility * .4})`
+                : `rgba(103,180,194,${visibility * (.23 + ripple.complexity * .13)})`;
+              context.lineWidth = .38 + harmonicStrength * .26;
+              context.shadowColor = `rgba(103,180,194,${visibility * .1})`;
+              context.shadowBlur = harmonic === 0 ? 1.8 : 0;
+              context.beginPath();
+              context.moveTo(previous.x, previous.y);
+              context.lineTo(x, y);
+              context.stroke();
+            }
+            if (sample % (harmonic + 3) === 0 && visibility > .13) {
+              context.fillStyle = ripple.coral && harmonic === 0 && sample % 11 === 0
+                ? `rgba(219,95,66,${visibility * .62})`
+                : `rgba(103,180,194,${visibility * .76})`;
+              context.beginPath();
+              context.arc(x, y, .32 + ripple.complexity * .42 * harmonicStrength, 0, TAU);
+              context.fill();
+            }
+            previous = { x, y };
+          }
+        }
+
+        const farFieldSamples = coarsePointer.matches ? 28 : 44;
+        for (let sample = 0; sample < farFieldSamples; sample++) {
+          const u = sample / (farFieldSamples - 1) - .5;
+          const diffuseEnvelope = Math.max(0, Math.cos(u * Math.PI)) * envelope;
+          const x = travel * 1.12 + u * packetLength * 1.35;
+          const y = Math.sin(u * TAU * (1.2 + ripple.frequency * .16) - age * TAU) * amplitude * 1.45 + Math.sin(u * 5 + ripple.seed) * amplitude * .35;
+          if (diffuseEnvelope < .08 || (sample + Math.floor(ripple.seed * 10)) % 3 === 0) continue;
+          context.fillStyle = `rgba(103,180,194,${diffuseEnvelope * .1})`;
+          context.beginPath();
+          context.arc(x, y, .45 + ripple.complexity * .3, 0, TAU);
+          context.fill();
+        }
+
+        context.strokeStyle = `rgba(103,180,194,${envelope * .035})`;
+        context.lineWidth = 1.4 + ripple.complexity;
+        context.shadowColor = `rgba(103,180,194,${envelope * .025})`;
+        context.shadowBlur = 5;
+        context.beginPath();
+        context.moveTo(-packetLength * .18, 0);
+        context.bezierCurveTo(travel * .2, -amplitude * 2.1, travel * .72, amplitude * 2.3, travel + packetLength * .35, 0);
+        context.stroke();
+        context.restore();
+      }
+      context.shadowBlur = 0;
+    };
+
     const drawScaffold = (time: number, structure: number, vibration: number, wave: number) => {
       if (structure <= .01) return;
       const centerX = width * .69;
@@ -84,6 +168,8 @@ export default function LivingSonicField() {
           return particle.x > width * .43 && organicBoundary < 1.08 && selection > region.density;
         });
         structuralNodes.push(...nodes);
+        let edgeCount = 0;
+        const nodeDegrees = new Array(nodes.length).fill(0) as number[];
 
         for (let index = 0; index < nodes.length; index++) {
           const node = nodes[index];
@@ -105,6 +191,9 @@ export default function LivingSonicField() {
             const reach = width * region.reach * (.68 + depth * .55);
             const edgeSeed = (node.seed + candidate.seed + regionIndex * .31) % 1;
             if (distance > reach || edgeSeed < .2) continue;
+            edgeCount++;
+            nodeDegrees[index]++;
+            nodeDegrees[candidateIndex]++;
             const edgeLife = structure * localLife * nodeLife * (.45 + depth * .55);
             const midpointX = (node.x + candidate.x) * .5;
             const midpointY = (node.y + candidate.y) * .5;
@@ -138,6 +227,53 @@ export default function LivingSonicField() {
           context.beginPath();
           context.arc(node.x, node.y, .4 + node.z * 1.15, 0, TAU);
           context.fill();
+        }
+
+        if (!reduceMotion.matches && nodes.length > 0) {
+          const xs = nodes.map((node) => node.x);
+          const ys = nodes.map((node) => node.y);
+          const extent = Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / Math.hypot(width, height);
+          const maxDegree = Math.max(0, ...nodeDegrees);
+          const coherence = structure * localLife;
+          const complexity = (nodes.length * .58 + edgeCount * 1.25 + maxDegree * 2.8 + extent * 18) * coherence + vibration * 7;
+          const soundTriggerThreshold = coarsePointer.matches ? 24 : 46;
+          const isComplex = complexity > soundTriggerThreshold && edgeCount >= (coarsePointer.matches ? 8 : 17) && maxDegree >= 3;
+
+          if (isComplex && !regionWasComplex[regionIndex] && time >= regionCooldownUntil[regionIndex] && ripples.length < 3) {
+            const originIndex = nodeDegrees.reduce((best, degree, index) => degree > nodeDegrees[best] ? index : best, 0);
+            const origin = nodes[originIndex];
+            const variation = .5 + .5 * Math.sin(origin.seed * 23.7 + time * .00017);
+            const originExcitation = particleExcitation(origin, time);
+            const structuralMagnitude = nodes.length * .45 + edgeCount * .75 + maxDegree * 2 + extent * 12;
+            const complexityNormalized = Math.max(0, Math.min(1, structuralMagnitude / (coarsePointer.matches ? 58 : 112)));
+            const centroidX = nodes.reduce((sum, node) => sum + node.x, 0) / nodes.length;
+            const centroidY = nodes.reduce((sum, node) => sum + node.y, 0) / nodes.length;
+            const covarianceX = nodes.reduce((sum, node) => sum + (node.x - centroidX) ** 2, 0) / nodes.length;
+            const covarianceY = nodes.reduce((sum, node) => sum + (node.y - centroidY) ** 2, 0) / nodes.length;
+            const covarianceXY = nodes.reduce((sum, node) => sum + (node.x - centroidX) * (node.y - centroidY), 0) / nodes.length;
+            const orientation = .5 * Math.atan2(2 * covarianceXY, covarianceX - covarianceY);
+            const anisotropy = Math.min(1, Math.abs(covarianceX - covarianceY) / Math.max(1, covarianceX + covarianceY));
+            const connectivityDensity = edgeCount / Math.max(1, nodes.length);
+            ripples.push({
+              x: origin.x,
+              y: origin.y,
+              startedAt: time,
+              duration: 3300 + complexityNormalized * 3500 + variation * 350,
+              radius: width * (.09 + complexityNormalized * .27 + extent * .08) * (.96 + variation * .08),
+              harmonics: 2 + Math.round(complexityNormalized * 3 + Math.min(1, connectivityDensity / 2)),
+              tilt: .64 + origin.z * .28,
+              rotation: orientation + (origin.seed % 1 > .5 ? 0 : Math.PI),
+              seed: origin.seed,
+              coral: originExcitation > .52 || complexity > soundTriggerThreshold * 1.42,
+              complexity: complexityNormalized,
+              frequency: 1.6 + Math.min(2.7, connectivityDensity * .9 + (1 - extent) * 1.35),
+              directionality: .45 + anisotropy * .55,
+            });
+            regionCooldownUntil[regionIndex] = time + 11000 + variation * 5000;
+          }
+          regionWasComplex[regionIndex] = isComplex;
+        } else {
+          regionWasComplex[regionIndex] = false;
         }
       }
 
@@ -245,6 +381,7 @@ export default function LivingSonicField() {
           context.beginPath(); context.moveTo(particle.x, particle.y); context.lineTo(particle.x - particle.vx * 14, particle.y - particle.vy * 14); context.stroke();
         }
       }
+      drawRipples(staticTime);
       drawScaffold(staticTime, structure, vibration, wave);
       if (!reduceMotion.matches) frame = requestAnimationFrame(render);
     };
