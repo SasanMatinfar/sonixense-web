@@ -41,7 +41,7 @@ export default function MobileMenu() {
         <nav aria-label="Mobile navigation" className="mobile-menu__nav">
           {links.map(([index, label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}><span>{index}</span>{label}</a>)}
         </nav>
-        <div className="mobile-menu__footer"><a className="mobile-menu__cta" href="mailto:sasan.matinfar@tum.de">Get in Touch</a><a className="mobile-menu__social" href="https://www.linkedin.com/in/sasan-matinfar" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
+        <div className="mobile-menu__footer"><a className="mobile-menu__cta" href="mailto:contact@sonixense.com">Get in Touch</a><a className="mobile-menu__social" href="https://www.linkedin.com/company/sonixense" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
       </div> : null}
     </>
   );

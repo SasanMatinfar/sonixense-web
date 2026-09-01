@@ -19,7 +19,7 @@ export const integration = [
 ] as const;
 
 export const machineEvents = ["Sensors", "Imaging", "Tracking", "AI", "Simulation", "Computation", "Robotics", "Data"] as const;
-export const humanEvents = ["Vision", "Hearing", "Attention", "Cognition", "Decision"] as const;
+export const humanEvents = ["Vision", "Attention", "Working memory", "Cognition", "Decision"] as const;
 
 export const associations = [
   { name: "TUM", image: "/images/logos/tum.png", width: 1730, height: 590 },

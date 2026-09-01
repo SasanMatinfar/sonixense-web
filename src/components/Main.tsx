@@ -496,9 +496,8 @@ function MainContent() {
             <p className="heading-font mx-auto max-w-full text-center text-lg sm:text-xl tracking-wide text-[#E9C9DF] font-bold leading-tight md:whitespace-nowrap">
               Transforming products through precision-engineered sound
             </p>
-            {/* TODO: Move this temporary address to contact@sonixense.com or a contact form once ready. */}
             <a
-              href="mailto:sasan.matinfar@tum.de"
+              href="mailto:contact@sonixense.com"
               className="rounded-full bg-[#F2D3C5] px-6 py-3 text-sm font-semibold text-[#0D2833] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Get in touch
@@ -743,9 +742,8 @@ function MainContent() {
                   <p className="mt-2 text-white/80 leading-relaxed">
                     contact@sonixense.com
                   </p>
-                  {/* TODO: Move this temporary address to contact@sonixense.com or a contact form once ready. */}
                   <a
-                    href="mailto:sasan.matinfar@tum.de"
+                    href="mailto:contact@sonixense.com"
                     className="mt-6 inline-flex rounded-full bg-[#F2D3C5] px-6 py-3 text-sm font-semibold text-[#0D2833] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   >
                     Get in touch
