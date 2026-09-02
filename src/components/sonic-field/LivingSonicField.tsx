@@ -190,9 +190,9 @@ export default function LivingSonicField() {
       const structuralNodes: Particle[] = [];
       let complexRegionCount = 0;
       const regions = [
-        { x: .77, y: .25, rx: .3, ry: .28, phase: 0, density: .67, reach: .1 },
-        { x: .63, y: .52, rx: .36, ry: .18, phase: 2.1, density: .6, reach: .12 },
-        { x: .81, y: .78, rx: .28, ry: .26, phase: 4.2, density: .52, reach: .115 },
+        { x: .77, y: .25, rx: .3, ry: .28, phase: 0, density: .62, reach: .072 },
+        { x: .63, y: .52, rx: .36, ry: .18, phase: 2.1, density: .55, reach: .08 },
+        { x: .81, y: .78, rx: .28, ry: .26, phase: 4.2, density: .48, reach: .076 },
       ];
 
       for (let regionIndex = 0; regionIndex < regions.length; regionIndex++) {
@@ -215,7 +215,7 @@ export default function LivingSonicField() {
           const node = nodes[index];
           const nodeLife = Math.max(0, Math.sin(topologyTime * .74 + node.seed * TAU + region.phase));
           if (nodeLife < .16) continue;
-          const neighborLimit = node.seed % 1 > .84 ? 4 : node.seed % 1 > .58 ? 3 : node.seed % 1 > .24 ? 2 : 1;
+          const neighborLimit = node.seed % 1 > .84 ? 6 : node.seed % 1 > .58 ? 5 : node.seed % 1 > .24 ? 4 : 3;
           const neighbors = nodes
             .map((candidate, candidateIndex) => ({
               candidate,
@@ -230,7 +230,7 @@ export default function LivingSonicField() {
             const depth = (node.z + candidate.z) * .5;
             const reach = width * region.reach * (.68 + depth * .55);
             const edgeSeed = (node.seed + candidate.seed + regionIndex * .31) % 1;
-            if (distance > reach || edgeSeed < .2) continue;
+            if (distance > reach || edgeSeed < .08) continue;
             edgeCount++;
             nodeDegrees[index]++;
             nodeDegrees[candidateIndex]++;
@@ -250,9 +250,9 @@ export default function LivingSonicField() {
             const coralEdge = edgeExcitation > .24;
             const deformationVisibility = .92 + (nodePoint.displacement + candidatePoint.displacement) * .075;
             context.strokeStyle = coralEdge
-              ? `rgba(187,92,118,${edgeLife * (.27 + edgeExcitation * .3) * deformationVisibility})`
-              : `rgba(166,90,117,${edgeLife * (.24 + depth * .28 + excitation * .11) * deformationVisibility})`;
-            context.lineWidth = .36 + (nodePoint.z + candidatePoint.z) * .21;
+              ? `rgba(187,92,118,${edgeLife * (.34 + edgeExcitation * .34) * deformationVisibility})`
+              : `rgba(166,90,117,${edgeLife * (.31 + depth * .32 + excitation * .13) * deformationVisibility})`;
+            context.lineWidth = .42 + (nodePoint.z + candidatePoint.z) * .23;
             context.shadowColor = coralEdge ? `rgba(187,92,118,${edgeExcitation * .2})` : `rgba(166,90,117,${excitation * .1})`;
             context.shadowBlur = edgeExcitation > .38 || excitation > .6 ? 2.5 : 0;
             context.beginPath();
@@ -336,7 +336,7 @@ export default function LivingSonicField() {
         const candidate = bridgeNodes[index + stride];
         if (!candidate) continue;
         const distance = Math.hypot(candidate.x - node.x, candidate.y - node.y);
-        if (distance < width * .14 || distance > width * .48 || (node.seed + candidate.seed) % 1 < .52) continue;
+        if (distance < width * .075 || distance > width * .14 || (node.seed + candidate.seed) % 1 < .36) continue;
         const nodePoint = deformedPoint(node.x, node.y, node.z, time);
         const candidatePoint = deformedPoint(candidate.x, candidate.y, candidate.z, time);
         const depth = (node.z + candidate.z) * .5;
@@ -345,9 +345,9 @@ export default function LivingSonicField() {
         const midpointY = (nodePoint.y + candidatePoint.y) * .5 + Math.sin(node.seed * 11 + topologyTime) * distance * .055;
         const bridgeExcitation = Math.max(particleExcitation(node, time), particleExcitation(candidate, time - 1600) * .58);
         context.strokeStyle = bridgeExcitation > .22
-          ? `rgba(187,92,118,${Math.max(0, life) * (.18 + bridgeExcitation * .24)})`
-          : `rgba(116,77,111,${Math.max(0, life) * (.17 + depth * .2)})`;
-        context.lineWidth = .32 + depth * .3;
+          ? `rgba(187,92,118,${Math.max(0, life) * (.25 + bridgeExcitation * .28)})`
+          : `rgba(116,77,111,${Math.max(0, life) * (.24 + depth * .24)})`;
+        context.lineWidth = .38 + depth * .32;
         context.shadowColor = `rgba(166,90,117,${bridgeExcitation * .08})`;
         context.shadowBlur = bridgeExcitation > .38 ? 2 : 0;
         context.beginPath();
