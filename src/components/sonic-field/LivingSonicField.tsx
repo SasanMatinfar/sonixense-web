@@ -41,7 +41,7 @@ export default function LivingSonicField() {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      const count = coarsePointer.matches || width < 700 ? 110 : 280;
+      const count = coarsePointer.matches || width < 700 ? 240 : 700;
       particles = Array.from({ length: count }, (_, index) => ({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -455,113 +455,25 @@ export default function LivingSonicField() {
       }
     };
 
-    const drawPerceptualFlow = (time: number) => {
-      const mobile = width < 700;
-      const entryX = width * (mobile ? .76 : .775);
-      const centerX = width * (mobile ? .895 : .89);
-      const centerY = height * (mobile ? .68 : .51);
-      const sourceX = width * (mobile ? .08 : .34);
-      const streamCount = mobile ? 4 : 6;
-
-      context.save();
-      context.globalCompositeOperation = "source-over";
-      for (let stream = 0; stream < streamCount; stream++) {
-        const identity = stream / Math.max(1, streamCount - 1) - .5;
-        const sourceY = centerY + identity * height * (mobile ? .43 : .64) + (stream % 2 ? height * .035 : -height * .02);
-        const phase = time * (.00009 + stream * .000006) + stream * 1.37;
-        const samples = mobile ? 54 : 82;
-        let previous: { x: number; y: number } | null = null;
-
-        for (let sample = 0; sample <= samples; sample++) {
-          const progress = sample / samples;
-          const entryEnd = .61 + (stream % 3) * .018;
-          let x: number;
-          let y: number;
-          let absorption = 0;
-
-          if (progress <= entryEnd) {
-            const approach = progress / entryEnd;
-            const accelerated = Math.pow(approach, .72);
-            const baseline = sourceY + (centerY - sourceY) * Math.pow(approach, 1.12);
-            const narrowing = Math.pow(1 - approach, 1.35);
-            const amplitude = height * (.015 + Math.abs(identity) * .02) * narrowing;
-            x = sourceX + (entryX - sourceX) * accelerated;
-            y = baseline
-              + Math.sin(approach * TAU * (1.2 + stream * .11) - phase * 2.45) * amplitude
-              + Math.sin(approach * TAU * 3 + phase) * amplitude * .2;
-          } else {
-            absorption = (progress - entryEnd) / (1 - entryEnd);
-            const radiusX = (centerX - entryX) * Math.pow(1 - absorption, 1.18);
-            const radiusY = height * (.105 + Math.abs(identity) * .045) * Math.pow(1 - absorption, 1.3);
-            const entryAngle = Math.PI + identity * .52;
-            const angle = entryAngle + absorption * TAU * (.72 + stream * .027) + Math.sin(phase) * .09;
-            x = centerX + Math.cos(angle) * radiusX;
-            y = centerY + Math.sin(angle) * radiusY;
-          }
-
-          const arrival = Math.min(1, progress / entryEnd);
-          const absorptionFade = absorption === 0 ? 1 : Math.pow(1 - absorption, .9);
-          const opacity = (.16 + arrival * .5) * absorptionFade * (mobile ? .82 : 1);
-          const packet = .3 + .7 * Math.pow(Math.max(0, Math.sin(progress * TAU * 2.4 - phase * 3.2)), 5);
-
-          if (previous) {
-            context.strokeStyle = `rgba(${stream % 3 === 0 ? "218,155,187" : stream % 3 === 1 ? "187,92,118" : "161,92,130"},${opacity * (.38 + packet * .62)})`;
-            context.lineWidth = (.8 + arrival * 1.65) * (1 - absorption * .5);
-            context.shadowColor = "rgba(218,155,187,.32)";
-            context.shadowBlur = arrival * 5;
-            context.beginPath();
-            context.moveTo(previous.x, previous.y);
-            context.lineTo(x, y);
-            context.stroke();
-          }
-
-          if (sample % 4 === stream % 4 && packet > .55) {
-            context.fillStyle = `rgba(218,155,187,${opacity * packet * 1.25})`;
-            context.beginPath();
-            context.arc(x, y, (.45 + arrival * 1.25) * (1 - absorption * .7), 0, TAU);
-            context.fill();
-          }
-          previous = { x, y };
-        }
-      }
-
-      const arrivalPulse = reduceMotion.matches ? .45 : .5 + .5 * Math.sin(time * .00115);
-      for (let layer = 0; layer < 3; layer++) {
-        context.strokeStyle = `rgba(${layer === 0 ? "116,77,111" : layer === 1 ? "161,92,130" : "187,92,118"},${.08 + arrivalPulse * (.035 + layer * .018)})`;
-        context.lineWidth = .7 + layer * .28;
-        context.shadowColor = "rgba(187,92,118,.22)";
-        context.shadowBlur = 4 + layer * 2;
-        context.beginPath();
-        context.ellipse(entryX + layer * width * .027, centerY, width * (.018 + layer * .012), height * (.11 + layer * .055), 0, -Math.PI / 2, Math.PI / 2);
-        context.stroke();
-      }
-      context.restore();
-      context.shadowBlur = 0;
-    };
-
-    // Retain the richer field generator for future non-hero use without running
-    // its expensive topology pass on every hero frame.
-    void drawScaffold;
-
     const render = (time: number) => {
       if (!running) return;
       if (!visible) { frame = requestAnimationFrame(render); return; }
       const staticTime = reduceMotion.matches ? 6800 : time;
       const cycle = (staticTime % 14000) / 14000;
       const structure = reduceMotion.matches ? .7 : Math.max(0, Math.sin(Math.PI * Math.min(1, Math.max(0, (cycle - .18) / .62))));
+      const vibration = reduceMotion.matches ? .52 : Math.min(1, Math.max(0, (cycle - .4) / .3));
+      const wave = reduceMotion.matches ? .56 : Math.min(1, Math.max(0, (cycle - .53) / .31));
 
       context.clearRect(0, 0, width, height);
-      const calmBoundary = width * .4;
+      const calmBoundary = width * .46;
       for (const particle of particles) {
         particle.z = (particle.z + (reduceMotion.matches ? 0 : .00016 + particle.seed % 1 * .00012)) % 1;
         const depthSpeed = .08 + particle.z * .42;
         const normalizedX = particle.x / width;
-        const funnelProgress = Math.max(0, Math.min(1, (normalizedX - .22) / .6));
-        const funnelCenter = height * (width < 700 ? .68 : .51);
-        const corridorCenter = funnelCenter + (particle.y - funnelCenter) * Math.pow(1 - funnelProgress, 1.7) + Math.sin(normalizedX * 7 + staticTime * .00012 + particle.branch) * height * .018 * (1 - funnelProgress);
-        const corridorPull = particle.x > width * .22 ? (corridorCenter - particle.y) * (.00055 + funnelProgress * .0014 + particle.z * .00035) : 0;
+        const corridorCenter = height * (.5 + Math.sin(normalizedX * 5.4 + staticTime * .00008) * .16 + particle.branch * (.045 + .08 * Math.sin(normalizedX * Math.PI)));
+        const corridorPull = particle.x > calmBoundary ? (corridorCenter - particle.y) * (.00022 + particle.z * .00034) : 0;
         const angle = Math.sin(particle.y * .006 + staticTime * .0001 + particle.seed) * .75 + Math.cos(particle.x * .003 - staticTime * .00007) * .38;
-        const flowX = (.56 + Math.cos(angle) * .28) * depthSpeed;
+        const flowX = Math.cos(angle) * depthSpeed;
         const flowY = Math.sin(angle) * depthSpeed + corridorPull;
         let forceX = 0;
         let forceY = 0;
@@ -571,19 +483,19 @@ export default function LivingSonicField() {
           const distance = Math.max(30, Math.hypot(dx, dy));
           if (distance < 150) { const force = (1 - distance / 150) * .055; forceX += dx / distance * force; forceY += dy / distance * force; }
         }
-        const targetX = width * .8 + Math.cos(particle.seed * TAU) * width * .035;
-        const targetY = height * (width < 700 ? .68 : .51) + Math.sin(particle.seed * TAU * 1.7) * height * .045;
+        const targetX = width * .69 + Math.cos(particle.seed * TAU) * width * .13;
+        const targetY = height * .51 + Math.sin(particle.seed * TAU * 1.7) * height * .17;
         const assemble = structure * (particle.seed % 1 > .72 ? .008 : .0012);
         particle.vx = particle.vx * .94 + flowX * .06 + (targetX - particle.x) * assemble * .012 + forceX;
         particle.vy = particle.vy * .94 + flowY * .06 + (targetY - particle.y) * assemble * .012 + forceY;
         particle.x += particle.vx;
         particle.y += particle.vy;
         if (particle.x < -20) particle.x = width + 20;
-        if (particle.x > width * .84) { particle.x = -20 - (particle.seed % 1) * width * .12; particle.y = ((particle.seed * 19.37 + time * .000013) % 1) * height; }
+        if (particle.x > width + 20) particle.x = -20;
         if (particle.y < -20) particle.y = height + 20;
         if (particle.y > height + 20) particle.y = -20;
 
-        const textCalm = particle.x < calmBoundary ? .2 : 1;
+        const textCalm = particle.x < calmBoundary ? .13 : 1;
         const displayPoint = deformedPoint(particle.x, particle.y, particle.z, staticTime);
         const alpha = (.035 + displayPoint.z * .3) * textCalm * (1 + displayPoint.displacement * .09);
         const size = .28 + displayPoint.z * displayPoint.z * 1.55;
@@ -599,8 +511,8 @@ export default function LivingSonicField() {
           context.beginPath(); context.moveTo(displayPoint.x, displayPoint.y); context.lineTo(trailPoint.x, trailPoint.y); context.stroke();
         }
       }
-      drawPerceptualFlow(staticTime);
       drawRipples(staticTime);
+      drawScaffold(staticTime, structure, vibration, wave);
       if (!reduceMotion.matches) frame = requestAnimationFrame(render);
     };
 
