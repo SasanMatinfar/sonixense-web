@@ -88,8 +88,12 @@ export default function Homepage() {
       <SiteHeader />
       <main id="main-content">
         <section className="hero hero--living palette-a" aria-labelledby="hero-title">
-          <LivingSonicField />
-          <ShapeComposition variant="nested-portal" intensity="high" />
+          <div className="hero__geometry-layer" aria-hidden="true">
+            <ShapeComposition variant="nested-portal" intensity="high" />
+          </div>
+          <div className="hero__signal-layer" aria-hidden="true">
+            <LivingSonicField />
+          </div>
           <Container className="hero__grid">
             <div className="hero__copy">
               <SectionLabel>SoniXense</SectionLabel>
