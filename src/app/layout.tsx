@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import brandIcon from "../../SoniXense-Brand-Kit/02-Web/favicon/favicon.svg";
+import brandIcon from "../../SoniXense-Brand-Kit/02-Web/favicon/favicon-colour.svg";
 import brandAppleIcon from "../../SoniXense-Brand-Kit/02-Web/favicon/apple-touch-icon.png";
 import brandOgImage from "../../SoniXense-Brand-Kit/02-Web/social/og-image-1200x630.png";
 
