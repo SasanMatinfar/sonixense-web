@@ -134,10 +134,10 @@ export default function LivingSonicField() {
             if (previous && visibility > .075) {
               const coralAccent = ripple.coral && harmonic === 0 && sample % 9 === 0;
               context.strokeStyle = coralAccent
-                ? `rgba(219,95,66,${visibility * .4})`
-                : `rgba(103,180,194,${visibility * (.23 + ripple.complexity * .13)})`;
+                ? `rgba(187,92,118,${visibility * .4})`
+                : `rgba(166,90,117,${visibility * (.23 + ripple.complexity * .13)})`;
               context.lineWidth = .38 + harmonicStrength * .26;
-              context.shadowColor = `rgba(103,180,194,${visibility * .1})`;
+              context.shadowColor = `rgba(166,90,117,${visibility * .1})`;
               context.shadowBlur = harmonic === 0 ? 1.8 : 0;
               context.beginPath();
               context.moveTo(previous.x, previous.y);
@@ -146,8 +146,8 @@ export default function LivingSonicField() {
             }
             if (sample % (harmonic + 3) === 0 && visibility > .13) {
               context.fillStyle = ripple.coral && harmonic === 0 && sample % 11 === 0
-                ? `rgba(219,95,66,${visibility * .62})`
-                : `rgba(103,180,194,${visibility * .76})`;
+                ? `rgba(187,92,118,${visibility * .62})`
+                : `rgba(166,90,117,${visibility * .76})`;
               context.beginPath();
               context.arc(x, y, .32 + ripple.complexity * .42 * harmonicStrength, 0, TAU);
               context.fill();
@@ -163,15 +163,15 @@ export default function LivingSonicField() {
           const x = travel * 1.12 + u * packetLength * 1.35;
           const y = Math.sin(u * TAU * (1.2 + ripple.frequency * .16) - age * TAU) * amplitude * 1.45 + Math.sin(u * 5 + ripple.seed) * amplitude * .35;
           if (diffuseEnvelope < .08 || (sample + Math.floor(ripple.seed * 10)) % 3 === 0) continue;
-          context.fillStyle = `rgba(103,180,194,${diffuseEnvelope * .1})`;
+          context.fillStyle = `rgba(166,90,117,${diffuseEnvelope * .1})`;
           context.beginPath();
           context.arc(x, y, .45 + ripple.complexity * .3, 0, TAU);
           context.fill();
         }
 
-        context.strokeStyle = `rgba(103,180,194,${envelope * .035})`;
+        context.strokeStyle = `rgba(166,90,117,${envelope * .035})`;
         context.lineWidth = 1.4 + ripple.complexity;
-        context.shadowColor = `rgba(103,180,194,${envelope * .025})`;
+        context.shadowColor = `rgba(166,90,117,${envelope * .025})`;
         context.shadowBlur = 5;
         context.beginPath();
         context.moveTo(-packetLength * .18, 0);
@@ -250,10 +250,10 @@ export default function LivingSonicField() {
             const coralEdge = edgeExcitation > .24;
             const deformationVisibility = .92 + (nodePoint.displacement + candidatePoint.displacement) * .075;
             context.strokeStyle = coralEdge
-              ? `rgba(219,95,66,${edgeLife * (.27 + edgeExcitation * .3) * deformationVisibility})`
-              : `rgba(86,166,181,${edgeLife * (.24 + depth * .28 + excitation * .11) * deformationVisibility})`;
+              ? `rgba(187,92,118,${edgeLife * (.27 + edgeExcitation * .3) * deformationVisibility})`
+              : `rgba(166,90,117,${edgeLife * (.24 + depth * .28 + excitation * .11) * deformationVisibility})`;
             context.lineWidth = .36 + (nodePoint.z + candidatePoint.z) * .21;
-            context.shadowColor = coralEdge ? `rgba(219,95,66,${edgeExcitation * .2})` : `rgba(103,180,194,${excitation * .1})`;
+            context.shadowColor = coralEdge ? `rgba(187,92,118,${edgeExcitation * .2})` : `rgba(166,90,117,${excitation * .1})`;
             context.shadowBlur = edgeExcitation > .38 || excitation > .6 ? 2.5 : 0;
             context.beginPath();
             context.moveTo(nodePoint.x, nodePoint.y);
@@ -266,8 +266,8 @@ export default function LivingSonicField() {
           const nodeExcitation = particleExcitation(node, time);
           const nodePoint = deformedPoint(node.x, node.y, node.z, time);
           context.fillStyle = nodeExcitation > .08
-            ? `rgba(219,95,66,${Math.min(.92, (nodeAlpha + nodeExcitation * .72) * (1 + nodePoint.displacement * .08))})`
-            : `rgba(103,180,194,${nodeAlpha * (1 + nodePoint.displacement * .08)})`;
+            ? `rgba(187,92,118,${Math.min(.92, (nodeAlpha + nodeExcitation * .72) * (1 + nodePoint.displacement * .08))})`
+            : `rgba(166,90,117,${nodeAlpha * (1 + nodePoint.displacement * .08)})`;
           context.beginPath();
           context.arc(nodePoint.x, nodePoint.y, .4 + nodePoint.z * 1.15, 0, TAU);
           context.fill();
@@ -345,10 +345,10 @@ export default function LivingSonicField() {
         const midpointY = (nodePoint.y + candidatePoint.y) * .5 + Math.sin(node.seed * 11 + topologyTime) * distance * .055;
         const bridgeExcitation = Math.max(particleExcitation(node, time), particleExcitation(candidate, time - 1600) * .58);
         context.strokeStyle = bridgeExcitation > .22
-          ? `rgba(219,95,66,${Math.max(0, life) * (.18 + bridgeExcitation * .24)})`
-          : `rgba(74,143,162,${Math.max(0, life) * (.17 + depth * .2)})`;
+          ? `rgba(187,92,118,${Math.max(0, life) * (.18 + bridgeExcitation * .24)})`
+          : `rgba(116,77,111,${Math.max(0, life) * (.17 + depth * .2)})`;
         context.lineWidth = .32 + depth * .3;
-        context.shadowColor = `rgba(103,180,194,${bridgeExcitation * .08})`;
+        context.shadowColor = `rgba(166,90,117,${bridgeExcitation * .08})`;
         context.shadowBlur = bridgeExcitation > .38 ? 2 : 0;
         context.beginPath();
         context.moveTo(nodePoint.x, nodePoint.y);
@@ -361,7 +361,7 @@ export default function LivingSonicField() {
       const eventY = centerY - height * .025;
       const eventStrength = Math.sin(Math.min(1, vibration) * Math.PI);
       const eventPoint = deformedPoint(eventX, eventY, .78, time);
-      context.fillStyle = `rgba(219,95,66,${eventStrength * .78})`;
+      context.fillStyle = `rgba(187,92,118,${eventStrength * .78})`;
       context.beginPath(); context.arc(eventPoint.x, eventPoint.y, (2.1 + eventStrength * 1.6) * (1 + eventPoint.displacement * .04), 0, TAU); context.fill();
 
       if (wave > 0 && wave < 1) {
@@ -434,12 +434,12 @@ export default function LivingSonicField() {
             if (visible) {
               const coral = strand === 0 && index % 13 === 0;
               const opacity = morph * amplitudeEnvelope * strandStrength;
-              context.fillStyle = coral ? `rgba(219,95,66,${opacity * .5})` : `rgba(103,180,194,${opacity * .42})`;
+              context.fillStyle = coral ? `rgba(187,92,118,${opacity * .5})` : `rgba(166,90,117,${opacity * .42})`;
               context.beginPath();
               context.arc(packetPoint.x, packetPoint.y, (coral ? 1.55 : .8 + strandStrength * .28) * (1 + packetPoint.displacement * .04), 0, TAU);
               context.fill();
               if (previousPoint && index % 5 !== 0 && fragment > .05) {
-                context.strokeStyle = `rgba(103,180,194,${opacity * (strand === 0 ? .2 : .09)})`;
+                context.strokeStyle = `rgba(166,90,117,${opacity * (strand === 0 ? .2 : .09)})`;
                 context.lineWidth = strand === 0 ? .48 : .34;
                 context.beginPath();
                 context.moveTo(previousPoint.x, previousPoint.y);
@@ -501,12 +501,12 @@ export default function LivingSonicField() {
         const size = .28 + displayPoint.z * displayPoint.z * 1.55;
         const excitation = particleExcitation(particle, staticTime) * (particle.x < calmBoundary ? .15 : 1);
         context.fillStyle = excitation > .025
-          ? `rgba(219,95,66,${Math.min(.94, alpha * .75 + excitation * .86)})`
-          : `rgba(103,180,194,${alpha})`;
+          ? `rgba(187,92,118,${Math.min(.94, alpha * .75 + excitation * .86)})`
+          : `rgba(166,90,117,${alpha})`;
         context.beginPath(); context.arc(displayPoint.x, displayPoint.y, size * (1 + excitation * .32), 0, TAU); context.fill();
         if (particle.z > .75 && particle.seed % 1 > .68) {
           const trailPoint = deformedPoint(particle.x - particle.vx * 14, particle.y - particle.vy * 14, particle.z, staticTime);
-          context.strokeStyle = `rgba(74,143,162,${alpha * .35})`;
+          context.strokeStyle = `rgba(116,77,111,${alpha * .35})`;
           context.lineWidth = .45;
           context.beginPath(); context.moveTo(displayPoint.x, displayPoint.y); context.lineTo(trailPoint.x, trailPoint.y); context.stroke();
         }

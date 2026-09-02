@@ -1,0 +1,38 @@
+:root {
+  /* SoniXense — brand colour tokens */
+  --sx-ink: #0E2F38;
+  --sx-ink-deep: #071D23;
+  --sx-paper: #F7F7F5;
+  --sx-white: #FFFFFF;
+  --sx-mist: #E4E7E8;
+  --sx-slate: #5C6E75;
+  --sx-slate-light: #8C9CA1;
+  --sx-indigo: #12303F;
+  --sx-plum: #5A4870;
+  --sx-orchid: #A75B84;
+  --sx-coral: #BC5560;
+  --sx-ember: #AE462A;
+  --sx-accent: #8A4A6E;
+  --sx-accent-on-dark: #DA9BBB;
+
+  /* signal gradient */
+  --sx-gradient: linear-gradient(135deg, #12303F 0%, #5A4870 28%, #A75B84 52%, #BC5560 72%, #AE462A 100%);
+
+  /* type */
+  --sx-font-display: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --sx-font-text: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --sx-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* spacing — 8px base */
+  --sx-space-1: 4px;
+  --sx-space-2: 8px;
+  --sx-space-3: 12px;
+  --sx-space-4: 16px;
+  --sx-space-5: 24px;
+  --sx-space-6: 32px;
+  --sx-space-7: 48px;
+  --sx-space-8: 64px;
+  --sx-space-9: 96px;
+  --sx-space-10: 128px;
+  --sx-radius-sm: 6px;  --sx-radius: 12px;  --sx-radius-lg: 22px;
+}

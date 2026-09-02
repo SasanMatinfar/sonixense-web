@@ -575,7 +575,7 @@ function MainContent() {
               {founders.map((founder) => (
                 <article
                   key={founder.id}
-                  className="group relative flex min-h-[17.5rem] sm:min-h-[18.5rem] flex-col items-center border border-white/10 bg-[linear-gradient(180deg,rgba(24,66,82,0.6)_0%,rgba(11,34,44,0.92)_100%)] px-3 sm:px-4 py-4 sm:py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.03]"
+                  className="group relative flex min-h-[17.5rem] sm:min-h-[18.5rem] flex-col items-center border border-white/10 bg-[#704E6D] px-3 sm:px-4 py-4 sm:py-6 text-center transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.03]"
                 >
                   <span className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-[#E9C9DF]/50 to-transparent" />
                   <button

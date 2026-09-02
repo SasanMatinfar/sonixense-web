@@ -1,19 +1,45 @@
 import "./globals.css";
-import { Inter, Syne } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import brandIcon from "../../SoniXense-Brand-Kit/02-Web/favicon/favicon.svg";
+import brandAppleIcon from "../../SoniXense-Brand-Kit/02-Web/favicon/apple-touch-icon.png";
+import brandOgImage from "../../SoniXense-Brand-Kit/02-Web/social/og-image-1200x630.png";
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Inter/Inter-Regular.ttf", weight: "400" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Inter/Inter-Medium.ttf", weight: "500" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Inter/Inter-SemiBold.ttf", weight: "600" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Inter/Inter-Bold.ttf", weight: "700" },
+  ],
   variable: "--font-body",
   display: "swap",
 });
 
-const syne = Syne({
-  subsets: ["latin"],
+const manrope = localFont({
+  src: [
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Manrope/Manrope-Light.ttf", weight: "300" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Manrope/Manrope-Regular.ttf", weight: "400" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Manrope/Manrope-Medium.ttf", weight: "500" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Manrope/Manrope-SemiBold.ttf", weight: "600" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/Manrope/Manrope-Bold.ttf", weight: "700" },
+  ],
   variable: "--font-heading",
   display: "swap",
 });
 
-export const metadata = {
+const plexMono = localFont({
+  src: [
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/IBM-Plex-Mono/IBMPlexMono-Regular.ttf", weight: "400" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/IBM-Plex-Mono/IBMPlexMono-Medium.ttf", weight: "500" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/IBM-Plex-Mono/IBMPlexMono-SemiBold.ttf", weight: "600" },
+    { path: "../../SoniXense-Brand-Kit/05-Fonts/IBM-Plex-Mono/IBMPlexMono-Bold.ttf", weight: "700" },
+  ],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
   metadataBase: new URL("https://sonixense.com"),
   title: { default: "SoniXense — Beyond Vision", template: "%s | SoniXense" },
   description:
@@ -27,8 +53,8 @@ export const metadata = {
     siteName: "soniXense",
     images: [
       {
-        url: "/images/teaser.png",
-        alt: "soniXense — The Future of Multisensory Interaction",
+        url: brandOgImage.src,
+        alt: "SoniXense — Beyond Vision",
       },
     ],
     type: "website",
@@ -38,14 +64,16 @@ export const metadata = {
     title: "SoniXense — Beyond Vision",
     description:
       "Intelligent auditory interaction and sonification for complex systems, with surgery as the first frontier.",
-    images: ["/images/teaser.png"],
+    images: [brandOgImage.src],
   },
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
+    icon: brandIcon.src,
+    shortcut: brandIcon.src,
+    apple: brandAppleIcon.src,
   },
 };
+
+export const viewport: Viewport = { themeColor: "#071D23" };
 
 export default function RootLayout({
   children,
@@ -54,7 +82,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${syne.variable} antialiased`}>
+      <body className={`${inter.variable} ${manrope.variable} ${plexMono.variable} antialiased`}>
         {children}
       </body>
     </html>

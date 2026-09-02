@@ -1,0 +1,281 @@
+{
+  "color": {
+    "ink": {
+      "hex": "#0E2F38",
+      "rgb": [
+        14,
+        47,
+        56
+      ],
+      "cmyk": [
+        75,
+        16,
+        0,
+        78
+      ],
+      "note": "Primary. Wordmark, headings, body text on light."
+    },
+    "ink-deep": {
+      "hex": "#071D23",
+      "rgb": [
+        7,
+        29,
+        35
+      ],
+      "cmyk": [
+        80,
+        17,
+        0,
+        86
+      ],
+      "note": "Dark surfaces, app chrome, social grounds."
+    },
+    "paper": {
+      "hex": "#F7F7F5",
+      "rgb": [
+        247,
+        247,
+        245
+      ],
+      "cmyk": [
+        0,
+        0,
+        1,
+        3
+      ],
+      "note": "Default light ground."
+    },
+    "white": {
+      "hex": "#FFFFFF",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "cmyk": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "note": "Cards, reversed type."
+    },
+    "mist": {
+      "hex": "#E4E7E8",
+      "rgb": [
+        228,
+        231,
+        232
+      ],
+      "cmyk": [
+        2,
+        0,
+        0,
+        9
+      ],
+      "note": "Rules, borders, table lines."
+    },
+    "slate": {
+      "hex": "#5C6E75",
+      "rgb": [
+        92,
+        110,
+        117
+      ],
+      "cmyk": [
+        21,
+        6,
+        0,
+        54
+      ],
+      "note": "Secondary text on light. AA at 5.3:1."
+    },
+    "slate-light": {
+      "hex": "#8C9CA1",
+      "rgb": [
+        140,
+        156,
+        161
+      ],
+      "cmyk": [
+        13,
+        3,
+        0,
+        37
+      ],
+      "note": "Tertiary text, captions. Large sizes only on light."
+    },
+    "indigo": {
+      "hex": "#12303F",
+      "rgb": [
+        18,
+        48,
+        63
+      ],
+      "cmyk": [
+        71,
+        24,
+        0,
+        75
+      ],
+      "note": "Signal ramp \u2014 stop 1."
+    },
+    "plum": {
+      "hex": "#5A4870",
+      "rgb": [
+        90,
+        72,
+        112
+      ],
+      "cmyk": [
+        20,
+        36,
+        0,
+        56
+      ],
+      "note": "Signal ramp \u2014 stop 2."
+    },
+    "orchid": {
+      "hex": "#A75B84",
+      "rgb": [
+        167,
+        91,
+        132
+      ],
+      "cmyk": [
+        0,
+        46,
+        21,
+        35
+      ],
+      "note": "Signal ramp \u2014 stop 3. Brand accent."
+    },
+    "coral": {
+      "hex": "#BC5560",
+      "rgb": [
+        188,
+        85,
+        96
+      ],
+      "cmyk": [
+        0,
+        55,
+        49,
+        26
+      ],
+      "note": "Signal ramp \u2014 stop 4."
+    },
+    "ember": {
+      "hex": "#AE462A",
+      "rgb": [
+        174,
+        70,
+        42
+      ],
+      "cmyk": [
+        0,
+        60,
+        76,
+        32
+      ],
+      "note": "Signal ramp \u2014 stop 5."
+    },
+    "accent": {
+      "hex": "#8A4A6E",
+      "rgb": [
+        138,
+        74,
+        110
+      ],
+      "cmyk": [
+        0,
+        46,
+        20,
+        46
+      ],
+      "note": "Accessible accent on light (6.4:1). Links, buttons."
+    },
+    "accent-on-dark": {
+      "hex": "#DA9BBB",
+      "rgb": [
+        218,
+        155,
+        187
+      ],
+      "cmyk": [
+        0,
+        29,
+        14,
+        15
+      ],
+      "note": "Accessible accent on dark (7.8:1). Links on ink."
+    }
+  },
+  "gradient": {
+    "signal": {
+      "angle": 135,
+      "stops": [
+        {
+          "offset": 0.0,
+          "hex": "#12303F"
+        },
+        {
+          "offset": 0.28,
+          "hex": "#5A4870"
+        },
+        {
+          "offset": 0.52,
+          "hex": "#A75B84"
+        },
+        {
+          "offset": 0.72,
+          "hex": "#BC5560"
+        },
+        {
+          "offset": 1.0,
+          "hex": "#AE462A"
+        }
+      ]
+    }
+  },
+  "font": {
+    "display": "Manrope",
+    "text": "Inter",
+    "mono": "IBM Plex Mono"
+  },
+  "space": {
+    "1": 4,
+    "2": 8,
+    "3": 12,
+    "4": 16,
+    "5": 24,
+    "6": 32,
+    "7": 48,
+    "8": 64,
+    "9": 96,
+    "10": 128
+  },
+  "radius": {
+    "sm": 6,
+    "md": 12,
+    "lg": 22
+  },
+  "logo": {
+    "clearspace_units": 42.0,
+    "min_width_px": {
+      "horizontal": 120,
+      "stacked": 90,
+      "mark": 24
+    },
+    "artboard": {
+      "horizontal": [
+        866,
+        169
+      ],
+      "mark": [
+        163,
+        169
+      ]
+    }
+  }
+}
