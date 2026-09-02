@@ -41,7 +41,7 @@ export default function LivingSonicField() {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      const count = coarsePointer.matches || width < 700 ? 240 : 700;
+      const count = coarsePointer.matches || width < 700 ? 110 : 280;
       particles = Array.from({ length: count }, (_, index) => ({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -464,7 +464,7 @@ export default function LivingSonicField() {
       const streamCount = mobile ? 4 : 6;
 
       context.save();
-      context.globalCompositeOperation = "screen";
+      context.globalCompositeOperation = "source-over";
       for (let stream = 0; stream < streamCount; stream++) {
         const identity = stream / Math.max(1, streamCount - 1) - .5;
         const sourceY = centerY + identity * height * (mobile ? .43 : .64) + (stream % 2 ? height * .035 : -height * .02);
@@ -501,12 +501,12 @@ export default function LivingSonicField() {
 
           const arrival = Math.min(1, progress / entryEnd);
           const absorptionFade = absorption === 0 ? 1 : Math.pow(1 - absorption, .9);
-          const opacity = (.08 + arrival * .34) * absorptionFade * (mobile ? .72 : 1);
+          const opacity = (.16 + arrival * .5) * absorptionFade * (mobile ? .82 : 1);
           const packet = .3 + .7 * Math.pow(Math.max(0, Math.sin(progress * TAU * 2.4 - phase * 3.2)), 5);
 
           if (previous) {
             context.strokeStyle = `rgba(${stream % 3 === 0 ? "218,155,187" : stream % 3 === 1 ? "187,92,118" : "161,92,130"},${opacity * (.38 + packet * .62)})`;
-            context.lineWidth = (.45 + arrival * 1.1) * (1 - absorption * .55);
+            context.lineWidth = (.8 + arrival * 1.65) * (1 - absorption * .5);
             context.shadowColor = "rgba(218,155,187,.32)";
             context.shadowBlur = arrival * 5;
             context.beginPath();
@@ -539,14 +539,16 @@ export default function LivingSonicField() {
       context.shadowBlur = 0;
     };
 
+    // Retain the richer field generator for future non-hero use without running
+    // its expensive topology pass on every hero frame.
+    void drawScaffold;
+
     const render = (time: number) => {
       if (!running) return;
       if (!visible) { frame = requestAnimationFrame(render); return; }
       const staticTime = reduceMotion.matches ? 6800 : time;
       const cycle = (staticTime % 14000) / 14000;
       const structure = reduceMotion.matches ? .7 : Math.max(0, Math.sin(Math.PI * Math.min(1, Math.max(0, (cycle - .18) / .62))));
-      const vibration = reduceMotion.matches ? .52 : Math.min(1, Math.max(0, (cycle - .4) / .3));
-      const wave = reduceMotion.matches ? .56 : Math.min(1, Math.max(0, (cycle - .53) / .31));
 
       context.clearRect(0, 0, width, height);
       const calmBoundary = width * .4;
@@ -599,7 +601,6 @@ export default function LivingSonicField() {
       }
       drawPerceptualFlow(staticTime);
       drawRipples(staticTime);
-      drawScaffold(staticTime, structure, vibration, wave);
       if (!reduceMotion.matches) frame = requestAnimationFrame(render);
     };
 

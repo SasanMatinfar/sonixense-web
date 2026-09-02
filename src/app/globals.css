@@ -391,7 +391,7 @@ h2 em,h1 em { color: var(--color-perception); font-style: normal; } h3 { line-he
 .hero.hero--living { background:var(--color-atmosphere); }
 .hero--living::after { z-index:0; background:rgba(12,29,36,.08); }
 .hero .shape-composition--nested-portal { z-index:1; }
-.hero .living-sonic-field { z-index:2; display:block; visibility:visible; width:100%; height:100%; opacity:1; filter:saturate(1.22) brightness(1.42); }
+.hero .living-sonic-field { z-index:2; display:block; visibility:visible; width:100%; height:100%; opacity:1; filter:none; }
 .hero>.site-container { position:relative; z-index:3; }
 .hero .shape-composition--nested-portal .shape-composition__field { opacity:.24; }
 .hero .shape-composition--nested-portal .shape-composition__field--1 { right:-16%; width:40%; background:#744d6f; animation:hero-capsule-outer 8s ease-in-out infinite; }
@@ -404,7 +404,7 @@ h2 em,h1 em { color: var(--color-perception); font-style: normal; } h3 { line-he
 @keyframes hero-capsule-inner { 45%,58% { opacity:.3; transform:scale(1.012); } }
 @media (max-width:640px) {
   .hero--living::after { background:rgba(12,29,36,.06); }
-  .living-sonic-field { filter:saturate(1.08) brightness(1.12); }
+  .living-sonic-field { filter:none; }
   .hero .shape-composition--nested-portal .shape-composition__field { opacity:.16; }
   .hero .shape-composition--nested-portal .shape-composition__field--1 { right:-52%; top:23%; width:78%; height:78%; }
   .hero .shape-composition--nested-portal .shape-composition__field--2 { right:-30%; top:35%; width:50%; height:60%; }
