@@ -390,11 +390,8 @@ h2 em,h1 em { color: var(--color-perception); font-style: normal; } h3 { line-he
 /* Hero restraint: preserve the portal signature without competing with the living sonic field. */
 .hero.hero--living { background:var(--color-atmosphere); }
 .hero--living::after { z-index:0; background:rgba(12,29,36,.08); }
-.hero__geometry-layer,.hero__signal-layer { position:absolute; inset:0; pointer-events:none; }
-.hero__geometry-layer { z-index:1; }
-.hero__signal-layer { z-index:2; mix-blend-mode:screen; }
-.hero__geometry-layer .shape-composition { z-index:auto; }
-.hero__signal-layer .living-sonic-field { z-index:auto; filter:saturate(1.18) brightness(1.35); }
+.hero .shape-composition--nested-portal { z-index:1; }
+.hero .living-sonic-field { z-index:2; display:block; visibility:visible; width:100%; height:100%; opacity:1; filter:saturate(1.22) brightness(1.42); }
 .hero>.site-container { position:relative; z-index:3; }
 .hero .shape-composition--nested-portal .shape-composition__field { opacity:.24; }
 .hero .shape-composition--nested-portal .shape-composition__field--1 { right:-16%; width:40%; background:#744d6f; animation:hero-capsule-outer 8s ease-in-out infinite; }
