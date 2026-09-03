@@ -495,6 +495,14 @@ export default function Homepage() {
                     <span key={system}>{system}</span>
                   ))}
                 </div>
+                <div className="integration-home__layer">
+                  <small>Software intelligence layer</small>
+                  <strong>SoniXense auditory intelligence</strong>
+                </div>
+                <p className="integration-home__result">
+                  <span>↓</span>
+                  Human perception
+                </p>
                 <p>Bring auditory intelligence into your system.</p>
                 <ButtonLink href="mailto:contact@sonixense.com" secondary>
                   Talk to us
