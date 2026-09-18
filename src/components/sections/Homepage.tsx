@@ -531,29 +531,6 @@ export default function Homepage() {
         </section>
 
         <section
-          className="institutions palette-c"
-          aria-label="Research origins, funding, and scientific community"
-        >
-          <Container>
-            <p>Research origins · funding · scientific community</p>
-            <div>
-              {associations.map((item) => (
-                <figure key={item.name}>
-                  <Image
-                    src={item.image}
-                    alt={`${item.name} logo`}
-                    width={item.width}
-                    height={item.height}
-                    sizes="120px"
-                  />
-                  <figcaption>{item.name}</figcaption>
-                </figure>
-              ))}
-            </div>
-          </Container>
-        </section>
-
-        <section
           id="contact"
           className="section closing-cta palette-c"
           aria-labelledby="closing-title"
@@ -566,6 +543,38 @@ export default function Homepage() {
             <ButtonLink href="mailto:contact@sonixense.com">
               Talk to us →
             </ButtonLink>
+          </Container>
+        </section>
+        <section
+          className="institutions ecosystem"
+          aria-labelledby="ecosystem-title"
+        >
+          <Container>
+            <h2 id="ecosystem-title">
+              Research origins · funding · scientific community
+            </h2>
+            <div className="ecosystem__logos">
+              {associations.map((item) => (
+                <a
+                  className={`ecosystem__logo ecosystem__logo--${item.id}`}
+                  key={item.id}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={item.name}
+                >
+                  <span className="ecosystem__mark">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={item.width}
+                      height={item.height}
+                      sizes="(max-width: 640px) 42vw, 220px"
+                    />
+                  </span>
+                </a>
+              ))}
+            </div>
           </Container>
         </section>
       </main>
