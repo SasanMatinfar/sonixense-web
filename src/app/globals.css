@@ -619,3 +619,197 @@ h2 em,h1 em { color: var(--color-perception); font-style: normal; } h3 { line-he
 .profile-footer { display:flex; justify-content:space-between; gap:2rem; padding-top:3rem; }.profile-footer>div { display:flex; flex-wrap:wrap; gap:1.5rem; }.profile-footer a { color:#eef2ed; font:.72rem var(--font-body); letter-spacing:.09em; text-transform:uppercase; text-underline-offset:.35em; }
 @media(max-width:700px) { .founder-profile { width:100vw; height:100dvh; max-height:none; border:0; }.profile-inner { padding:1.25rem 1.25rem 4rem; }.founder-profile .founder-dialog__close { margin:.75rem .75rem -3rem 0; }.profile-opening { display:flex; flex-direction:column; align-items:stretch; gap:1.5rem; padding-bottom:2rem; }.profile-opening__copy { padding-top:3rem; }.founder-profile .profile-opening h2 { font-size:clamp(3.2rem,14vw,5.5rem); }.profile-portrait { min-height:24rem; }.profile-biography,.profile-work { grid-template-columns:1fr; }.profile-awards__grid { grid-template-columns:1fr; }.profile-award--featured { grid-column:auto; }.profile-highlights>div { grid-template-columns:1fr; gap:.5rem; }.profile-metrics { gap:1rem; }.profile-metrics strong { font-size:clamp(2.6rem,11vw,4rem); }.profile-footer { flex-direction:column; }.team .founder-card__body { min-height:16rem; } }
 .profile-media img { z-index:1; transition:opacity .2s ease; }
+
+/* Perception gap: a single spatial argument, continuing the hero material. */
+.problem { position:relative; overflow:hidden; min-height:100svh; padding-top:clamp(7rem,10vw,10rem)!important; background:#002b34; }
+.problem::before { content:""; position:absolute; z-index:0; inset:-9rem 0 auto; height:16rem; background:linear-gradient(180deg,rgba(18,62,71,.72),rgba(0,43,52,0)); pointer-events:none; }
+.problem>.site-container { position:relative; z-index:1; }
+.problem .section-label { color:#bb5c76; }
+.problem__statements { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(15rem,.65fr); align-items:end; gap:clamp(2rem,7vw,8rem); }
+.problem__statements h2 { max-width:15ch; margin:0; color:#fff; font:600 clamp(3rem,6.2vw,6.25rem)/.94 var(--font-heading); letter-spacing:-.06em; }
+.problem__statements h2 span,.problem__statements h2 strong { display:block; }
+.problem__statements h2 strong { margin-top:.12em; color:#d7a8b2; font:inherit; }
+.problem__statements p { max-width:19rem; margin:0 0 .5rem; color:rgba(230,240,237,.72); font:500 clamp(1.15rem,1.8vw,1.55rem)/1.28 var(--font-heading); }
+.problem__statements p em { color:#e1b6bd; font-style:normal; }
+.perception-field { position:relative; height:clamp(29rem,46vw,37rem); margin-top:clamp(2.5rem,4vw,4rem); overflow:hidden; border-top:1px solid rgba(255,255,255,.09); }
+.perception-field canvas { position:absolute; inset:0; width:100%; height:100%; }
+.perception-field p,.perception-field strong,.perception-field span { position:relative; z-index:1; text-transform:uppercase; }
+.perception-field__machine-title { position:absolute!important; top:2rem; left:0; color:#bb5c76; font:700 .64rem var(--font-mono); letter-spacing:.15em; }
+.perception-field__machine-labels { position:absolute; left:0; top:4.25rem; display:flex; max-width:47%; flex-wrap:wrap; gap:.65rem 1.25rem; }
+.perception-field__machine-labels span { color:rgba(210,233,229,.5); font:500 .58rem var(--font-mono); letter-spacing:.1em; }
+.perception-field__interface { position:absolute; left:70%; top:50%; display:flex; width:8.5rem; flex-direction:column; gap:.5rem; transform:translate(-50%,-50%); text-align:center; }
+.perception-field__interface strong { margin-bottom:.5rem; color:#ddb3ba; font:700 .63rem/1.3 var(--font-mono); letter-spacing:.11em; }
+.perception-field__interface span { color:rgba(225,230,225,.45); font:500 .52rem var(--font-mono); letter-spacing:.08em; }
+.perception-field__decision { position:absolute; left:91%; top:55%; display:flex; align-items:center; gap:1rem; transform:translate(-50%,-50%); white-space:nowrap; }
+.perception-field__decision i { width:.46rem; height:.46rem; border-radius:50%; background:#cf7c82; }
+.perception-field__decision strong { color:#fff; font:600 .68rem/1.4 var(--font-mono); letter-spacing:.1em; }
+@media (max-width:768px) {
+  .problem { padding-top:6.5rem!important; }
+  .problem__statements { grid-template-columns:1fr; gap:1.5rem; }
+  .problem__statements h2 { font-size:clamp(3rem,13vw,4.7rem); }
+  .problem__statements p { max-width:17rem; }
+  .perception-field { height:38rem; margin-top:2.5rem; }
+  .perception-field__machine-title { top:1.5rem; }
+  .perception-field__machine-labels { top:3.8rem; max-width:100%; gap:.55rem 1rem; }
+  .perception-field__interface { left:50%; top:62%; width:11rem; }
+  .perception-field__decision { left:50%; top:88%; flex-direction:column; gap:.75rem; transform:translate(-50%,-50%); text-align:center; }
+}
+
+/* Perception field refinement: seven distinct source families converge into one decision. */
+.perception-field__machine-labels { top:4.2rem; display:flex; max-width:none; flex-direction:column; gap:clamp(.8rem,1.6vh,1.25rem); }
+.perception-field__machine-labels span { position:relative; min-width:7.8rem; padding-right:1.35rem; text-align:right; }
+.perception-field__machine-labels span::after { content:""; position:absolute; right:.15rem; top:50%; width:.28rem; height:.28rem; border-radius:50%; background:rgba(172,214,210,.42); transform:translateY(-50%); }
+.perception-field__interface { width:10.5rem; gap:.62rem; }
+.perception-field__interface strong { margin-bottom:.65rem; color:#e1bbc0; font-size:.88rem; line-height:1.25; letter-spacing:.105em; }
+.perception-field__interface span { color:rgba(225,230,225,.58); font-size:.67rem; letter-spacing:.075em; }
+.perception-field__decision { right:0; left:auto; gap:0; transform:translateY(-50%); }
+.perception-field__decision i { width:.72rem; height:.72rem; box-shadow:0 0 0 .3rem rgba(207,124,130,.07); }
+.perception-field__decision strong { font-size:.82rem; line-height:1.35; }
+@media (max-width:768px) {
+  .perception-field__machine-labels { top:3.8rem; display:grid; grid-template-columns:1fr 1fr; gap:.55rem 1.5rem; }
+  .perception-field__machine-labels span { min-width:0; padding-right:1rem; text-align:right; }
+  .perception-field__interface { top:66%; width:13rem; gap:.5rem; }
+  .perception-field__interface strong { font-size:.82rem; }
+  .perception-field__interface span { font-size:.62rem; }
+  .perception-field__decision { left:50%; top:90%; transform:translate(-50%,-50%); }
+  .perception-field__decision strong { font-size:.76rem; }
+}
+
+/* Source origins use measured normalized positions across 71% of field height. */
+.perception-field__machine-labels { inset:0 auto 0 0; width:9rem; display:block; }
+.perception-field__machine-labels span { position:absolute; right:0; width:100%; }
+.perception-field__machine-labels span:nth-child(1) { top:15%; }
+.perception-field__machine-labels span:nth-child(2) { top:26.83%; }
+.perception-field__machine-labels span:nth-child(3) { top:38.67%; }
+.perception-field__machine-labels span:nth-child(4) { top:50.5%; }
+.perception-field__machine-labels span:nth-child(5) { top:62.33%; }
+.perception-field__machine-labels span:nth-child(6) { top:74.17%; }
+.perception-field__machine-labels span:nth-child(7) { top:86%; }
+@media (max-width:768px) {
+  .perception-field__machine-labels { inset:0 auto 0 0; width:8.4rem; display:block; }
+  .perception-field__machine-labels span:nth-child(1) { top:15%; }
+  .perception-field__machine-labels span:nth-child(2) { top:19.67%; }
+  .perception-field__machine-labels span:nth-child(3) { top:24.33%; }
+  .perception-field__machine-labels span:nth-child(4) { top:29%; }
+  .perception-field__machine-labels span:nth-child(5) { top:33.67%; }
+  .perception-field__machine-labels span:nth-child(6) { top:38.33%; }
+  .perception-field__machine-labels span:nth-child(7) { top:43%; }
+}
+@media (max-width:768px) { .perception-field__decision { right:auto; } }
+
+/* Perception gap hierarchy: human responsibility carries the strongest supporting emphasis. */
+.problem__statements h2 { font-size:clamp(2.7rem,5vw,5rem); }
+.problem__statements p { max-width:24rem; font-size:clamp(1.55rem,2.5vw,2.35rem); line-height:1.16; }
+.perception-field__machine-title { font-size:.58rem; letter-spacing:.14em; }
+.perception-field__machine-labels span { font-size:.52rem; letter-spacing:.085em; }
+@media (max-width:768px) {
+  .problem__statements h2 { font-size:clamp(2.65rem,11.5vw,4.1rem); }
+  .problem__statements p { max-width:20rem; font-size:clamp(1.35rem,6.2vw,1.75rem); }
+  .perception-field__machine-title { font-size:.55rem; }
+  .perception-field__machine-labels span { font-size:.49rem; }
+}
+
+/* Stronger perception-gap hierarchy requested: the human responsibility statement dominates. */
+.problem__statements { grid-template-columns:minmax(0,.85fr) minmax(22rem,1.15fr); }
+.problem__statements h2 { max-width:17ch; font-size:clamp(2rem,3.15vw,3.35rem); line-height:1; letter-spacing:-.045em; }
+.problem__statements p { max-width:10ch; margin-bottom:0; font-size:clamp(3.35rem,5.6vw,5.8rem); line-height:.96; letter-spacing:-.055em; }
+.perception-field__machine-title { font-size:.52rem; }
+.perception-field__machine-labels span { font-size:.68rem; }
+@media (max-width:768px) {
+  .problem__statements { grid-template-columns:1fr; }
+  .problem__statements h2 { max-width:16ch; font-size:clamp(1.8rem,8.5vw,2.8rem); }
+  .problem__statements p { max-width:9ch; font-size:clamp(3rem,15vw,4.7rem); }
+  .perception-field__machine-title { font-size:.5rem; }
+  .perception-field__machine-labels span { font-size:.6rem; }
+}
+
+/* Final Perception Gap intro hierarchy: compact setup, one dominant conclusion. */
+.problem__statements { grid-template-columns:minmax(15rem,.48fr) minmax(0,1.52fr); align-items:end; gap:clamp(3rem,7vw,8rem); }
+.problem__statements h2 { max-width:16ch; color:var(--color-foreground); font-size:clamp(1.85rem,2.75vw,2.9rem); line-height:1.03; letter-spacing:-.04em; opacity:.78; }
+.problem__statements h2 strong { margin-top:.65em; color:var(--color-foreground); font:inherit; }
+.problem__statements h2 em { color:var(--color-action); font-style:normal; }
+.problem__statements .problem__conclusion { max-width:none; margin:0; color:var(--color-foreground); font:600 clamp(5.2rem,8.8vw,9rem)/.84 var(--font-heading); letter-spacing:-.075em; opacity:1; }
+.problem__conclusion span { display:block; white-space:nowrap; }
+.problem__conclusion em { color:var(--color-action); font-style:normal; }
+.problem .perception-field { margin-top:clamp(2.75rem,4.5vw,4.5rem); }
+@media (max-width:768px) {
+  .problem__statements { grid-template-columns:1fr; align-items:start; gap:clamp(3rem,10vw,4.5rem); }
+  .problem__statements h2 { max-width:15ch; font-size:clamp(1.65rem,7.3vw,2.35rem); }
+  .problem__statements .problem__conclusion { max-width:100%; font-size:clamp(4rem,19vw,6rem); line-height:.86; }
+  .problem__conclusion span { white-space:normal; }
+  .problem .perception-field { margin-top:3.25rem; }
+}
+
+/* Perception gap statement: the constraints form the frame around the decision. */
+.problem__statements {
+  position:relative;
+  display:block;
+  margin-top:clamp(3.5rem,6vw,6rem);
+  min-height:clamp(25rem,42vw,38rem);
+  padding:clamp(5.5rem,8vw,8rem) clamp(2rem,5vw,5rem) clamp(4.5rem,7vw,7rem) clamp(18rem,31vw,30rem);
+}
+.problem__statements h2 { display:contents; }
+.problem__statements .problem__top-label {
+  position:absolute;
+  top:0;
+  left:clamp(1.5rem,4vw,4rem);
+  display:inline-block;
+  max-width:none;
+  padding:0;
+  color:rgba(225,241,238,.8);
+  background:transparent;
+  font:600 clamp(1.35rem,2.3vw,2.4rem)/1 var(--font-heading);
+  letter-spacing:-.035em;
+  white-space:nowrap;
+  opacity:1;
+  transform:translateY(-52%);
+}
+.problem__statements .problem__side-label {
+  position:absolute;
+  top:50%;
+  left:0;
+  display:block;
+  width:clamp(10rem,19vw,17rem);
+  margin:0;
+  padding:1.15rem clamp(1.5rem,3vw,3rem) 1.15rem 0;
+  color:rgba(225,241,238,.84);
+  background:transparent;
+  font:600 clamp(1.7rem,3.1vw,3.25rem)/.98 var(--font-heading);
+  letter-spacing:-.035em;
+  white-space:normal;
+  opacity:1;
+  transform:translateY(-50%);
+}
+.problem__statements .problem__side-label em { color:var(--color-action); font-style:normal; }
+.problem__statements .problem__conclusion {
+  max-width:8ch;
+  margin:0;
+  font-size:clamp(5.2rem,9.2vw,9.5rem);
+}
+@media (max-width:768px) {
+  .problem__statements {
+    margin-top:4rem;
+    min-height:0;
+    padding:8.5rem 1.25rem 4rem 2.25rem;
+  }
+  .problem__statements .problem__top-label {
+    left:.75rem;
+    max-width:calc(100% - 1.5rem);
+    padding:0;
+    font-size:clamp(1.05rem,5vw,1.45rem);
+    white-space:normal;
+  }
+  .problem__statements .problem__side-label {
+    top:3.4rem;
+    left:0;
+    width:auto;
+    max-width:13rem;
+    padding:.55rem 1.15rem .55rem 0;
+    font-size:clamp(1.3rem,6.2vw,1.8rem);
+    transform:none;
+  }
+  .problem__statements .problem__conclusion {
+    max-width:7ch;
+    font-size:clamp(3.7rem,17vw,5.8rem);
+  }
+}

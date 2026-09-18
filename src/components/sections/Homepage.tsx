@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties } from "react";
 import Container from "@/components/ui/Container";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ButtonLink from "@/components/ui/ButtonLink";
 import SignatureI from "@/components/ui/SignatureI";
 import LivingSonicField from "@/components/sonic-field/LivingSonicField";
+import PerceptionGapField from "@/components/PerceptionGapField";
 import VideoFacade from "@/components/media/VideoFacade";
 import FounderCard from "@/components/team/FounderCard";
 import SiteHeader from "@/components/SiteHeader";
@@ -14,8 +14,6 @@ import SkipLink from "@/components/layout/SkipLink";
 import ShapeComposition from "@/components/visual/ShapeComposition";
 import {
   associations,
-  humanEvents,
-  machineEvents,
   technologyBehaviors,
 } from "@/content/home";
 import { people } from "@/content/people";
@@ -121,55 +119,19 @@ export default function Homepage() {
         </section>
 
         <section className="section problem palette-a" aria-labelledby="problem-title">
-          <ShapeComposition variant="overlap" intensity="medium" />
           <Container>
             <SectionLabel>The perception gap</SectionLabel>
             <div className="problem__statements">
               <h2 id="problem-title">
-                Machines can scale perception.
-                <br />
-                Human attention cannot.
+                <span className="problem__top-label">Machines can scale perception.</span>
+                <strong className="problem__side-label">Human attention <em>cannot.</em></strong>
               </h2>
-              <strong>
-                Humans still make the <em>critical decisions.</em>
-              </strong>
+              <p className="problem__conclusion">
+                <span>Decision is</span>
+                <span>still <em>human.</em></span>
+              </p>
             </div>
-            <div
-              className="capacity-field"
-              aria-label="Scalable machine capacity compared with finite human perceptual bandwidth"
-            >
-              <div className="capacity-field__machine">
-                <p>Machine capacity expands</p>
-                <div>
-                  {machineEvents.map((event, index) => (
-                    <span
-                      key={event}
-                      style={{ "--capacity-index": index } as CSSProperties}
-                    >
-                      {event}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="capacity-field__bridge">
-                <i />
-                <strong>
-                  Perceptual
-                  <br />
-                  interface
-                </strong>
-                <i />
-              </div>
-              <div className="capacity-field__human">
-                <p>Human capacity remains finite</p>
-                <div>
-                  {humanEvents.map((event) => (
-                    <span key={event}>{event}</span>
-                  ))}
-                </div>
-                <small>One human decision-maker</small>
-              </div>
-            </div>
+            <PerceptionGapField />
           </Container>
         </section>
 
