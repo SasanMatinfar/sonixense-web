@@ -586,3 +586,36 @@ h2 em,h1 em { color: var(--color-perception); font-style: normal; } h3 { line-he
   .institutions .site-container>div { grid-template-columns:repeat(2,1fr); gap:2rem; }
   .closing-cta { min-height:55vh; }
 }
+
+/* Co-founder editorial profiles */
+.team .founder-card__body { min-height:17rem; }
+.team .founder-card__expertise { color:#d7e5e3; opacity:1; }
+.founder-card__signals { display:flex; flex-direction:column; gap:.22rem; margin:1rem 0; color:#d1dddb; font-size:.68rem; line-height:1.35; }
+.founder-card__signals span::before { content:"+ "; color:#eaa5a1; }
+.founder-profile { width:min(88vw,90rem); max-width:none; height:min(92svh,62rem); max-height:none; margin:auto; overflow-y:auto; overscroll-behavior:contain; border:1px solid rgba(229,240,237,.25); background:#082b32; color:#f7f7f5; }
+.founder-profile::backdrop { background:rgba(2,17,22,.86); backdrop-filter:blur(9px); }
+.founder-profile .founder-dialog__close { position:sticky; top:1rem; float:right; margin:1rem 1rem -3.5rem 0; z-index:4; border-color:rgba(247,247,245,.4); background:#103b43; color:#fff; }
+.profile-inner { padding:clamp(1.5rem,4vw,5rem); }
+.profile-kicker { margin:0 0 1.3rem; color:#9ed0d1; font:700 .65rem/1.4 var(--font-body); letter-spacing:.16em; text-transform:uppercase; }
+.profile-opening { display:grid; grid-template-columns:1.25fr .75fr; min-height:30rem; gap:clamp(2rem,5vw,6rem); align-items:end; padding-bottom:clamp(2rem,4vw,4rem); border-bottom:1px solid rgba(247,247,245,.24); }
+.profile-opening__copy { padding:3rem 0 0; }
+.founder-profile .profile-opening h2 { max-width:12ch; margin:0 0 1.5rem; color:#fff; font-size:clamp(3.3rem,6.8vw,7.5rem); line-height:.88; letter-spacing:-.07em; }
+.profile-discipline { max-width:22ch; color:#a8d6d5; font:600 clamp(1.3rem,2.25vw,2.4rem)/1.13 var(--font-heading); }
+.profile-statement { max-width:40rem; color:#d6dfdd; font-size:clamp(.95rem,1.2vw,1.15rem); }
+.profile-portrait { position:relative; min-height:clamp(20rem,38vw,38rem); overflow:hidden; background:#1d4b52; }
+.profile-portrait img { filter:saturate(.72); }
+.profile-signature,.profile-biography,.profile-awards,.profile-highlights,.profile-work { padding:clamp(3rem,6vw,6rem) 0; border-bottom:1px solid rgba(247,247,245,.24); }
+.profile-signature { max-width:62rem; }
+.founder-profile .profile-signature h3 { margin:0 0 1.25rem; color:#fff; font:600 clamp(2.4rem,5vw,5rem)/.95 var(--font-heading); letter-spacing:-.055em; }
+.profile-signature>p:not(.profile-kicker) { max-width:45rem; color:#d9e5e2; font-size:clamp(1.1rem,1.65vw,1.5rem); }
+.profile-sequence { display:flex; flex-wrap:wrap; gap:.7rem 1.2rem; margin-top:2.5rem; color:#a8d6d5; font:.7rem var(--font-body); letter-spacing:.12em; text-transform:uppercase; }
+.profile-sequence span { display:flex; gap:1.2rem; }.profile-sequence i { color:#dd8f87; font-style:normal; }
+.profile-biography { display:grid; grid-template-columns:1fr 2fr; gap:2rem; }.profile-biography>div { max-width:46rem; }.profile-biography p:not(.profile-kicker) { margin-bottom:1.4rem; color:#d6dfdd; font-size:clamp(.95rem,1.2vw,1.1rem); line-height:1.75; }
+.profile-awards__grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3rem 1.5rem; }.profile-award--featured { grid-column:1/-1; }.profile-award .profile-media { height:clamp(13rem,25vw,22rem); }.profile-award--featured .profile-media { height:clamp(17rem,35vw,30rem); }.profile-award h3 { margin:1.25rem 0 .3rem; color:#fff; font:600 clamp(1.5rem,2.4vw,2.7rem)/1 var(--font-heading); }.profile-award p { margin:0; color:#a8d6d5; font-size:.9rem; }
+.profile-media { position:relative; display:flex; flex-direction:column; justify-content:end; padding:1.5rem; min-height:15rem; border:1px solid rgba(168,214,213,.32); background:linear-gradient(135deg,#123e47,#0b2e36); color:#a8d6d5; overflow:hidden; }.profile-media::before { content:""; position:absolute; inset:1rem; border:1px solid rgba(168,214,213,.15); pointer-events:none; }.profile-media__line { position:absolute; left:15%; top:45%; width:70%; height:1px; background:linear-gradient(90deg,transparent,#88bcba,transparent); transform:rotate(-13deg); opacity:.5; }.profile-media>span:not(.profile-media__line) { position:relative; font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; }.profile-media strong { position:relative; margin-top:.25rem; color:#eef2ed; font:600 1.1rem var(--font-heading); }
+.profile-metrics { display:grid; grid-template-columns:repeat(2,1fr); gap:2rem; padding:clamp(3rem,5vw,5rem) 0; border-bottom:1px solid rgba(247,247,245,.24); }.profile-metrics div { display:flex; flex-direction:column; }.profile-metrics strong { color:#fff; font:600 clamp(3.5rem,7vw,7rem)/.95 var(--font-heading); letter-spacing:-.06em; }.profile-metrics span { color:#a8d6d5; font-size:.73rem; letter-spacing:.13em; text-transform:uppercase; }
+.profile-highlights>div { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }.profile-highlights article,.profile-work article { padding-top:1rem; border-top:1px solid rgba(247,247,245,.24); }.profile-highlights h3,.profile-work h3 { margin:0 0 .65rem; color:#fff; font:600 clamp(1.15rem,1.8vw,1.7rem)/1.15 var(--font-heading); }.profile-highlights p,.profile-work p { max-width:39rem; color:#cadbd8; font-size:.9rem; }
+.profile-work { display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(2rem,5vw,5rem); }.profile-work article { padding-block:1rem; }.profile-work__lead { margin-bottom:2rem; }.profile-work__lead h3 { font-size:clamp(1.5rem,2.5vw,2.5rem); }.profile-work>.profile-media { min-height:24rem; align-self:start; }
+.profile-footer { display:flex; justify-content:space-between; gap:2rem; padding-top:3rem; }.profile-footer>div { display:flex; flex-wrap:wrap; gap:1.5rem; }.profile-footer a { color:#eef2ed; font:.72rem var(--font-body); letter-spacing:.09em; text-transform:uppercase; text-underline-offset:.35em; }
+@media(max-width:700px) { .founder-profile { width:100vw; height:100dvh; max-height:none; border:0; }.profile-inner { padding:1.25rem 1.25rem 4rem; }.founder-profile .founder-dialog__close { margin:.75rem .75rem -3rem 0; }.profile-opening { display:flex; flex-direction:column; align-items:stretch; gap:1.5rem; padding-bottom:2rem; }.profile-opening__copy { padding-top:3rem; }.founder-profile .profile-opening h2 { font-size:clamp(3.2rem,14vw,5.5rem); }.profile-portrait { min-height:24rem; }.profile-biography,.profile-work { grid-template-columns:1fr; }.profile-awards__grid { grid-template-columns:1fr; }.profile-award--featured { grid-column:auto; }.profile-highlights>div { grid-template-columns:1fr; gap:.5rem; }.profile-metrics { gap:1rem; }.profile-metrics strong { font-size:clamp(2.6rem,11vw,4rem); }.profile-footer { flex-direction:column; }.team .founder-card__body { min-height:16rem; } }
+.profile-media img { z-index:1; transition:opacity .2s ease; }
