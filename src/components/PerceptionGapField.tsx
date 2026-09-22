@@ -9,7 +9,11 @@ const hash = (n: number) => { const x = Math.sin(n * 127.1) * 43758.5453; return
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (v: number) => { v = clamp(v); return v * v * (3 - 2 * v); };
 
-export default function PerceptionGapField() {
+type Geometry = { x0: number; xspan: number; iface: number; human: number; humanY: number; top: number; span: number; mid: number; lineTop: number; lineBot: number };
+const fallbackGeometry: Geometry = { x0: .115, xspan: .61, iface: .7, human: .91, humanY: .78, top: .34, span: .54, mid: .62, lineTop: .27, lineBot: .92 };
+
+// The canvas and the typography share one coordinate system: the layout is defined once, as CSS variables on the field.
+export default function PerceptionGapField({ children }: { children?: React.ReactNode }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = ref.current;
@@ -17,9 +21,27 @@ export default function PerceptionGapField() {
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const field = canvas.parentElement as HTMLElement;
+    const geo: Geometry = { ...fallbackGeometry };
+    const charge: Record<string, string> = {};
     let width = 1, height = 1, frame = 0, visible = true;
 
+    function readGeometry() {
+      const style = getComputedStyle(field);
+      (Object.keys(fallbackGeometry) as (keyof Geometry)[]).forEach((key) => {
+        const name = "--gap-" + key.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase());
+        const value = parseFloat(style.getPropertyValue(name));
+        geo[key] = Number.isNaN(value) ? fallbackGeometry[key] : value;
+      });
+    }
+    // Typography answers the animation subtly; the copy is fully legible at every value.
+    function setCharge(name: string, value: number) {
+      const rounded = value.toFixed(2);
+      if (charge[name] !== rounded) { charge[name] = rounded; field.style.setProperty(name, rounded); }
+    }
+
     function resize() {
+      readGeometry();
       const bounds = canvas!.getBoundingClientRect();
       width = Math.max(1, bounds.width); height = Math.max(1, bounds.height);
       const ratio = Math.min(devicePixelRatio || 1, 1.5);
@@ -40,9 +62,9 @@ export default function PerceptionGapField() {
       const motionRate = .00007 + hash(strandSeed + 9.2) * .00024;
       const strandPhase = hash(strandSeed + 13.6) * TAU;
       if (mobile) {
-        const startX = width * .31 + (sibling - (siblings - 1) / 2) * 1.2;
-        const startY = height * (.15 + familyPosition * .28);
-        const bottleneckY = height * .66;
+        const startX = width * geo.x0 + (sibling - (siblings - 1) / 2) * 1.2;
+        const startY = height * (geo.top + familyPosition * geo.span);
+        const bottleneckY = height * (geo.mid + .04);
         const y = startY + progress * (bottleneckY - startY);
         const converge = smooth((progress - .6) / .36);
         const character = family === 4 ? .65 : family === 3 ? 1.3 : family === 5 ? .82 : 1;
@@ -52,9 +74,9 @@ export default function PerceptionGapField() {
         const x = startX * (1 - converge) + width * .5 * converge + (familyMotion + fineMotion + turbulence) * (1 - converge * .72);
         return { x, y, compression: smooth((y / bottleneckY - .77) / .23) };
       }
-      const startY = height * (.15 + familyPosition * .71) + (sibling - (siblings - 1) / 2) * 1.45;
-      const x = width * .115 + progress * width * .61;
-      const bottleneckX = width * .7;
+      const startY = height * (geo.top + familyPosition * geo.span) + (sibling - (siblings - 1) / 2) * 1.45;
+      const x = width * geo.x0 + progress * width * geo.xspan;
+      const bottleneckX = width * geo.iface;
       const converge = smooth((progress - .58) / .38);
       const character = family === 4 ? .62 : family === 3 ? 1.3 : family === 5 ? .76 : 1;
       const broad = Math.sin(progress * TAU * frequency + strandPhase) * height * (.006 + sibling * .0008) * character * amplitude;
@@ -62,7 +84,7 @@ export default function PerceptionGapField() {
       const chirp = Math.sin(progress * progress * TAU * (3.5 + hash(strandSeed + 10) * 7.5) + time * motionRate * .52) * height * (.0014 + hash(strandSeed + 14) * .0036) * Math.sin(progress * Math.PI);
       const localBurst = Math.sin(progress * TAU * (7 + hash(strandSeed + 18) * 6) - time * motionRate * 1.7) * height * .0045 * Math.exp(-Math.pow((progress - (.25 + hash(strandSeed + 21) * .46)) / (.07 + hash(strandSeed + 25) * .13), 2));
       const drift = Math.sin(progress * TAU * (.28 + hash(strandSeed + 17) * .56) + strandPhase * .7) * height * (.004 + hash(strandSeed + 20) * .009);
-      const y = startY * (1 - converge) + height * .55 * converge + (broad + fine + chirp + localBurst + drift) * (1 - converge * .72);
+      const y = startY * (1 - converge) + height * geo.mid * converge + (broad + fine + chirp + localBurst + drift) * (1 - converge * .72);
       return { x, y, compression: smooth((x / bottleneckX - .72) / .28) };
     }
 
@@ -74,6 +96,10 @@ export default function PerceptionGapField() {
       const cycle = reduced.matches ? .64 : (time % 9000) / 9000;
       const interfaceCharge = smooth((cycle - .48) / .2) * (1 - smooth((cycle - .78) / .14));
       const decisionCharge = smooth((cycle - .72) / .12) * (1 - smooth((cycle - .96) / .04));
+      const machineCharge = smooth(cycle / .34) * (1 - smooth((cycle - .62) / .2));
+      setCharge("--ch-m", reduced.matches ? .7 : machineCharge);
+      setCharge("--ch-i", reduced.matches ? .7 : interfaceCharge);
+      setCharge("--ch-d", reduced.matches ? .7 : decisionCharge);
       // Broad fields establish scale and depth without containing the machine side.
       const haze = ctx!.createRadialGradient(width * (mobile ? .5 : .38), height * .48, 20,
         width * (mobile ? .5 : .38), height * .48, width * .58);
@@ -149,8 +175,8 @@ export default function PerceptionGapField() {
       }
       ctx!.shadowBlur = 0;
 
-      const bx = mobile ? width * .5 : width * .7;
-      const by = mobile ? height * .62 : height * .55;
+      const bx = mobile ? width * .5 : width * geo.iface;
+      const by = height * geo.mid;
       // The interface is a constrained zone, not a funnel illustration.
       const gradient = mobile
         ? ctx!.createLinearGradient(0, by - 50, 0, by + 50)
@@ -161,7 +187,7 @@ export default function PerceptionGapField() {
       gradient.addColorStop(.52, "rgba(181,97,130,.11)");
       gradient.addColorStop(1, "rgba(181,97,130,0)");
       ctx!.fillStyle = gradient;
-      if (mobile) ctx!.fillRect(width * .1, by - 50, width * .8, 100); else ctx!.fillRect(bx - 50, height * .12, 100, height * .76);
+      if (mobile) ctx!.fillRect(width * .1, by - 50, width * .8, 100); else ctx!.fillRect(bx - 50, height * geo.lineTop, 100, height * (geo.lineBot - geo.lineTop));
 
       // The arriving samples charge the perceptual boundary before one decision fires.
       ctx!.save();
@@ -171,10 +197,10 @@ export default function PerceptionGapField() {
       ctx!.lineWidth = 1.25 + interfaceCharge * 2.6;
       ctx!.beginPath();
       if (mobile) { ctx!.moveTo(width * .16, by); ctx!.lineTo(width * .84, by); }
-      else { ctx!.moveTo(bx, height * .16); ctx!.lineTo(bx, height * .9); }
+      else { ctx!.moveTo(bx, height * geo.lineTop); ctx!.lineTo(bx, height * geo.lineBot); }
       ctx!.stroke();
       for (let dot = 0; dot < 18; dot++) {
-        const spread = (hash(dot * 7.3) - .5) * (mobile ? width * .62 : height * .68);
+        const spread = (hash(dot * 7.3) - .5) * (mobile ? width * .62 : height * (geo.lineBot - geo.lineTop) * .9);
         const offset = (hash(dot * 11.7) - .5) * (7 - interfaceCharge * 4);
         const x = mobile ? bx + spread : bx + offset;
         const y = mobile ? by + offset : by + spread;
@@ -187,14 +213,14 @@ export default function PerceptionGapField() {
       const pulse = reduced.matches ? .62 : decisionCharge;
       if (mobile) {
         ctx!.strokeStyle = "rgba(188,218,211,.25)"; ctx!.lineWidth = .7;
-        ctx!.beginPath(); ctx!.moveTo(bx, by + 6); ctx!.lineTo(bx, height * .88); ctx!.stroke();
+        ctx!.beginPath(); ctx!.moveTo(bx, by + 6); ctx!.lineTo(bx, height * geo.humanY); ctx!.stroke();
         ctx!.shadowColor = "rgba(246,131,143,.95)"; ctx!.shadowBlur = 5 + pulse * 24;
-        ctx!.fillStyle = `rgba(238,132,141,${.72 + pulse * .28})`; ctx!.beginPath(); ctx!.arc(bx, height * .88, 5.2 + pulse * 2.1, 0, TAU); ctx!.fill(); ctx!.shadowBlur = 0;
+        ctx!.fillStyle = `rgba(238,132,141,${.72 + pulse * .28})`; ctx!.beginPath(); ctx!.arc(bx, height * geo.humanY, 5.2 + pulse * 2.1, 0, TAU); ctx!.fill(); ctx!.shadowBlur = 0;
       } else {
         ctx!.strokeStyle = "rgba(188,218,211,.25)"; ctx!.lineWidth = .7;
-        ctx!.beginPath(); ctx!.moveTo(bx + 6, by); ctx!.lineTo(width * .91, by); ctx!.stroke();
+        ctx!.beginPath(); ctx!.moveTo(bx + 6, by); ctx!.lineTo(width * geo.human, by); ctx!.stroke();
         ctx!.shadowColor = "rgba(246,131,143,.95)"; ctx!.shadowBlur = 5 + pulse * 24;
-        ctx!.fillStyle = `rgba(238,132,141,${.72 + pulse * .28})`; ctx!.beginPath(); ctx!.arc(width * .91, by, 5.2 + pulse * 2.1, 0, TAU); ctx!.fill(); ctx!.shadowBlur = 0;
+        ctx!.fillStyle = `rgba(238,132,141,${.72 + pulse * .28})`; ctx!.beginPath(); ctx!.arc(width * geo.human, by, 5.2 + pulse * 2.1, 0, TAU); ctx!.fill(); ctx!.shadowBlur = 0;
       }
     }
 
@@ -207,11 +233,13 @@ export default function PerceptionGapField() {
     return () => { cancelAnimationFrame(frame); ro.disconnect(); io.disconnect(); reduced.removeEventListener("change", motion); };
   }, []);
 
-  return <div className="perception-field" aria-label="Many machine information streams converge through a constrained perceptual interface into one human decision point">
+  return <div className="gap-field" role="group" aria-label="Many machine information streams converge through a constrained perceptual interface into one human decision point">
     <canvas ref={ref} aria-hidden="true" />
-    <p className="perception-field__machine-title">Machine capacity expands</p>
-    <div className="perception-field__machine-labels">{labels.map(label => <span key={label}>{label}</span>)}</div>
-    <div className="perception-field__interface"><strong>Perceptual interface</strong>{limits.map(label => <span key={label}>{label}</span>)}</div>
-    <div className="perception-field__decision"><strong>One human<br />decision-maker</strong></div>
+    <p className="gap-field__machine-title">Machine capacity expands</p>
+    <i className="gap-field__axis" aria-hidden="true" />
+    <div className="gap-field__labels">{labels.map((label, i) => <span key={label} style={{ "--i": i } as React.CSSProperties}>{label}</span>)}</div>
+    <div className="gap-field__interface"><strong>Perceptual interface</strong>{limits.map(label => <span key={label}>{label}</span>)}</div>
+    <p className="gap-field__human">One human decision-maker</p>
+    {children}
   </div>;
 }

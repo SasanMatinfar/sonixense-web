@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./chapters.css";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import brandIcon from "../../SoniXense-Brand-Kit/02-Web/favicon/favicon-colour.svg";

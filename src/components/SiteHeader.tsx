@@ -1,13 +1,13 @@
 import MobileMenu from "@/components/layout/MobileMenu";
 import HomeLogoLink from "@/components/brand/HomeLogoLink";
 
-const links = [["Technology", "/#technology"], ["Applications", "/#surgery"], ["ArtScience", "/#artscience"], ["Team", "/#team"], ["Company", "/#company"]] as const;
+const links = [["Technology", "/#technology"], ["Surgery", "/#surgery"], ["Science", "/#science"], ["Team", "/#team"], ["Build", "/#build"]] as const;
 
 export default function SiteHeader() {
   return <header className="site-header">
     <div className="site-container site-header__inner">
       <HomeLogoLink />
-      <nav className="desktop-nav" aria-label="Primary navigation">{links.map(([label, href]) => <a key={label} href={href}>{label}</a>)}<a href="mailto:contact@sonixense.com">Get in Touch</a></nav>
+      <nav className="desktop-nav" aria-label="Primary navigation">{links.map(([label, href]) => <a key={label} href={href}>{label}</a>)}</nav>
       <MobileMenu />
     </div>
   </header>;

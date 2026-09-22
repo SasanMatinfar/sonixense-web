@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const links = [
-  ["01", "Technology", "/#technology"], ["02", "Applications", "/#surgery"],
-  ["03", "ArtScience", "/#artscience"], ["04", "Team", "/#team"], ["05", "Company", "/#company"],
+  ["01", "Technology", "/#technology"], ["02", "Surgery", "/#surgery"],
+  ["03", "Science", "/#science"], ["04", "Team", "/#team"], ["05", "Build", "/#build"],
 ] as const;
 
 export default function MobileMenu() {
