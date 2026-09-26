@@ -61,6 +61,7 @@ export default function ArtSciencePage() {
                   key={video.id}
                   provider="vimeo"
                   videoId={video.id}
+                  poster={`/images/artscience/${video.id}.jpg`}
                   title={video.title}
                 />
               ))}

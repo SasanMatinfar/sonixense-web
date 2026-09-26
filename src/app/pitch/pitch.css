@@ -1,0 +1,49 @@
+.pitch { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; aspect-ratio: 16 / 9; overflow: hidden; color: #f3f6f3; background: #071d23; container-type: inline-size; }
+.pitch--technology { background: radial-gradient(ellipse at 52% 45%, #85516e, #422a43 65%, #291f32); }
+.pitch header { position: absolute; top: 5.5%; left: 5%; }
+.pitch header p { font: 600 1cqw var(--font-mono), monospace; text-transform: uppercase; letter-spacing: .16em; color: #eea2ad; margin: 0 0 1cqw; }
+.pitch h1 { font: 600 2.8cqw/1.12 var(--font-heading), sans-serif; letter-spacing: -.04em; margin: 0; }
+.pitch__diagram { position: absolute; left: 5%; right: 5%; top: 24%; bottom: 5%; }
+.pitch .gap-field { --gap-x0: .115; --gap-xspan: .357; --gap-iface: .46; --gap-top: .2; --gap-span: .64; --gap-mid: .52; --gap-human: .9; --gap-line-top: .13; --gap-line-bot: .9; --gap-axis: .1; --gap-col: 52%; }
+.pitch .gap-field__labels span, .pitch .tf__sources span { font-size: 1cqw; letter-spacing: .07em; }
+.pitch .gap-field__machine-title { font-size: 1.05cqw; opacity: var(--pitch-machine, 0); }
+.pitch .gap-field__axis { opacity: var(--pitch-machine, 0); }
+.pitch .gap-field__interface { opacity: var(--pitch-interface, 0); gap: .7cqw; }
+.pitch .gap-field__interface strong { font-size: 1.15cqw; }
+.pitch .gap-field__interface span { font-size: .95cqw; }
+.pitch .gap-field__human { font-size: 1.15cqw; top: 57%; opacity: var(--pitch-human, 0); }
+.pitch .gap-field__conclusion { font-size: 3cqw; top: 68%; opacity: var(--pitch-conclusion, 0); }
+.pitch .tf { height: 100%; padding: 0; }
+.pitch .tf canvas { inset: 0; height: 100%; mask-image: none; }
+.pitch .tf__capsule, .pitch .tf__sources { inset: 0; }
+.pitch .tf__capsule { opacity: var(--pitch-core, 0); }
+.pitch .tf__capsule-caption { display: none; }
+.pitch .tf__capsule-frame { width: 14%; height: 47%; }
+.pitch .tf__sources, .pitch .gap-field__labels { opacity: var(--pitch-sources, 1); }
+
+/* The main diagram keeps its coordinates; the pipeline occupies the lower margin. */
+.pitch .tf__stages { display: block; top: 94%; bottom: auto; height: 5cqw; }
+.pitch .tf__stage { top: 0; bottom: auto; width: 15%; padding-top: .8cqw; gap: .3cqw; grid-template-rows: .7cqw .85cqw auto; }
+.pitch .tf__stage::before { height: .45cqw; }
+.pitch .tf__stage span { font-size: .7cqw; }
+.pitch .tf__stage strong { font-size: .8cqw; }
+.pitch .tf__stage em { font-size: .7cqw; }
+
+/* Native 1920 × 1080 technology slide. These rules never target the website. */
+.pitch--technology { width: 1920px; height: 1080px; max-height: none; }
+.pitch--technology header { left: 120px; top: 54px; width: 1100px; }
+.pitch--technology header p { font-size: 20px; margin-bottom: 28px; }
+.pitch--technology h1 { font-size: 58px; line-height: 1.1; letter-spacing: -.04em; }
+.pitch--technology h1 em { color: #f3bdcd; font-style: normal; }
+.pitch--technology .pitch__intro { position: absolute; top: 250px; right: 120px; width: 510px; margin: 0; color: rgba(255,255,255,.76); font-size: 26px; line-height: 1.45; text-align: right; }
+.pitch--technology .pitch__diagram { left: 120px; right: 120px; top: 330px; bottom: auto; height: 540px; }
+.pitch--technology .tf__sources span { font-size: 20px; letter-spacing: .055em; color: rgba(240,222,231,.78); }
+.pitch--technology .tf__capsule-frame { width: 152px; height: 254px; }
+.pitch--technology .tf__stages { top: 554px; height: 124px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+.pitch--technology .tf__stage,
+.pitch--technology .tf__stage:first-child,
+.pitch--technology .tf__stage:last-child { position: relative; left: auto; top: 0; width: auto; transform: none; padding-top: 20px; gap: 12px; grid-template-rows: 18px 23px auto; opacity: .9; }
+.pitch--technology .tf__stage::before { height: 10px; }
+.pitch--technology .tf__stage span { font-size: 18px; }
+.pitch--technology .tf__stage strong { font-size: 21px; }
+.pitch--technology .tf__stage em { font-size: 18px; line-height: 1.35; letter-spacing: 0; color: rgba(243,226,232,.78); }

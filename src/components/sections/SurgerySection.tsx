@@ -118,7 +118,7 @@ export default function SurgerySection() {
               <ul className="artscience__lineage">{lineage.map((t) => <li key={t}>{t}</li>)}</ul>
               <Link href="/artscience" className="artscience__link">Explore SoniXense ArtScience →</Link>
             </div>
-            <VideoFacade provider="vimeo" videoId="329952640" title="SoniXense ArtScience film" />
+            <VideoFacade provider="vimeo" videoId="329952640" poster="/images/artscience/329952640.jpg" title="SoniXense ArtScience film" />
           </div>
         </div>
       </Container>

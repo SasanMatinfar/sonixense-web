@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { drawMachineField, fallbackGeometry, SOURCES } from "./fields/machineField";
+import { outputSignal, receptionActivity, perceptionResonances, resonanceEnvelope } from "./fields/outputSignals";
+import { runPitchTimeline } from "./fields/pitchTimeline";
 import Image from "next/image";
 import techLogo from "../../SoniXense-Brand-Kit/01-Logo/SVG/sonixense-horizontal-white.svg";
 
@@ -17,9 +20,9 @@ import techLogo from "../../SoniXense-Brand-Kit/01-Logo/SVG/sonixense-horizontal
  *
  * MANY MACHINE SIGNALS → SONIXENSE → HIGH-LEVEL INSIGHTS + HARMONIZED CUES + SOUND.
  *
- * Everything is a pure function of the cycle time `t`; everything downstream
- * reacts only after an excitation pulse has arrived at its position along the
- * transformation (arr(u)), so the motion is causal rather than decorative.
+ * Website time is unbounded; particles recycle independently at zero opacity.
+ * Pitch mode shows the fully established diagram immediately. Reception and cognition
+ * respond to the same carriers, with a short propagation delay.
  * (u, v) → pixels via pt()/ax()/ac()/at() — the one place the mobile/desktop
  * axis swap happens; every drawing routine below is orientation-agnostic.
  */
@@ -29,24 +32,16 @@ const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (v: number) => { v = clamp(v); return v * v * (3 - 2 * v); };
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 const hash = (n: number) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
-const CYCLE = 15.5;    // seconds for one full cause → effect → harmonize → settling loop
-const ARR0 = .5;       // the first signal arrives — almost immediately, not after a dead pause
-const ARRK = 5.6;      // seconds for the excitation to travel u = 0 → 1 (a brisk, legible sweep)
-const T_STATIC = 7.4;  // frame shown under prefers-reduced-motion (mid-harmonization)
-
-const arr = (u: number) => ARR0 + u * ARRK;
-const env = (tau: number) => (tau <= 0 ? 0 : Math.min(1, (1 - Math.exp(-tau / .45)) * Math.exp(-tau / 3.4) * 1.6));
-const ex = (u: number, t: number) => env(t - arr(u)) * (1 - smooth((t - 14) / 1.3));
-const pulse = (u: number, t: number, w = .35) => Math.exp(-Math.pow((t - arr(u)) / w, 2));
+const T_STATIC = 7.4;  // Representative reduced-motion frame.
 
 // The transformation's zones, as fractions of the primary axis. The box sits on the exact
 // centre of the field. boxL/boxR/formR/hornR are recomputed every resize (see below) from
-// the capsule image's own rendered pixel size, so the streams always terminate at its real
+// the transformation layer's rendered size, so streams terminate at its real
 // edges — never an independent rectangle that happens to sit near it.
-const CAPSULE_ASPECT = 684 / 922; // the identity pattern's own width:height
+const CAPSULE_ASPECT = 684 / 922; // Retain the established central object proportions.
 const FORM_OFFSET = .065, HORN_OFFSET = .185; // how far formR/hornR sit past boxR
-const GATHER_U = .85; // past this, the three outcomes gather back toward the speaker
-const U = { streamStart: .04, boxL: .385, boxR: .615, formR: .68, hornR: .8, outEnd: .95 };
+const GATHER_U = .84; // past this, the three outcomes gather back toward the listener
+const DEFAULT_U = { streamStart: .04, boxL: .385, boxR: .615, formR: .68, hornR: .8, outEnd: .9 };
 
 const STAGES = [
   { name: "Input", detail: "multimodal data", u: .12, um: .1 },
@@ -56,42 +51,6 @@ const STAGES = [
   { name: "Render", detail: "real-time · spatial audio", u: .93, um: .92 },
 ] as const;
 
-// Section 02's machine-capacity language, continued at the same density: same seven sources,
-// same order, same number of strands per source (9, matching Section 02's own desktop count),
-// each recognised by behaviour rather than an icon.
-const SOURCES = [
-  { name: "Sensors", v: .08, n: 9 },
-  { name: "Imaging", v: .22, n: 9 },
-  { name: "Tracking", v: .38, n: 9 },
-  { name: "AI", v: .53, n: 9 },
-  { name: "Simulation", v: .67, n: 9 },
-  { name: "Robotics", v: .8, n: 9 },
-  { name: "Data", v: .93, n: 9 },
-] as const;
-const TRACKING_SRC = SOURCES.findIndex((s) => s.name === "Tracking");
-
-type Strand = { src: number; v0: number; vEnd: number; ph: number; seed: number };
-const STRANDS: Strand[] = (() => {
-  const out: Strand[] = [];
-  SOURCES.forEach((s, si) => {
-    const gap = si === 1 ? .0105 : .013;
-    for (let j = 0; j < s.n; j++) {
-      out.push({ src: si, v0: s.v + (j - (s.n - 1) / 2) * gap, vEnd: 0, ph: hash(out.length * 1.9) * TAU, seed: out.length + 1 });
-    }
-  });
-  const n = out.length, spread = .108; // the box receives distinct, still-legible entry points, not one merged point
-  out.forEach((s, k) => { s.vEnd = .5 + (k - (n - 1) / 2) * (2 * spread / (n - 1)); });
-  return out;
-})();
-const FAMILY_START = SOURCES.map((_, fam) => STRANDS.findIndex((s) => s.src === fam));
-// One excitation head per source, not just tracking — the causal wave visibly arrives at
-// every source at once, each riding a representative strand from its own family.
-const HEAD_STRANDS = SOURCES.map((_, fam) => FAMILY_START[fam] + Math.floor(SOURCES[fam].n / 2));
-const IMAGING_RANGE = (() => {
-  const start = STRANDS.findIndex((s) => s.src === 1);
-  return [start, start + SOURCES[1].n - 1] as const;
-})();
-
 // Three related outcomes, never a random scatter: a slow, stable pair for the dominant
 // system states ("high-level insights"), a mid pair moving in coordination ("harmonized
 // perceptual cues"), and a quicker pair that reads as the clearest acoustic behaviour
@@ -100,9 +59,9 @@ const IMAGING_RANGE = (() => {
 // character. Each cluster is two voices, close enough to read as one coordinated pair.
 const BASE_FREQ = 3.4;
 const CLUSTERS = [
-  { key: "insights", label: "High-level insights", centerV: -.078, harmonic: 1, amp: 1.3, mix: .7 },
-  { key: "cues", label: "Harmonized perceptual cues", centerV: 0, harmonic: 1.5, amp: 1, mix: .58 },
-  { key: "sound", label: "Sound", centerV: .078, harmonic: 2.2, amp: .82, mix: .84 },
+  { key: "insights", label: "Information-rich sound", centerV: -.145, harmonic: 1, amp: 1.3, mix: .7 },
+  { key: "cues", label: "Perceptual audio cues", centerV: 0, harmonic: 1.5, amp: 1, mix: .58 },
+  { key: "sound", label: "Spatial sound", centerV: .145, harmonic: 2.2, amp: .82, mix: .84 },
 ] as const;
 // Three voices per cluster now, not two — and each one carries its own small amplitude
 // jitter, a tiny (still-harmonic) detune and its own lane spacing, so a cluster reads as
@@ -122,16 +81,18 @@ const VOICES: Outcome[] = CLUSTERS.flatMap((_, ci) => Array.from({ length: VOICE
 
 type Geo = { mobile: boolean; W: number; H: number; Ld: number; Ad: number; S: number; cx: number; boxHalf: number };
 
-export default function TechnologyField() {
+export default function TechnologyField({ pitch = false }: { pitch?: boolean }) {
   const wrap = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = ref.current, root = wrap.current;
     if (!canvas || !root) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
+    const ctx = canvas.getContext("2d", { alpha: true, willReadFrequently: pitch });
     if (!ctx) return;
+    let lastPitchTime = 0;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const U = { ...DEFAULT_U };
     const stageNodes = Array.from(root.querySelectorAll<HTMLElement>(".tf__stage"));
     const stageValue: string[] = [];
     let g: Geo = { mobile: false, W: 1, H: 1, Ld: 1, Ad: 1, S: 1, cx: .5, boxHalf: .205 };
@@ -151,14 +112,18 @@ export default function TechnologyField() {
       const zoneHpx = 2 * g.boxHalf * g.Ad, zoneWpx = zoneHpx * CAPSULE_ASPECT;
       const halfWFrac = (zoneWpx / 2) / g.Ld;
       U.boxL = .5 - halfWFrac; U.boxR = .5 + halfWFrac;
+      if (pitch) { U.boxL = .46; U.boxR = .54; }
       U.formR = U.boxR + FORM_OFFSET; U.hornR = U.boxR + HORN_OFFSET;
       root.style.setProperty("--capsule-h", `${zoneHpx * CAPSULE_OVERLAP}px`);
-      const ratio = Math.min(devicePixelRatio || 1, 1.5);
+      const ratio = pitch ? 1 : Math.min(devicePixelRatio || 1, 2);
       canvas.width = Math.round(W * ratio); canvas.height = Math.round(H * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      draw(reduced.matches ? T_STATIC : now());
+      draw(pitch ? lastPitchTime : reduced.matches ? T_STATIC : now());
     };
-    const now = () => (((performance.now() - start) / 1000) % CYCLE + CYCLE) % CYCLE;
+    // Website time never wraps. Every carrier and deformation owns its own phase.
+    const now = () => (performance.now() - start) / 1000;
+    const ex = (u: number, t: number) => .22 + .2 * (1 + Math.sin(t * .61 - u * 6.2)) / 2
+        + .18 * (1 + Math.sin(t * .37 - u * 9.1 + 1.7)) / 2;
 
     const pt = (u: number, v: number): [number, number] =>
       g.mobile ? [g.cx + (v - .5) * g.Ad, u * g.H] : [u * g.W, g.cx + (v - .5) * g.Ad];
@@ -178,180 +143,14 @@ export default function TechnologyField() {
       return `rgba(${r | 0},${gr | 0},${b | 0},${clamp(a, 0, 1)})`;
     }
 
-    // Section 02's own motion, exactly: not a clean periodic wave per source, but five layered,
-    // per-strand-randomised terms — a broad carrier, a finer wobble, a chirp that grows across
-    // the strand, a localised burst, and a slow drift — the same heterogeneous, non-repeating
-    // texture "machine capacity expands" has. Sources are told apart by rendering (dotted,
-    // layered, dashed…), never by a distinct waveform.
-    function behaviour(s: Strand, u: number, t: number) {
-      const character = s.src === 3 ? 1.3 : s.src === 4 ? .62 : s.src === 5 ? .76 : 1;
-      const amplitude = .58 + hash(s.seed * 1.4) * 1.05;
-      const frequency = .62 + hash(s.seed * 4.8) * 1.7;
-      const rate = .07 + hash(s.seed * 9.2) * .24;
-      const broad = Math.sin(u * TAU * frequency + s.ph) * .012 * character * amplitude;
-      const fine = Math.sin(u * TAU * (1.8 + hash(s.seed * 3) * 3.8) - t * rate + s.ph * .37) * (.004 + hash(s.seed * 6) * .011);
-      const chirp = Math.sin(u * u * TAU * (3.5 + hash(s.seed * 10) * 7.5) + t * rate * .52) * (.003 + hash(s.seed * 14) * .008) * Math.sin(u * Math.PI);
-      const burst = Math.sin(u * TAU * (7 + hash(s.seed * 18) * 6) - t * rate * 1.7) * .009
-        * Math.exp(-Math.pow((u - (.25 + hash(s.seed * 21) * .46)) / (.07 + hash(s.seed * 25) * .13), 2));
-      const drift = Math.sin(u * TAU * (.28 + hash(s.seed * 17) * .56) + s.ph * .7) * (.007 + hash(s.seed * 20) * .016);
-      return broad + fine + chirp + burst + drift;
-    }
-    function strandV(s: Strand, u: number) {
-      const t = now();
-      const conv = smooth((u - U.streamStart) / (U.boxL - .02 - U.streamStart));
-      return lerp(s.v0, s.vEnd, conv) + behaviour(s, u, t) * (1 - conv);
+    function drawStreams(t: number, flowTime: number) {
+      const geo = { ...fallbackGeometry, xspan: U.boxL - .115 + .012,
+        iface: U.boxL, top: g.mobile ? .06 : .2, span: g.mobile ? .25 : .64, mid: g.mobile ? .46 : .52, x0: g.mobile ? .31 : .115 };
+      return drawMachineField(ctx!, g.W, g.H, geo, flowTime * 1000, g.mobile, reduced.matches && !pitch,
+        1, true, 1, 1);
     }
 
-    function drawStreams(t: number) {
-      const steps = g.mobile ? 56 : 76, uEnd = U.boxL + .01; // run past boxL, under the capsule — overlap, never a gap
-      const pts: [number, number][][] = STRANDS.map((s) => {
-        const row: [number, number][] = [];
-        for (let i = 0; i <= steps; i++) row.push(pt(lerp(U.streamStart, uEnd, i / steps), strandV(s, lerp(U.streamStart, uEnd, i / steps))));
-        return row;
-      });
-      // A depth wash seats the field in the environment — the sources feel like they emerge
-      // from something, rather than starting flat on the plain background.
-      const washFrom = pt(U.streamStart - .03, .5), washTo = pt(lerp(U.streamStart, U.boxL, .62), .5);
-      const wash = ctx!.createLinearGradient(washFrom[0], washFrom[1], washTo[0], washTo[1]);
-      wash.addColorStop(0, "rgba(10,4,8,.3)"); wash.addColorStop(1, "rgba(10,4,8,0)");
-      ctx!.fillStyle = wash; ctx!.fillRect(0, 0, g.W, g.H);
-      // Each source gets a faint halo of its own at its origin — a little more presence,
-      // a little more variation, source to source.
-      SOURCES.forEach((source, fam) => {
-        const op = pt(U.streamStart - .01, source.v), r = g.S * .07;
-        const glow = ctx!.createRadialGradient(op[0], op[1], 0, op[0], op[1], r);
-        glow.addColorStop(0, tone(.14 + fam * .01, 0, .1 + .04 * Math.sin(t * .5 + fam)));
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx!.fillStyle = glow; ctx!.fillRect(op[0] - r, op[1] - r, r * 2, r * 2);
-      });
-      // Imaging reads as dense layered slices: contours interpolated between its own strands.
-      for (let k = IMAGING_RANGE[0]; k < IMAGING_RANGE[1]; k++) {
-        ctx!.beginPath();
-        for (let i = 0; i <= steps; i++) {
-          const x = (pts[k][i][0] + pts[k + 1][i][0]) / 2, y = (pts[k][i][1] + pts[k + 1][i][1]) / 2;
-          if (i) ctx!.lineTo(x, y); else ctx!.moveTo(x, y);
-        }
-        ctx!.strokeStyle = tone(.06, 0, .12); ctx!.lineWidth = .6; ctx!.stroke();
-      }
-      // Line type, not just line colour, tells the sources apart — dotted, dashed, ticked,
-      // solid — the same restraint Section 02 keeps: dim enough to read as texture, not signage.
-      const DASH_BY_SRC: number[][] = [[], [], [], [3, 3], [11, 5], [], [4, 4]];
-      STRANDS.forEach((s, k) => {
-        const srcMix = .03 + s.src * .012; // each source keeps a faintly different warmth, not one flat white
-        ctx!.setLineDash(DASH_BY_SRC[s.src] ?? []);
-        for (let i = 1; i <= steps; i++) {
-          const u = lerp(U.streamStart, uEnd, i / steps), conv = smooth((u - U.streamStart) / (uEnd - U.streamStart));
-          let lw = 1, al = lerp(.13, .22, conv);
-          if (s.src === TRACKING_SRC) { lw = lerp(1.4, 1, conv); al = lerp(.17, .28, conv); } // tracking: still the most confident line, just not blown out
-          if (s.src === 0) { // sensors: jittering samples, not a continuous line
-            al = .05; if (i % 3 === 0) { ctx!.fillStyle = tone(srcMix, 0, .32); ctx!.beginPath(); ctx!.arc(pts[k][i][0], pts[k][i][1], .9, 0, TAU); ctx!.fill(); }
-          }
-          if (s.src === 6 && i % 9 > 5) continue; // data: derived, segmented structure
-          ctx!.strokeStyle = tone(srcMix, 0, clamp(al)); ctx!.lineWidth = lw;
-          ctx!.beginPath(); ctx!.moveTo(pts[k][i - 1][0], pts[k][i - 1][1]); ctx!.lineTo(pts[k][i][0], pts[k][i][1]); ctx!.stroke();
-          if (s.src === 5 && i % 6 === 0) { // robotics: small perpendicular ticks — a mechanical, stepped read
-            const tick = at(pts[k][i], 0, 2.4);
-            ctx!.strokeStyle = tone(srcMix, 0, al * .8); ctx!.lineWidth = .7;
-            ctx!.beginPath(); ctx!.moveTo(pts[k][i][0], pts[k][i][1]); ctx!.lineTo(tick[0], tick[1]); ctx!.stroke();
-          }
-        }
-      });
-      ctx!.setLineDash([]);
-      // A secondary contour threads through each family — the same layered, textured field
-      // Section 02 has, not a single clean line standing in for the whole source.
-      SOURCES.forEach((source, fam) => {
-        const k = FAMILY_START[fam] + Math.floor(source.n / 2);
-        ctx!.beginPath();
-        for (let i = 0; i <= steps; i++) {
-          const u = lerp(U.streamStart, uEnd, i / steps), conv = smooth((u - U.streamStart) / (uEnd - U.streamStart));
-          const off = .024 * Math.sin(u * TAU * (1.5 + fam * .35) - t * .13 + fam * 1.7) * (1 - conv);
-          const p = pt(u, strandV(STRANDS[k], u) + off);
-          if (i) ctx!.lineTo(p[0], p[1]); else ctx!.moveTo(p[0], p[1]);
-        }
-        ctx!.strokeStyle = tone(.08, 0, .09); ctx!.lineWidth = .55; ctx!.stroke();
-      });
-      // Every source keeps sending — many independent feeds, none of them metronomic, and not
-      // all moving the same way. Each one settles into one of four small behaviours: most
-      // cruise at their own steady pace; some arrive in a quick eased burst and trail behind
-      // themselves as they do; some hold, then jump, holding again — a stutter, like a sensor
-      // sampling in steps; a few wander with a looser, looping path rather than a straight run.
-      STRANDS.forEach((s, k) => {
-        for (let n = 0; n < 5; n++) {
-          const seed = k * 3.1 + n * 7.3;
-          // Density: each slot fades in and out of existence on its own slow, random cycle,
-          // rather than a fixed count of dots being present every frame.
-          const onRate = .18 + hash(seed + 13) * .5, onPhase = hash(seed + 15) * TAU;
-          const threshold = -.15 + hash(seed + 17) * .35;
-          const presence = smooth((Math.sin(t * onRate + onPhase) - threshold) / .3);
-          if (presence <= 0) continue;
-          const ph0 = hash(k * 5.7 + n * 2.3);
-          const cls = hash(seed + 40);
-          const isBurst = cls < .22, isStutter = !isBurst && cls < .4, isLoop = !isBurst && !isStutter && cls < .58;
-          // else: cruise, the plain steady majority (~42%)
-
-          let p: number, speed = .55; // speed: 0..1-ish, how fast this dot reads right now — drives trail length
-          if (isBurst) {
-            const cyc = ((t * (.3 + hash(seed) * .4) + ph0) % 1 + 1) % 1;
-            p = smooth(cyc); // eased S-curve: slow off the source, quick through the middle, slow into the box
-            speed = Math.sin(cyc * Math.PI);
-          } else if (isStutter) {
-            const segments = 4 + Math.floor(hash(seed + 2) * 3);
-            const raw = ((t * (.09 + hash(seed) * .13) + ph0) % 1 + 1) % 1;
-            const idx = Math.floor(raw * segments), frac = raw * segments - idx;
-            const jump = smooth((frac - .68) / .3);
-            p = (idx + jump) / segments;
-            speed = jump * (1 - jump) * 4; // only "moving" during the brief jump between holds
-          } else {
-            const baseSpeed = .08 + hash(seed) * .34;
-            const driftFreq = .25 + hash(seed + 4) * 1.1, driftPhase = hash(seed + 8) * TAU;
-            p = t * baseSpeed + ph0 + .05 * Math.sin(t * driftFreq + driftPhase);
-            p -= Math.floor(p);
-          }
-          const u = lerp(U.streamStart, uEnd, p);
-          // Movement: most drift a little off the strand's centreline; the loop class wanders
-          // with a second, faster frequency layered in, so its path visibly curls rather than
-          // just trembling.
-          const wander = isLoop
-            ? .022 * Math.sin(t * (.8 + hash(seed + 20) * 1.4) + hash(seed + 22) * TAU) + .012 * Math.sin(t * (2.4 + hash(seed + 24) * 2.2) + hash(seed + 26) * TAU)
-            : .01 * Math.sin(t * (.7 + hash(seed + 20) * 1.6) + hash(seed + 22) * TAU);
-          const q = at(pt(u, strandV(s, u)), 0, wander * g.Ad);
-          const glint = .55 + .45 * Math.sin(t * 2.6 + k * 1.7 + n * 3.1);
-          const size = isBurst ? .8 + speed * .9 : isStutter ? .75 + speed * .7 : .85 + .55 * Math.sin(Math.PI * p);
-          const alpha = presence * (isStutter ? .26 + speed * .22 : .32) * glint * Math.sin(Math.PI * clamp(p, .02, .98));
-          // A brief trail behind the fast ones — the only visible sign of how quickly they move.
-          if ((isBurst || isStutter) && speed > .12) {
-            const pBack = clamp(p - (isBurst ? .028 : .02) * speed);
-            const uBack = lerp(U.streamStart, uEnd, pBack);
-            const back = at(pt(uBack, strandV(s, uBack)), 0, wander * g.Ad);
-            ctx!.strokeStyle = tone(.1, 0, alpha * .5); ctx!.lineWidth = .7;
-            ctx!.beginPath(); ctx!.moveTo(back[0], back[1]); ctx!.lineTo(q[0], q[1]); ctx!.stroke();
-          }
-          ctx!.fillStyle = tone(.1, 0, alpha);
-          ctx!.beginPath(); ctx!.arc(q[0], q[1], presence * size, 0, TAU); ctx!.fill();
-        }
-      });
-      // Absorption: each stream arrives at its own point on the box face and is received there.
-      const flash = pulse(U.boxL, t, .5);
-      STRANDS.forEach((s) => {
-        const p = pt(uEnd, s.vEnd);
-        ctx!.fillStyle = tone(.4, .3, .12 + flash * .5); ctx!.beginPath(); ctx!.arc(p[0], p[1], .9 + flash * 1.1, 0, TAU); ctx!.fill();
-      });
-      ctx!.fillStyle = "rgba(240,222,231,.58)"; ctx!.font = "500 9px ui-monospace, SFMono-Regular, Menlo, monospace";
-      SOURCES.forEach((s) => {
-        const p = pt(U.streamStart - .008, s.v), label = s.name.toUpperCase();
-        if (g.mobile) { ctx!.save(); ctx!.translate(p[0] + 3, p[1] - 4); ctx!.rotate(-Math.PI / 2); ctx!.textAlign = "left"; ctx!.fillText(label, 0, 0); ctx!.restore(); }
-        else {
-          ctx!.textAlign = "right";
-          // "Simulation" is the longest label — keep its full width on-canvas even on a
-          // narrower monitor, rather than let the right edge of the text run past x = 0.
-          const longest = ctx!.measureText("SIMULATION").width;
-          ctx!.fillText(label, Math.max(p[0] - 4, longest + 6), p[1] + 3);
-        }
-      });
-    }
-
-    // The SoniXense core is now the same identity capsule as the Hero — held as a DOM image
-    // over the canvas, not redrawn here — so the canvas only needs to know where it sits.
+    // The translucent DOM core overlays the computational trajectories drawn below.
 
     // Where a voice sits: a tight, aligned bundle right off the box, opening — asymmetrically,
     // like a horn — into three widely-spaced clusters. It only ever spreads out; it never
@@ -364,7 +163,7 @@ export default function TechnologyField() {
       const far = .5 + c.centerV * asym + v.laneJitter * .013;
       const opened = lerp(near, far, openEase);
       // Three outcomes, told apart to be understood — then gathered back into one point,
-      // because what actually reaches a person is a single, perceptible thing: sound.
+      // where the related representations collectively reach perception and cognition.
       const closeEase = smooth((u - GATHER_U) / (U.outEnd - GATHER_U));
       const gathered = .5 + v.laneJitter * .006;
       return lerp(opened, gathered, closeEase);
@@ -447,112 +246,187 @@ export default function TechnologyField() {
       // between the sampled points rather than snapping from one to the next, and bright
       // enough now to actually read as something travelling, not a flicker.
       VOICES.forEach((v, i) => {
-        const p = (t * .05 + hash(i * 3.7)) % 1, pos = p * steps;
+        const signal = outputSignal(i, t);
+        const p = signal.progress, pos = p * steps;
         const i0 = clamp(Math.floor(pos), 0, steps - 1), frac = pos - i0;
         const a = voicePts[i][i0], b = voicePts[i][i0 + 1];
         const q: [number, number] = [lerp(a[0], b[0], frac), lerp(a[1], b[1], frac)];
-        const bright = smooth(Math.sin(Math.PI * p));
+        const bright = signal.visibility;
         ctx!.save();
         ctx!.shadowColor = tone(CLUSTERS[v.cluster].mix + .1, .08, .8); ctx!.shadowBlur = 4 * bright;
-        ctx!.fillStyle = tone(CLUSTERS[v.cluster].mix + .12, .05, .75 * bright);
+        ctx!.fillStyle = tone(CLUSTERS[v.cluster].mix + .12, .05, .75 * bright * (1 - signal.morph * .7));
         ctx!.beginPath(); ctx!.arc(q[0], q[1], 1.5 + bright * .6, 0, TAU); ctx!.fill();
         ctx!.restore();
+        if (signal.morph > 0) {
+          // Tiny structures stay attached to a carrier and dissolve before recycling.
+          const size = (pitch ? 6 : 3.6) * (1 + smooth((p - .65) / .25) * .35);
+          ctx!.save();
+          ctx!.translate(...q);
+          if (g.mobile) ctx!.rotate(Math.PI / 2);
+          ctx!.strokeStyle = tone(CLUSTERS[v.cluster].mix + .1, .04, .6 * bright * signal.morph);
+          ctx!.fillStyle = tone(CLUSTERS[v.cluster].mix + .1, .04, .65 * bright * signal.morph);
+          ctx!.lineWidth = pitch ? 1.1 : .8;
+          if (signal.event === "note") {
+            // A single understated note head/stem; never notation or a staff.
+            ctx!.beginPath(); ctx!.ellipse(-size * .15, size * .35, size * .45, size * .27, -.4, 0, TAU); ctx!.fill();
+            ctx!.beginPath(); ctx!.moveTo(size * .22, size * .3); ctx!.lineTo(size * .22, -size); ctx!.stroke();
+          } else if (signal.event === "rings") {
+            for (let ring = 0; ring < 2; ring++) {
+              ctx!.beginPath(); ctx!.ellipse(0, 0, size * (.65 + ring * .45), size * (.38 + ring * .28), -.2, 0, TAU); ctx!.stroke();
+            }
+          } else if (signal.event === "packet") {
+            ctx!.beginPath();
+            for (let k = 0; k <= 24; k++) {
+              const x = (k / 24 - .5) * size * 3.6;
+              const y = Math.sin(k / 24 * TAU * 2 - t * 1.1) * Math.pow(Math.sin(k / 24 * Math.PI), 2) * size * .55;
+              if (k) ctx!.lineTo(x, y); else ctx!.moveTo(x, y);
+            }
+            ctx!.stroke();
+          } else {
+            for (let k = -2; k <= 2; k++) {
+              ctx!.beginPath(); ctx!.arc(k * size * .62, Math.sin(k * 1.2 - t * .6) * size * .28, size * .13, 0, TAU); ctx!.fill();
+            }
+          }
+          ctx!.restore();
+        }
       });
-      // The three outcomes gather back into one point — met there by an emitter unmistakably
-      // built around a speaker's own driver (a diaphragm of concentric rings, viewed head-on),
-      // housed in the same instrument-panel language as everything else in this field (a
-      // faceted frame, ticks, dashes), not a plain household icon. Every size below is a
-      // fraction of the field's own real margin past outEnd, so it can never crowd the edge.
+      // Reception is a small resonant field, followed by the separate cognition network.
       {
-        const speakerP = pt(U.outEnd, .5);
-        const sPulse = ex(U.outEnd, t);
+        const perceptionP = pt(U.outEnd, .5);
+        const resonances = perceptionResonances(t);
+        const sPulse = 1 - Math.exp(-resonances.reduce((sum, event) =>
+          sum + resonanceEnvelope(event.age, event.lifetime, event.decay) * event.strength * 2, 0));
         const margin = (1 - U.outEnd) * g.Ld;
-        const core = margin * .15, coneA = margin * .22, coneB = margin * .29, coneC = margin * .37;
-        const hex = margin * .43, tickR = margin * .49, tickLen = margin * .09;
-        const spin = t * .045;
-
-        // A soft field glow, like each source's own halo — this reads as an active point,
-        // not a flat drawing dropped on top.
-        const halo = ctx!.createRadialGradient(speakerP[0], speakerP[1], 0, speakerP[0], speakerP[1], hex * 2.1);
-        halo.addColorStop(0, tone(.8, .12, .15 + sPulse * .12));
+        const receptionR = margin * .17;
+        const halo = ctx!.createRadialGradient(...perceptionP, 0, ...perceptionP, receptionR * 2);
+        halo.addColorStop(0, tone(.8, .12, .12 + sPulse * .12));
         halo.addColorStop(1, "rgba(0,0,0,0)");
         ctx!.fillStyle = halo;
-        ctx!.beginPath(); ctx!.arc(speakerP[0], speakerP[1], hex * 2.1, 0, TAU); ctx!.fill();
+        ctx!.beginPath(); ctx!.arc(...perceptionP, receptionR * 2, 0, TAU); ctx!.fill();
+        for (let ring = 0; ring < 3; ring++) {
+          const radius = receptionR * (.5 + ring * .34) * (1 + sPulse * .09);
+          ctx!.beginPath();
+          for (let k = 0; k <= 40; k++) {
+            // Open curved wavefronts suggest reception rather than a speaker cone.
+            const theta = .38 + k / 40 * (TAU - .76);
+            const q = at(perceptionP, Math.cos(theta) * radius * .72, Math.sin(theta) * radius);
+            if (k) ctx!.lineTo(...q); else ctx!.moveTo(...q);
+          }
+          ctx!.strokeStyle = tone(.85, .07, .12 - ring * .018 + sPulse * .08);
+          ctx!.lineWidth = .85; ctx!.stroke();
+        }
+        // Closely spaced wavefronts launch in 33–57 ms succession, oscillate,
+        // and damp locally. The surrounding field keeps its existing slow motion.
+        for (const event of resonances) {
+          for (let front = 0; front < event.fronts; front++) {
+            const age = event.age - front * event.spacing;
+            const envelope = resonanceEnvelope(age, event.lifetime, event.decay);
+            if (envelope <= .001) continue;
+            const expansion = 1 - Math.exp(-age * event.velocity);
+            const oscillation = Math.sin(age * 32 + event.phase) * Math.exp(-age * 4);
+            const radius = receptionR * (.26 + expansion * 1.2 + oscillation * .065);
+            ctx!.beginPath();
+            for (let k = 0; k <= 64; k++) {
+              const theta = .32 + k / 64 * (TAU - .64);
+              const deformation = 1 + event.deformation * Math.exp(-age * 3.6)
+                * (Math.sin(theta * 3 - age * 35 + event.phase)
+                  + .35 * Math.sin(theta * 5 + age * 23));
+              const q = at(perceptionP, Math.cos(theta) * radius * .78 * deformation,
+                Math.sin(theta) * radius * deformation);
+              if (k) ctx!.lineTo(...q); else ctx!.moveTo(...q);
+            }
+            ctx!.strokeStyle = tone(.88, .1, envelope * event.strength * .72);
+            ctx!.lineWidth = .75 + envelope * .35; ctx!.stroke();
+          }
+        }
+        ctx!.fillStyle = tone(.95, .2, .64 + sPulse * .25);
+        ctx!.beginPath(); ctx!.arc(...perceptionP, Math.max(1.6, receptionR * .14) * (1 + sPulse * .2), 0, TAU); ctx!.fill();
 
-        // The driver itself — a speaker cone's own concentric rings, viewed straight on, the
-        // one shape that reads as "this is a speaker" before anything else here does.
-        [coneA, coneB, coneC].forEach((r, i) => {
-          ctx!.beginPath(); ctx!.arc(speakerP[0], speakerP[1], r, 0, TAU);
-          ctx!.strokeStyle = tone(.6, 0, .34 - i * .07 + sPulse * .12); ctx!.lineWidth = 1;
-          ctx!.stroke();
+        // The listener — not drawn as a literal brain, but as what a brain actually is here:
+        // a small cluster of nodes and the connections between them, the same diagram language
+        // as a neural network. Activity follows reception with a short delay,
+        // then propagates outward from the hub.
+        const brainR = margin * .15;
+        const brainP = at(perceptionP, margin * .74, 0);
+        ctx!.beginPath(); ctx!.moveTo(...at(perceptionP, receptionR, 0)); ctx!.lineTo(...brainP);
+        ctx!.strokeStyle = tone(.7, 0, .3); ctx!.lineWidth = .8; ctx!.stroke();
+        VOICES.forEach((_, index) => {
+          const transit = outputSignal(index, t).sinceArrival / .55;
+          if (transit >= 1) return;
+          const q = at(perceptionP, lerp(receptionR, margin * .74, transit), 0);
+          ctx!.fillStyle = tone(.9, .1, Math.pow(Math.sin(transit * Math.PI), 2) * .55);
+          ctx!.beginPath(); ctx!.arc(...q, pitch ? 1.8 : 1.2, 0, TAU); ctx!.fill();
         });
+        const heard = receptionActivity(t - .55); // Reception reaches cognition after a short delay.
 
-        // A faceted housing, slowly turning — a hexagonal frame around the driver, never a
-        // plain circle.
-        ctx!.save();
-        ctx!.strokeStyle = tone(.7, 0, .4 + sPulse * .16); ctx!.lineWidth = 1;
-        ctx!.setLineDash([hex * .5, hex * .32]);
+        const bHalo = ctx!.createRadialGradient(brainP[0], brainP[1], 0, brainP[0], brainP[1], brainR * 1.9);
+        bHalo.addColorStop(0, tone(.85, .15, .05 + heard * .16));
+        bHalo.addColorStop(1, "rgba(0,0,0,0)");
+        ctx!.fillStyle = bHalo;
+        ctx!.beginPath(); ctx!.arc(brainP[0], brainP[1], brainR * 1.9, 0, TAU); ctx!.fill();
+
+        // An irregular, organic outline — never a perfect circle — the one cue that this is
+        // a soft mass of tissue, not another piece of instrumentation.
+        const rim = 12;
         ctx!.beginPath();
-        for (let i = 0; i <= 6; i++) {
-          const th = spin + (i / 6) * TAU;
-          const p = at(speakerP, Math.cos(th) * hex, Math.sin(th) * hex);
+        for (let i = 0; i <= rim; i++) {
+          const th = (i / rim) * TAU;
+          const wobble = .82 + hash(Math.floor(i % rim) + 61) * .16 + .02 * Math.sin(t * .25 + i);
+          const p = at(brainP, Math.cos(th) * brainR * wobble, Math.sin(th) * brainR * wobble);
           if (i) ctx!.lineTo(p[0], p[1]); else ctx!.moveTo(p[0], p[1]);
         }
+        ctx!.closePath();
+        ctx!.strokeStyle = tone(.75, 0, .32 + heard * .18); ctx!.lineWidth = 1;
         ctx!.stroke();
-        ctx!.restore();
 
-        // A ring of short ticks around it — mounting points, a dial, a piece of instrumentation.
-        ctx!.strokeStyle = tone(.6, 0, .3);
-        ctx!.lineWidth = 1;
-        for (let i = 0; i < 16; i++) {
-          const th = spin * .6 + (i / 16) * TAU;
-          const a0 = at(speakerP, Math.cos(th) * tickR, Math.sin(th) * tickR);
-          const a1 = at(speakerP, Math.cos(th) * (tickR + tickLen), Math.sin(th) * (tickR + tickLen));
-          ctx!.beginPath(); ctx!.moveTo(a0[0], a0[1]); ctx!.lineTo(a1[0], a1[1]); ctx!.stroke();
-        }
-
-        // The glowing dust cap at the centre — where the gathered lines are actually received,
-        // and where the sound is actually made. It breathes gently even between excitations,
-        // and flares with each one, rather than sitting dark until the pulse arrives.
-        const breathe = .5 + .5 * Math.sin(t * .7);
-        const coreGlow = ctx!.createRadialGradient(speakerP[0], speakerP[1], 0, speakerP[0], speakerP[1], core);
-        coreGlow.addColorStop(0, tone(.95, .35, .75 + sPulse * .25));
-        coreGlow.addColorStop(.6, tone(.85, .2, .32 + breathe * .12 + sPulse * .2));
-        coreGlow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx!.fillStyle = coreGlow;
-        ctx!.beginPath(); ctx!.arc(speakerP[0], speakerP[1], core, 0, TAU); ctx!.fill();
-        ctx!.strokeStyle = tone(.9, .1, .55 + sPulse * .3); ctx!.lineWidth = .9;
-        ctx!.beginPath(); ctx!.arc(speakerP[0], speakerP[1], core * .55, 0, TAU); ctx!.stroke();
-
-        // Real sound waves, not a static decoration — dashed, like a scanning pulse rather
-        // than a soft ripple, several in flight together so the emission reads as continuous,
-        // never a single blip, and each still tied to the same excitation that just travelled
-        // the whole field.
-        for (let f = 0; f < 4; f++) {
-          const dt = f * .32, a = t - (arr(U.outEnd) + dt), life = 2.3;
-          if (a < 0 || a > life) continue;
-          const grow = smooth(a / .35);
-          const rr = tickR + margin * .045 * f + margin * .16 * grow;
-          const alpha = grow * Math.pow(1 - a / life, 1.4) * .58;
-          if (alpha <= .01) continue;
+        // A small network inside it — a hub, and a ring of nodes around it, wired together
+        // like a minimal perceptual/cognitive graph. Each node fires in its own short cascade
+        // outward from the hub, rather than all at once, so it reads as a signal actually
+        // propagating through it.
+        const nodeN = 6;
+        const nodes: [number, number][] = Array.from({ length: nodeN }, (_, i) => {
+          const th = (i / nodeN) * TAU + hash(i + 63) * .5;
+          const r = brainR * (.52 + hash(i + 66) * .14);
+          return at(brainP, Math.cos(th) * r, Math.sin(th) * r);
+        });
+        ctx!.strokeStyle = tone(.85, .05, .12 + heard * .16); ctx!.lineWidth = .8;
+        nodes.forEach((n, i) => {
+          ctx!.beginPath(); ctx!.moveTo(brainP[0], brainP[1]); ctx!.lineTo(n[0], n[1]); ctx!.stroke();
+          const next = nodes[(i + 1) % nodeN];
+          ctx!.beginPath(); ctx!.moveTo(n[0], n[1]); ctx!.lineTo(next[0], next[1]); ctx!.stroke();
+        });
+        const hubFire = smooth(heard / .5);
+        ctx!.fillStyle = tone(.95, .3, .3 + hubFire * .55);
+        ctx!.beginPath(); ctx!.arc(brainP[0], brainP[1], brainR * .16, 0, TAU); ctx!.fill();
+        nodes.forEach((n, i) => {
+          const cascade = receptionActivity(t - .55 - hash(i + 69) * .5 - .1);
+          const fire = smooth(cascade / .5);
           ctx!.save();
-          ctx!.strokeStyle = tone(.92, .15, alpha); ctx!.lineWidth = 1.1;
-          ctx!.setLineDash([rr * .13, rr * .09]);
-          ctx!.beginPath();
-          for (let i = 0; i <= 20; i++) {
-            const th = -.66 + (i / 20) * 1.32;
-            const p = at(speakerP, Math.cos(th) * rr, Math.sin(th) * rr);
-            if (i) ctx!.lineTo(p[0], p[1]); else ctx!.moveTo(p[0], p[1]);
-          }
-          ctx!.stroke();
+          ctx!.shadowColor = tone(.95, .25, .8); ctx!.shadowBlur = 3.5 * fire;
+          ctx!.fillStyle = tone(.9, .2, .22 + fire * .68);
+          ctx!.beginPath(); ctx!.arc(n[0], n[1], brainR * .1 + fire * brainR * .06, 0, TAU); ctx!.fill();
           ctx!.restore();
+        });
+
+        // Separate, local labels keep the two stages legible even on narrow layouts.
+        ctx!.font = `${pitch ? 18 : 9}px ${getComputedStyle(root!).getPropertyValue("--font-mono")}, monospace`;
+        ctx!.fillStyle = tone(.85, 0, .58);
+        for (const [label, point] of [["PERCEPTION", perceptionP], ["COGNITION", brainP]] as const) {
+          const lp = at(point, 0, receptionR * 1.8);
+          if (g.mobile) {
+            ctx!.textAlign = "left"; ctx!.fillText(label, lp[0], lp[1] + 3);
+          } else {
+            const tw = ctx!.measureText(label).width;
+            ctx!.textAlign = "left";
+            ctx!.fillText(label, clamp(lp[0] - tw / 2, 4, g.W - tw - 4), lp[1]);
+          }
         }
       }
       // Restrained annotations, not cards — the same register as the source labels on the left.
-      ctx!.font = "600 9px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx!.font = `${pitch ? 22 : 10}px ${getComputedStyle(root!).getPropertyValue("--font-mono")}, monospace`;
       CLUSTERS.forEach((c) => {
         const asym = c.centerV < 0 ? 1.15 : c.centerV > 0 ? .9 : 1;
-        const p = pt(.82, .5 + c.centerV * asym * 1.55), label = c.label.toUpperCase();
+        const p = pt(.77, .5 + c.centerV * asym * 1.55 - (c.centerV === 0 ? .045 : 0)), label = c.label.toUpperCase();
         ctx!.fillStyle = tone(c.mix, 0, .64);
         if (g.mobile) { ctx!.save(); ctx!.translate(p[0], p[1]); ctx!.rotate(-Math.PI / 2); ctx!.textAlign = "center"; ctx!.fillText(label, 0, 0); ctx!.restore(); }
         else { ctx!.textAlign = "center"; ctx!.fillText(label, p[0], p[1]); }
@@ -560,6 +434,7 @@ export default function TechnologyField() {
     }
 
     function draw(t: number) {
+      lastPitchTime = t;
       ctx!.clearRect(0, 0, g.W, g.H);
       const eBox = ex((U.boxL + U.boxR) / 2, t), eOut = ex(U.hornR, t);
       const boxC = pt((U.boxL + U.boxR) / 2, .5);
@@ -571,63 +446,96 @@ export default function TechnologyField() {
       calm.addColorStop(0, `rgba(255,244,248,${.04 + .04 * eOut})`); calm.addColorStop(1, "rgba(0,0,0,0)");
       ctx!.fillStyle = calm; ctx!.fillRect(0, 0, g.W, g.H);
 
+      ctx!.save();
       drawOutput(t);
-      drawStreams(t);
-
-      // The excitation that drives everything downstream — visible only until it is received.
-      // Each source gets its own start time and its own pace now, not one synchronised sweep
-      // — they arrive at, and cross, the field independently, the way real signals would.
-      HEAD_STRANDS.forEach((idx, fam) => {
-        const seed = fam * 7.3;
-        const ownArr0 = ARR0 + hash(seed + 1) * CYCLE * .3;
-        const ownArrK = ARRK * (.72 + hash(seed + 2) * .6);
-        const hu = clamp((t - ownArr0) / ownArrK, 0, U.boxL - .01);
-        if (t <= ownArr0 || hu >= U.boxL - .012) return;
-        const ha = 1 - smooth((hu - (U.boxL - .06)) / .05);
-        const head = STRANDS[idx], hp = pt(hu, strandV(head, hu));
-        const r = 10 + hash(fam * 3.7) * 6, ownHa = ha * (.75 + hash(fam * 5.1) * .35);
-        const glow = ctx!.createRadialGradient(hp[0], hp[1], 0, hp[0], hp[1], r);
-        glow.addColorStop(0, `rgba(238,132,141,${.4 * ownHa})`); glow.addColorStop(1, "rgba(238,132,141,0)");
-        ctx!.fillStyle = glow; ctx!.beginPath(); ctx!.arc(hp[0], hp[1], r, 0, TAU); ctx!.fill();
-        ctx!.fillStyle = `rgba(250,226,226,${.85 * ownHa})`; ctx!.beginPath(); ctx!.arc(hp[0], hp[1], 1.5 + hash(fam * 6.3) * .6, 0, TAU); ctx!.fill();
-      });
+      ctx!.restore();
+      const flowTime = t;
+      const intake = drawStreams(t, flowTime);
+      const pressure = intake.reduce((sum, value) => sum + value, 0) / intake.length;
+      root!.style.setProperty("--core-charge", String(.35 + .48 * ex(.5, t) + pressure * .17));
+      if (pitch) root!.style.setProperty("--pitch-core", "1");
+      // Fine internal trajectories replace product gloss with an integration field.
+      ctx!.save();
+      ctx!.globalAlpha = 1;
+      for (let strand = 0; strand < 14; strand++) {
+        ctx!.beginPath();
+        for (let i = 0; i <= 40; i++) {
+          const p = i / 40;
+          const compression = intake[Math.floor(strand / 2)] * Math.exp(-p * 5);
+          const propagation = Math.sin(p * TAU * 1.4 - flowTime * 2.3 + strand * .3)
+            * .009 * pressure * Math.sin(p * Math.PI);
+          const v = .5 + (strand - 6.5) * .019 * (1 - compression * .18)
+            + Math.sin(p * TAU + strand * .4 - flowTime * .35) * .025 * Math.sin(p * Math.PI)
+            + propagation;
+          const q = pt(lerp(U.boxL, U.boxR, p), v);
+          if (i) ctx!.lineTo(...q); else ctx!.moveTo(...q);
+        }
+        ctx!.strokeStyle = tone(.7, 0, .16 + intake[Math.floor(strand / 2)] * .09); ctx!.lineWidth = .7; ctx!.stroke();
+      }
+      ctx!.restore();
 
       STAGES.forEach((st, i) => {
-        const val = (reduced.matches ? .7 : ex(g.mobile ? st.um : st.u, t)).toFixed(2);
+        const position = i === 1 ? U.boxL : i === 2 ? .5 : (g.mobile ? st.um : st.u);
+        const activation = ex(position, t);
+        const val = (reduced.matches && !pitch ? .7 : activation).toFixed(2);
         if (stageValue[i] !== val) { stageValue[i] = val; stageNodes[i]?.style.setProperty("--ex", val); }
       });
     }
 
+    if (pitch) {
+      // Keep the approved first frame and full-speed motion for the speaking window.
+      // Blend two deterministic continuations only at the loop seam; neither clock
+      // reverses or stops, and the smooth envelope preserves velocity at the join.
+      const outgoing = document.createElement("canvas");
+      const outgoingContext = outgoing.getContext("2d")!;
+      const renderPitch = (seconds: number) => {
+        draw(seconds + 20);
+        if (seconds > 88) {
+          outgoing.width = canvas.width; outgoing.height = canvas.height;
+          outgoingContext.drawImage(canvas, 0, 0);
+          const charge = Number(root.style.getPropertyValue("--core-charge"));
+          const blend = smooth((seconds - 88) / 2);
+          draw(seconds - 90 + 20);
+          const incomingCharge = Number(root.style.getPropertyValue("--core-charge"));
+          ctx.save();
+          ctx.globalCompositeOperation = "destination-in";
+          ctx.fillStyle = `rgba(0,0,0,${blend})`;
+          ctx.fillRect(0, 0, g.W, g.H);
+          ctx.globalCompositeOperation = "lighter";
+          ctx.globalAlpha = 1 - blend;
+          ctx.drawImage(outgoing, 0, 0);
+          ctx.restore();
+          root.style.setProperty("--core-charge", String(lerp(charge, incomingCharge, blend)));
+        }
+        root.style.setProperty("--pitch-sources", "1");
+      };
+      resize();
+      const ro = new ResizeObserver(resize); ro.observe(canvas);
+      const stop = runPitchTimeline(root, 90, renderPitch, { loop: true, hold: 0 });
+      return () => { stop(); ro.disconnect(); };
+    }
     const tick = () => { if (visible) draw(now()); if (!reduced.matches) frame = requestAnimationFrame(tick); };
     const ro = new ResizeObserver(resize);
     const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !visible) start = performance.now() - now() * 1000;
       visible = e.isIntersecting;
     }, { rootMargin: "80px" });
-    const motion = () => { cancelAnimationFrame(frame); draw(reduced.matches ? T_STATIC : now()); if (!reduced.matches) frame = requestAnimationFrame(tick); };
+    const motion = () => { cancelAnimationFrame(frame); draw(pitch ? lastPitchTime : reduced.matches ? T_STATIC : now()); if (!reduced.matches) frame = requestAnimationFrame(tick); };
     start = performance.now();
     resize(); ro.observe(canvas); io.observe(canvas); reduced.addEventListener("change", motion);
     if (!reduced.matches) frame = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(frame); ro.disconnect(); io.disconnect(); reduced.removeEventListener("change", motion); };
-  }, []);
+  }, [pitch]);
 
-  const boxU = (U.boxL + U.boxR) / 2;
+  const boxU = .5;
   return (
     <div className="tf" ref={wrap}>
-      <canvas ref={ref} role="img" aria-label="Heterogeneous machine data streams — sensors, imaging, tracking, AI, simulation, robotics and data — enter the SoniXense processing core. A small aligned bundle emerges from it, opens into a curved acoustic form, and resolves into three harmonized outcomes: high-level insights, harmonized perceptual cues, and sound." />
+      <canvas ref={ref} role="img" aria-label="Heterogeneous machine data streams — sensors, imaging, tracking, AI, simulation, robotics and data — enter the SoniXense processing core. A small aligned bundle emerges from it, opens into a curved acoustic form, and resolves into three complementary auditory aspects: information-rich sound, perceptual audio cues, and spatial sound, received by a responsive acoustic resonance field before reaching cognition." />
       <div className="tf__capsule" style={{ "--u": boxU, "--um": boxU } as React.CSSProperties}>
         <div className="tf__capsule-frame">
-          <Image
-            className="tf__capsule-pattern"
-            src="/images/hero/sonixense-identity-pattern.png"
-            alt=""
-            width={684}
-            height={922}
-          />
           <Image className="tf__capsule-logo" src={techLogo} alt="SoniXense" priority={false} />
-          <p className="tf__capsule-caption">Adaptive perceptualization · Congruent multisensory cues</p>
         </div>
       </div>
+      <div className="tf__sources">{SOURCES.map((label, i) => <span key={label} style={{ "--i": i } as React.CSSProperties}>{label}</span>)}</div>
       <ol className="tf__stages">
         {STAGES.map((s, i) => (
           <li className="tf__stage" key={s.name} style={{ "--u": s.u, "--um": s.um } as React.CSSProperties}>

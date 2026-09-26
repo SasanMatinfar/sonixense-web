@@ -22,7 +22,7 @@ export default function TechnologySection() {
         </div>
 
         <div className="tf-wrap">
-          <p className="tf__intro">SoniXense transforms heterogeneous medical and system data into high-level insights, harmonized perceptual cues, and sound.</p>
+          <p className="tf__intro">SoniXense transforms complex, multimodal system data into high-level insights through intuitive auditory cues.</p>
           <TechnologyField />
         </div>
 

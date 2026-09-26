@@ -7,7 +7,6 @@ export type Person = {
   preview: readonly string[]; statement: string; bio: readonly string[];
   signature: { label: string; title: string; description: string; sequence?: readonly string[]; media?: ProfileMedia };
   highlights: readonly ProfileHighlight[];
-  awards?: readonly { title: string; context: string; media: ProfileMedia; featured?: boolean }[];
   work?: readonly ProfileHighlight[]; invention?: string; leadership?: readonly ProfileHighlight[];
   metrics?: readonly { value: string; label: string }[];
   links: readonly ProfileLink[];
@@ -31,12 +30,6 @@ export const people: Person[] = [
       { title: "Scientific Coordinator", detail: "DFG Synergia · TUM / TU Dresden" },
       { title: "Interdisciplinary training", detail: "Computer science, musicology and piano performance" }
     ],
-    awards: [
-      { title: "MICCAI Young Scientist Award", context: "2017", media: { src: "/team/sasan/miccai-young-scientist-award.jpg", alt: "Sasan Matinfar receiving the 2017 MICCAI Young Scientist Award", label: "MICCAI award photograph" }, featured: true },
-      { title: "Data Sonification Awards", context: "2025 · 2026 ×2", media: { src: "/team/sasan/sonification-awards.jpg", alt: "Sasan Matinfar's Data Sonification Awards", label: "Award photograph" } },
-      { title: "MICCAI Best Paper Award Nominee", context: "2023 · finalist distinction", media: { src: "/team/sasan/miccai-best-paper.jpg", alt: "MICCAI 2023 Best Paper Award finalist recognition", label: "Recognition photograph" } }
-    ],
-    invention: "Lead inventor across multiple international patent families in surgical sonification and intelligent surgical assistance. The underlying records include published patents, filed applications and work in preparation; these have different legal statuses.",
     work: [{ title: "From Tissue to Sound", detail: "Research framework and 2025 Medical Image Analysis publication" }, { title: "Ocular Stethoscope", detail: "Auditory support for retinal membrane peeling" }],
     links: [{ label: "TUM CAMP profile", href: "https://www.cs.cit.tum.de/camp/members/sasan-matinfar-1/" }, { label: "Synergia team", href: "https://synergia.camp.cit.tum.de/team/" }]
   },
@@ -53,7 +46,6 @@ export const people: Person[] = [
     ],
     signature: { label: "Signature work", title: "Organism", description: "Created with Garnet Willis, the work pairs a robotically prepared historic pipe organ with a robotically steered chaotic pendulum. The work makes nonlinear dynamics and material behavior audible through a responsive technological system.", media: { src: "/team/navid/organism.jpg", alt: "Organism performance installation by Navid Navab", label: "Installation photograph" } },
     highlights: [{ title: "ArtScience", detail: "Sound, kinetic systems and material intelligence" }, { title: "International practice", detail: "Installations and performances presented internationally" }, { title: "Topological Media Lab", detail: "Director of an interdisciplinary artistic research lab" }],
-    awards: [{ title: "Golden Nica", context: "Prix Ars Electronica · Digital Musics & Sound Art · 2025 · for Organism, with Garnet Willis", media: { src: "/team/navid/golden-nica.jpg", alt: "Navid Navab's 2025 Golden Nica for Organism", label: "Golden Nica photograph" }, featured: true }, { title: "Lumen Prize", context: "For Organism", media: { src: "/team/navid/lumen.jpg", alt: "Lumen Prize recognition for Organism", label: "Lumen Prize / exhibition photograph" } }],
     work: [{ title: "Organism", detail: "Responsive organ and chaotic pendulum performance installation" }, { title: "Material sound practice", detail: "Kinetic sculpture, responsive architecture and gestural composition" }],
     links: [{ label: "Artist website", href: "https://www.navidnavab.com/about" }]
   },
@@ -70,14 +62,13 @@ export const people: Person[] = [
     ],
     signature: { label: "Signature contribution", title: "BioSonix", description: "Physics-based sonification of tool–tissue interaction. Biomechanical modeling of tissue deformation drives auditory representations of interaction dynamics and tissue properties.", sequence: ["Tool–tissue interaction", "Biomechanics", "Sound"], media: { src: "/team/veronica/biosonix.jpg", alt: "BioSonix physics-based sonification research", label: "BioSonix research image" } },
     highlights: [{ title: "BioSonix", detail: "Physics-based tool–tissue sonification" }, { title: "Cardiovascular XR", detail: "Physics-based guidance for minimally invasive intervention" }, { title: "Retinal sonification", detail: "Physics-based iOCT sonification research for subretinal injection" }],
-    awards: [{ title: "Data Sonification Award", context: "2026 · BioSonix", media: { src: "/team/veronica/sonification-award.jpg", alt: "Veronica Ruozzi's 2026 Data Sonification Award for BioSonix", label: "Award photograph" }, featured: true }],
     links: [{ label: "TUM CAMP profile", href: "https://www.cs.cit.tum.de/en/camp/members/template-personal-page-postdoc-3/" }, { label: "Synergia team", href: "https://synergia.camp.cit.tum.de/team/" }]
   },
   {
     id: "nassir-navab", name: "Prof. Dr. Nassir Navab", title: "CSO / Co-Founder",
     expertise: "Medical XR, Robotics & Surgical Intelligence", image: "/images/founders/nassir.png",
     imagePosition: "center 38%", cardImagePosition: "center 70%",
-    preview: ["Pioneer in medical XR", "60+ international patents", "TUM CAMP chair"],
+    preview: ["Pioneer in medical XR", "Computer-assisted intervention", "TUM CAMP chair"],
     statement: "An internationally recognized pioneer in computer-assisted medical procedures and medical augmented reality.",
     bio: [
       "Nassir Navab is Professor of Computer Aided Medical Procedures at TUM. His research group develops technologies linking medicine and computer science to improve medical interventions, with work spanning augmented reality, imaging, surgical navigation and intelligent systems.",
@@ -86,7 +77,7 @@ export const people: Person[] = [
     ],
     signature: { label: "Foundational contribution", title: "Medical XR & Surgical Intelligence", description: "Decades of research connecting imaging, navigation and computer-assisted medical procedures with new ways to support clinicians.", media: { src: "/team/nassir/medical-xr.jpg", alt: "Nassir Navab's medical extended reality research", label: "Medical XR research image" } },
     highlights: [{ title: "Computer-assisted medicine", detail: "TUM chair connecting medical procedures and augmented reality" }, { title: "Scientific leadership", detail: "MICCAI Society board member from 2006; editorial service for IEEE TMI, Medical Image Analysis and Medical Physics" }, { title: "Research trajectory", detail: "INRIA / Paris XI · MIT Media Laboratory · Siemens Corporate Research · TUM" }],
-    metrics: [{ value: "60+", label: "International patents" }, { value: "Hundreds", label: "Scientific publications" }],
+    metrics: [{ value: "Hundreds", label: "Scientific publications" }],
     work: [{ title: "Medical augmented reality", detail: "Research in imaging and navigation for medical procedures" }, { title: "CAMP research group", detail: "Computer-assisted medical procedures and augmented reality at TUM" }],
     links: [{ label: "TUM Professor profile", href: "https://www.professoren.tum.de/navab-nassir" }, { label: "TUM CAMP", href: "https://www.cs.cit.tum.de/camp/" }]
   }

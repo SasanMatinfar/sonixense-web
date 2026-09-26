@@ -1,10 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
+import MovementTag from "@/components/ui/MovementTag";
+import { awardsFrame } from "@/content/awards";
 import Container from "@/components/ui/Container";
 import SectionLabel from "@/components/ui/SectionLabel";
-import MovementTag from "@/components/ui/MovementTag";
 import FounderCard from "@/components/team/FounderCard";
 import { people } from "@/content/people";
-import { awardsFrame } from "@/content/awards";
 
 export default function TeamSection() {
   return (
@@ -21,17 +22,16 @@ export default function TeamSection() {
 
         <div className="awards" id="awards">
           <MovementTag index="07B">Awards &amp; recognition</MovementTag>
-          <div className="awards__frame">
-            {awardsFrame.map((item) => (
-              <figure className={`awards__item awards__item--${item.slot}`} key={`${item.who}-${item.title}`} data-asset={item.media.src}>
-                <div className="awards__media" role="img" aria-label={item.media.available ? item.media.alt : `${item.media.alt}. Photograph pending.`}>
-                  {item.media.available
-                    ? <Image src={item.media.src} alt="" fill sizes="(max-width: 700px) 100vw, 60vw" style={{ objectFit: "cover" }} />
-                    : <span className="awards__pending" aria-hidden="true"><i />Photograph forthcoming</span>}
+          <div className="awards__frame awards__frame--ranked">
+            {awardsFrame.map((award) => {
+              const media = award.awardMedia ?? award.media;
+              return <Link href={`/team/${award.founderIds[0]}#recognition`} className={`awards__item awards__item--${award.slot}`} key={award.id} data-award={award.id}>
+                <div className={`awards__media awards__media--${media.fit ?? "cover"}`}>
+                  <Image src={media.src} alt={media.alt} fill sizes="(max-width: 700px) 90vw, 50vw" style={{ objectFit: media.fit ?? "cover" }} />
                 </div>
-                <figcaption><strong>{item.title}</strong><span>{item.caption}</span><small>{item.who}</small></figcaption>
-              </figure>
-            ))}
+                <div className="awards__caption"><strong>{award.award}</strong><span>{award.year}{award.project ? ` · ${award.shortProject ?? award.project}` : ""}</span><small>{award.founderIds.map((id) => people.find((person) => person.id === id)?.name).join(" + ")} ↗</small></div>
+              </Link>;
+            })}
           </div>
         </div>
       </Container>

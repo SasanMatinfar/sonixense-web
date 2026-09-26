@@ -1,9 +1,6 @@
 import Image from "next/image";
 import logo from "../../../SoniXense-Brand-Kit/01-Logo/SVG/sonixense-horizontal-white.svg";
 
-// The Hero's one visual: the SoniXense identity pattern, with the official wordmark held
-// over its inner focal point. Static — Sections 02 and 03 carry the site's motion now, so
-// this section is deliberately still, beyond a one-off entrance handled in CSS.
 export default function HeroIdentity() {
   return (
     <div className="hero-identity" aria-hidden="true">

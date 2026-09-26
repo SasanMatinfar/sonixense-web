@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import SectionLabel from "@/components/ui/SectionLabel";
 
@@ -36,10 +37,14 @@ export default function ScienceSection() {
             <a href="https://synergia.camp.cit.tum.de/" target="_blank" rel="noopener noreferrer">Explore Synergia ↗</a>
           </div>
           <div className="science-anchor__visual">
-            <div className="scientific-foundation__research-field" aria-hidden="true">
-              <span>Imaging / sensing</span><span>Computational models</span><span>Spatial audio</span>
-              <i /><i /><i /><i /><i /><i /><i /><i /><i />
-            </div>
+            <Image
+              className="science-anchor__image"
+              src="/images/hero/synergia-medical-hero.png"
+              alt="Synergia visualization of a surgeon, anatomical tissue, and spatial sound waves."
+              width={1536}
+              height={1024}
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
             <ul className="science-anchor__areas" aria-label="Research areas">
               {researchAreas.map((a) => <li key={a}>{a}</li>)}
             </ul>
