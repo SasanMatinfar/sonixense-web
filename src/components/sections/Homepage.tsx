@@ -35,8 +35,8 @@ export default function Homepage() {
               </p>
               <div className="button-row">
                 <ButtonLink href="#experience">Experience SoniXense</ButtonLink>
-                <a className="hero__secondary-link" href="#perception">
-                  How it works <span aria-hidden="true">↓</span>
+                <a className="hero__secondary-link" href="mailto:contact@sonixense.com">
+                  Talk to us <span aria-hidden="true">→</span>
                 </a>
               </div>
             </div>

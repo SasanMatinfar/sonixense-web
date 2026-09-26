@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import MobileMenu from "@/components/layout/MobileMenu";
 import HomeLogoLink from "@/components/brand/HomeLogoLink";
 
-const links = [["Technology", "/#technology"], ["Surgery", "/#surgery"], ["Science", "/#science"], ["Team", "/#team"], ["Build", "/#build"]] as const;
+const links = [["Technology", "/#technology"], ["Surgery", "/#surgery"], ["Science", "/#science"], ["Team", "/#team"], ["Talk to us", "mailto:contact@sonixense.com"]] as const;
 
 export default function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
